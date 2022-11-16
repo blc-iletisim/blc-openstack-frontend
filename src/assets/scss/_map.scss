@@ -1,0 +1,10 @@
+#map * {
+  -moz-transition: none !important;
+  -webkit-transition: none !important;
+  -o-transition: all 0s ease !important;
+  transition: none !important;
+}
+
+.google-map * {
+  transition: none !important;
+}
