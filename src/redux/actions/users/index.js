@@ -97,7 +97,7 @@ export const addUser = (sender, data) => {
     }
   ) */
   //data.workingHours = arr
-  console.log(data)
+  //console.log(data)
 
 /*   for (let i = 0; i < data.permissions.length; i++) {
     data.permissions[i] = data.permissions[i].uid
@@ -111,28 +111,33 @@ export const addUser = (sender, data) => {
         "/graphql",{
           query:`
           mutation {
-            createUser(input: {email:"`+data.email+`",name:"`+data.name+`",password:"`+data.password+`",organization:"`+data.organization+`"}) {
+            createUser(
+              input: {
+                name: "`+data.name+`"
+                email: "`+data.email+`"
+                password: "`+data.password+`"
+                company: "`+data.organization+`"
+                role:"af321f59-2164-4a9a-944a-c5760228e8b8"
+              }
+            ) {
               id
               name
               email
-        
-              
               password
-              roles {
-                id
-                name
-               
-                createdDateTime
-                deletedDateTime
-              }
-              organization {
+              company
+              role {
                 id
                 name
              
+              }
+              instances {
+                id
+                name
+            
               }
               createdDateTime
               updatedDateTime
-             
+              deletedDateTime
             }
           }
           

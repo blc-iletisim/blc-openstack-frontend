@@ -5,7 +5,7 @@ import layout from "./layout";
 
 import users from "./users";
 
-
+import organisationReducer from "./organisations";
 
 import rolesReducer from "./roles";
 
@@ -17,7 +17,7 @@ const rootReducer = combineReducers({
   layout,
 
   users,
-
+  organisationReducer,
   rolesReducer,
 
 });

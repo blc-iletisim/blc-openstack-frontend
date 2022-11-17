@@ -477,6 +477,24 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     
   };
 
+  useEffect(() => {
+    getOrganizationOptions();
+   }, [OrganisationsStore]);
+
+   const getOrganizationOptions = () => {
+    OrganisationsStore?.dataOrganization?.forEach((organisation) =>
+      setOrganizationOptions((organizationOptions) => [
+        ...organizationOptions,
+        {
+          value: organisation.id,
+          label: organisation?.name,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])
+    ); 
+  };
 
 
 
@@ -757,7 +775,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
         permissions: editingProfileData?.permissions,
         id:editingProfileData.id,
         organization:editingProfileData.organization,
-        roles:editingProfileData.role.label,
+        roles:editingProfileData?.roles?.label,
         role: editingProfileData.permissions?.find(
           (p) => p.value === "web-auth-login"
         )
@@ -856,28 +874,23 @@ console.log("OrganisationsStore: ",OrganisationsStore)
         </ModalHeader>
         <ModalBody>
         <div className="mb-2">
-          <Label className="form-label" for="organization-name">
-            Organizasyon Adı:
-          </Label>
-
-          <Select
-            id="personel-select"
-            closeMenuOnSelect={false}
-            className="react-select"
-            classNamePrefix="Seç"
-            defaultValue={{
-              //label: isEdit ? device?.user?.name : "",
-              value: 0,
-            }} 
-       /*      defaultValue={editingProfileData?.organization?.name
-              || ""} */
-            options={organizationOptions}
-            onChange={(value) =>
-              setEditingProfileData({ organization: value.value  })
-              
-            }
-          />
-        </div> 
+            <Label className="form-label" for="user-name">
+              Şirket Adı:
+            </Label>
+            <Input
+              type="text"
+              id="company-name"
+              placeholder="Şirket Adı"
+              /* defaultValue={{
+                //label: isEdit ? device?.user?.name : "",
+                value: 0,
+              }}  */
+              onChange={(value) =>
+                setEditingProfileData({ organization: value.target.value  })
+                
+              }
+            />
+          </div>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
               Kullanıcı İsmi:
