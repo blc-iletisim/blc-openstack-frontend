@@ -49,7 +49,7 @@ export const getOrganisations = () => {
       });
   };
 };
-
+//get hariç yeni sorguların eklenmesi lazım!!!
 export const addOrganization = (data) => {
   console.log("data: ", data);
   console.log("dataId: ",data.responsibleUser);

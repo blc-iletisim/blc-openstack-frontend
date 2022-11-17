@@ -371,8 +371,8 @@ const UserManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [organOptions, setOrganOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [editingProfileData, setEditingProfileData] = useState(null);
-  console.log("editingProfileData: ", editingProfileData)
+  const [editingProfileData, setEditingProfileData] = useState(null)
+  console.log("editingProfileData set: ", editingProfileData)
 /* console.log("usersStore: ",usersStore)
 console.log("authStore",authStore)
 console.log("OrganisationsStore: ",OrganisationsStore)
@@ -503,7 +503,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
    }, [rolesStore]);
 
    const getRolesOptions = () => {
-    rolesStore.data?.forEach((role) =>
+    rolesStore.roles?.forEach((role) =>
       setRolesOptions((rolesOptions) => [
         ...rolesOptions,
         {
@@ -707,6 +707,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       password: "",
       email: "",
       organization: [],
+      id:"",
       //organization: [OrganisationsStore[0]],
       //permissions: [userRoles[0]],
       //workingHours: {},
@@ -775,12 +776,13 @@ console.log("OrganisationsStore: ",OrganisationsStore)
         permissions: editingProfileData?.permissions,
         id:editingProfileData.id,
         organization:editingProfileData.organization,
-        roles:editingProfileData?.roles?.label,
-        role: editingProfileData.permissions?.find(
+        roles:editingProfileData?.role,
+        role:editingProfileData?.role?.map((rol) => rol.value),
+        /* role: editingProfileData.permissions?.find(
           (p) => p.value === "web-auth-login"
         )
           ? "admin"
-          : "user",
+          : "user", */
         //workingHours: editingProfileData?.workingHours,
         deleted: editingProfileData.deleted || null,
         deletedAt: editingProfileData.deletedAt || null,
@@ -806,6 +808,9 @@ console.log("OrganisationsStore: ",OrganisationsStore)
           });
         });
     } else {
+
+      //BU KISIMA UPDATE EDERKEN GİRMİYOR PROBLEM BURADAN KAYNAKLANIYOR İD Yİ GÖNDERMİYOR OLABİLİR
+      console.log("update else")
       //console.log("ELSE", editingProfileData?.workingHours);
       let obj = {};
       /* Object.entries(editingProfileData?.workingHours).forEach(
@@ -835,6 +840,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
         permissions: editingProfileData?.permissions,
+        roles:editingProfileData?.role?.value
         //workingHours: editingProfileData?.workingHours,
       };
       console.log("NUD", newUserData);
@@ -962,7 +968,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
-              options={userOptions}
+              options={rolesOptions}
               className="react-select"
               classNamePrefix="Seç"
               defaultValue={editingProfileData?.role || []}
@@ -974,7 +980,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
                 
                 setEditingProfileData({
                   ...editingProfileData,
-                  role: value,
+                  role: value.map((rol) => rol.value),
                   //role: value.label,
                 })
               }}

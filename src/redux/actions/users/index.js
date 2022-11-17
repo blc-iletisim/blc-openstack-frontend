@@ -117,7 +117,7 @@ export const addUser = (sender, data) => {
                 email: "`+data.email+`"
                 password: "`+data.password+`"
                 company: "`+data.organization+`"
-                role:"af321f59-2164-4a9a-944a-c5760228e8b8"
+                role:"`+data.roles+`"
               }
             ) {
               id
@@ -214,41 +214,30 @@ export const updateUser = (sender, data) => {
       .post("/graphql",
       {
         query:`
-        mutation {
-          updateUser(id: "`+data.id+`", input: {email:"`+data.email+`",name:"`+data.name+`",organization:"`+data.organization+`",password:"`+data.password+`"}) {
-            id
-            name
-            email
-            oneSignalId
-            workerNumber
-            password
-            roles {
+       
+          mutation {
+            updateUser(id: "`+data.id+`", input: {company:"`+data.organization+`",email:"`+data.email+`",name:"`+data.name+`",password:"`+data.password+`",role:"af321f59-2164-4a9a-944a-c5760228e8b8"}) {
               id
               name
+              email
+              password
+              company
+              role {
+                id
+                name
+
+              }
+              instances {
+                id
+                name
+
             
+              }
               createdDateTime
               updatedDateTime
               deletedDateTime
             }
-           
-          
-           
-            organization {
-              id
-              name
-            
-              createdDateTime
-              updatedDateTime
-              deletedDateTime
-            }
-           
-            createdDateTime
-            updatedDateTime
-            deletedDateTime
           }
-        }
-        
-        
 
 
         
