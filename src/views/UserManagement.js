@@ -101,7 +101,7 @@ const UserManagement = () => {
       });
   }, []);
   const serverSideColumns = [
-    {
+    /* {
       name: "Aktiflik",
       selector: "deleted",
       sortable: true,
@@ -117,7 +117,7 @@ const UserManagement = () => {
           </Badge>
         );
       },
-    },
+    }, */
     {
       name: "İsim",
       selector: "name",
@@ -131,35 +131,23 @@ const UserManagement = () => {
       minWidth: "350px",
     },
     {
-      name: "Rol",
-      selector: "roles.name",
+      name: "Şirket",
+      selector: "company",
       sortable: true,
       minWidth: "350px",
       //cell: (row) => <span>{row.role?.toUpperCase() || "ROLE_ADMIN"}</span>,
-      cell: (row) => <span>{row.roles.name?.toUpperCase() || "ROLE_ADMIN"}</span>,
+      //cell: (row) => <span>{"ROLE_ADMIN"}</span>,
     }, 
-   /*  {
-      name: "Organizasyon",
-      selector: "organization.name",
+    {
+      name: "Rol",
+      selector: "role.name",
       sortable: true,
       minWidth: "350px",
-    }, */
-    {
-      name: "Organizasyon",
-      selector: "organization.name",
-      sortable: false,
-      minWidth: "250px",
-      cell: (row) => (
-        <span>
-          {/*row.createdDateTime
-            ? moment(row.createdDateTime).format("DD.MM.YYYY HH:mm:ss")
-            : "-"
-          */
-            row.organization?.name?.toUpperCase() || "-"
-          }
-        </span>
-      ),
-    },
+      //cell: (row) => <span>{row.role?.toUpperCase() || "ROLE_ADMIN"}</span>,
+      //cell: (row) => <span>{"ROLE_ADMIN"}</span>,
+    }, 
+
+    
     {
       name: "Aksiyonlar",
       allowOverflow: false,
@@ -360,6 +348,7 @@ const UserManagement = () => {
   
  
   const a = useSelector((state) => state.users);
+  
   const authStore = useSelector((state) => state.auth);
   const OrganisationsStore = useSelector((state) => state.organizations);
   
@@ -469,7 +458,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   const getUserOptions = () => {
     // usersStore.data.map(user =>
     usersStore.data.forEach((user) =>
-    user.roles.map(use =>
+    users.map(use =>
       setUserOptions((userOptions) => [
      
         {

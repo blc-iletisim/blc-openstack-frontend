@@ -7,31 +7,36 @@ export const getUsersHttp = () => {
     ApplicationService.http()
       .post("/graphql", {
         query:`
-        {
-          users {
-            id
-            name
-            email
-         
-            roles {
+       
+          {
+            users {
               id
               name
-             
+              email
+              password
+              company
+              role {
+                id
+                name
+              
+                createdDateTime
+                updatedDateTime
+                deletedDateTime
+              }
+              instances {
+                id
+                name
+
+                createdDateTime
+                updatedDateTime
+                deletedDateTime
+              }
               createdDateTime
+              updatedDateTime
               deletedDateTime
             }
-            organization {
-              id
-              name
-           
-            }
-           
-           
-            createdDateTime
-            updatedDateTime
-            
           }
-        }
+
         
         
        

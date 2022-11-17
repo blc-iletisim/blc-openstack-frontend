@@ -8,14 +8,26 @@ export const getRoles = () => {
           "/graphql",{
             query:`
            
-            {
-                roles {
-                id
-                name
+                          
+                {
+                  roles {
+                    id
+                    name
+                    permissions {
+                      id
+                      name
+                    
+                      createdDateTime
+                      updatedDateTime
+                      deletedDateTime
+                    }
                 
-                
+                    createdDateTime
+                    updatedDateTime
+                    deletedDateTime
+                  }
                 }
-            }
+
   
             `,
           },{
