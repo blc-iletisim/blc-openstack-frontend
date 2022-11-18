@@ -40,7 +40,7 @@ import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 
 import {
-  getRoles,
+  getRoles,deleteRoles
   
 } from "../redux/actions/roles";
 import { addRoles,} from "../redux/actions/roles";
@@ -959,6 +959,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   };
 
   const handleDeleteUser = (selectedUser) => {
+    console.log("handleDeleteUser selectedUser: ",selectedUser)
     return Swal.fire({
       title: `${selectedUser.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
       text: "Silinen hesaplar tekrar aktif edilebilir, ancak aynı email adresi ile tekrar hesap oluşturulamaz. Tüm yetkileri kaldırılacaktır!",
@@ -974,7 +975,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     }).then(function (result) {
       if (result.value !== null && result.value === true) {
         console.log("selectedUser: ",selectedUser);
-        //dispatch(deleteUser(selectedUser.id));
+        dispatch(deleteRoles(selectedUser.value));
       }
     });
   };

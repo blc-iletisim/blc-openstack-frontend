@@ -48,10 +48,10 @@ export const getRoles = () => {
 
   export const addRoles = (role) => {
     console.log("addRoles role: ",role)
-    //console.log("userId: ",role.user.id)
+   
     
     return async (dispatch) => { 
-      //console.log("userId: ",role.user.id)
+   
       ApplicationService.http()
         .post(
           "/graphql",
@@ -94,6 +94,38 @@ export const getRoles = () => {
         })
         .catch((error) => {
           console.log("error", error);
+        });
+    };
+  };
+
+  export const deleteRoles = (roleId) => {
+    console.log("delete user id: ", roleId);
+    return async (dispatch) => {
+      ApplicationService.http()
+        .post("/graphql", {
+          query:`
+          
+            mutation {
+              deleteRole(id: "`+roleId+`")
+            }
+
+          `,
+        },{
+          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          
+        })
+        .then((response) => {
+          console.log("DeleteResponse: ", response);
+          console.log("roleId:",roleId);
+          dispatch({
+            type: "DELETE_ROLES",
+            payload: {
+              id: roleId,
+            },
+          });
+        })
+        .catch((error) => {
+          console.log("error -- responsee", error);
         });
     };
   };
