@@ -10,6 +10,12 @@ export default [
     icon: <Users size={20} />,
     navLink: "/user-management",
   },
+  {
+    id: "RoleManagement",
+    title: "Rol Yönetimi",
+    icon: <Users size={20} />,
+    navLink: "/role-management",
+  },
   
   
 ];
