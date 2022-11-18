@@ -9,16 +9,16 @@ export const getPermissions = () => {
             query:`
            
             {
-                permissions{
-                  id
-                  name
-                
-                  createdDateTime
-                  updatedDateTime
-                  deletedDateTime
-                }
-              }
+              permissions{
+                id
+                name
               
+                createdDateTime
+                updatedDateTime
+                deletedDateTime
+              }
+            }
+            
 
 
   

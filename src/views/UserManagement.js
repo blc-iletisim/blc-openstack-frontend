@@ -1113,7 +1113,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     <div style={{ marginTop: "2%" }}>
       <Card>
         <CardHeader className="border-bottom">
-          <CardTitle tag="h4">Kullanıcılar</CardTitle>
+          <CardTitle tag="h4">Kullanıcı Yönetimi</CardTitle>
           <Button
             className="ml-2"
             color="primary"
@@ -1168,7 +1168,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
             md="3"
           >
             <Label className="mr-1" for="search-input">
-             Organizasyona Göre Filtrele
+             Şirkete Göre Filtrele
             </Label>
             <Input
               className="dataTable-filter"

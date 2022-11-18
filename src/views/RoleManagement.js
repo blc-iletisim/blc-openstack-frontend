@@ -43,7 +43,8 @@ import {
   getRoles,
   
 } from "../redux/actions/roles";
-import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
+import { addUser, deleteUser,  } from "../redux/actions/users";
+import{getPermissions} from "../redux/actions/permissions"
 import useGetUsers from "../utility/hooks/useGetUsers";
 
 const Swal = withReactContent(SweetAlert);
@@ -337,7 +338,8 @@ const UserManagement = () => {
   
   const authStore = useSelector((state) => state.auth);
   const OrganisationsStore = useSelector((state) => state.organizations);
-  
+  const PermissionsStore = useSelector((state) => state.permissionsReducer);
+  console.log("permissionsStore: ",PermissionsStore)
   const usersStore = useSelector((state) => state.users);
  console.log("usersStore: ",usersStore); 
   const rolesStore = useSelector((state) =>state.rolesReducer);
@@ -346,7 +348,8 @@ const UserManagement = () => {
   const [rolesOptions, setRolesOptions] = useState([]);
   console.log("rolesOptions: ",rolesOptions)
   const { enqueueSnackbar } = useSnackbar();
-
+  const [permissionsOptions, setPermissionsOptions] = useState([]);
+  console.log("permissionsOptions: ",permissionsOptions)
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
@@ -382,6 +385,13 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     }
   }, []);
   
+  useEffect(() => {
+    dispatch(getPermissions());
+    console.log("permissionsStore: ",PermissionsStore);
+    if (PermissionsStore.length > 0) {
+      setPermissionsOptions(PermissionsStore);
+    }
+  }, []);
   
 /*   useEffect(() => {
     dispatch(getUsersHttp());
@@ -482,7 +492,24 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       ])
     ); 
   };
+  useEffect(() => {
+    getPermissionsOptions();
+   }, [PermissionsStore]);
 
+   const getPermissionsOptions = () => {
+    PermissionsStore.permissions?.forEach((permission) =>
+      setPermissionsOptions((permissionsOptions) => [
+        ...permissionsOptions,
+        {
+          value: permission.id,
+          label: permission?.name,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])
+    ); 
+  };
 
 
    useEffect(() => {
@@ -887,7 +914,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
           
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-              Kullanıcı Rolü
+              Rol Yetkileri
             </Label>
             <Select
               id="permissions-select"
@@ -896,10 +923,10 @@ console.log("OrganisationsStore: ",OrganisationsStore)
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
-              options={rolesOptions}
+              options={permissionsOptions}
               className="react-select"
               classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || []}
+              //defaultValue={editingProfileData?.role || []}
               //defaultValue={editingProfileData?.roles || []}
               //defaultValue={editingProfileData?.role.label || []}
               onChange={(value) =>{{
