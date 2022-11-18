@@ -43,7 +43,7 @@ import {
   getRoles,
   
 } from "../redux/actions/roles";
-import { addUser, deleteUser,  } from "../redux/actions/users";
+import { addRoles,} from "../redux/actions/roles";
 import{getPermissions} from "../redux/actions/permissions"
 import useGetUsers from "../utility/hooks/useGetUsers";
 
@@ -361,8 +361,8 @@ const UserManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [organOptions, setOrganOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [editingProfileData, setEditingProfileData] = useState(null)
-  console.log("editingProfileData set: ", editingProfileData)
+  const [editingRoleData, setEditingRoleData] = useState(null)
+  console.log("editingRoleData set: ", editingRoleData)
 /* console.log("usersStore: ",usersStore)
 console.log("authStore",authStore)
 console.log("OrganisationsStore: ",OrganisationsStore)
@@ -497,7 +497,8 @@ console.log("OrganisationsStore: ",OrganisationsStore)
    }, [PermissionsStore]);
 
    const getPermissionsOptions = () => {
-    PermissionsStore.permissions?.forEach((permission) =>
+    PermissionsStore.permissions
+?.forEach((permission) =>
       setPermissionsOptions((permissionsOptions) => [
         ...permissionsOptions,
         {
@@ -717,7 +718,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   };
 
   const onAddUserButtonPressed = () => {
-    setEditingProfileData({
+    setEditingRoleData({
       name: "",
       password: "",
       email: "",
@@ -735,8 +736,8 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     if (
       usersStore.data?.some(
         (c) =>
-          c.email === editingProfileData.email &&
-          c.id !== editingProfileData.id
+          c.email === editingRoleData.email &&
+          c.id !== editingRoleData.id
       )
     ) {
       enqueueSnackbar(
@@ -750,7 +751,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       return;
     }
 
-    if (editingProfileData.password && editingProfileData.password <= 6) {
+    if (editingRoleData.password && editingRoleData.password <= 6) {
       enqueueSnackbar("6 karakterden uzun bir şifre giriniz.", {
         variant: "error",
         preventDuplicate: true,
@@ -759,16 +760,16 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       return;
     }
 
-    console.log("EDIT ", editingProfileData.permissions);
+    console.log("EDIT ", editingRoleData.permissions);
 
-    /*editingProfileData.permissions.forEach((p) => {
+    /*editingRoleData.permissions.forEach((p) => {
       setPermissions((perm) => [...perm, p]);
     });*/
 
     //console.log("PERM ",permissions)
 
     //let workingHours = {};
-   /*  Object.entries(editingProfileData.workingHours || {}).forEach(
+   /*  Object.entries(editingRoleData.workingHours || {}).forEach(
       ([key, value]) => {
         if (typeof value === "string") {
           workingHours[key] = value?.split(",") || [];
@@ -777,35 +778,36 @@ console.log("OrganisationsStore: ",OrganisationsStore)
         }
       }
     ); */
-    console.log("editingProfileData: ",editingProfileData);
-    if (!editingProfileData.id) {
-      console.log("editingProfileData: ",editingProfileData);
+    console.log("editingRoleData: ",editingRoleData);
+    if (!editingRoleData.id) {
+      console.log("editingRoleData: ",editingRoleData);
       const newUserData = {
-        name: editingProfileData.name, 
-        email: editingProfileData.email,
-        password: editingProfileData?.password,
-        createdTime: editingProfileData?.createdTime || new Date().getTime(),
-        createdBy: editingProfileData?.createdBy || authStore.id,
+        name: editingRoleData.name, 
+        email: editingRoleData.email,
+        password: editingRoleData?.password,
+        createdTime: editingRoleData?.createdTime || new Date().getTime(),
+        createdBy: editingRoleData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
-        permissions: editingProfileData?.permissions,
-        id:editingProfileData.id,
-        organization:editingProfileData.organization,
-        roles:editingProfileData?.role,
-        role:editingProfileData?.role?.map((rol) => rol.value),
-        /* role: editingProfileData.permissions?.find(
+        permissions: editingRoleData?.permissions,
+        id:editingRoleData.id,
+        organization:editingRoleData.organization,
+        roles:editingRoleData?.role,
+        role:editingRoleData?.role?.map((rol) => rol.value),
+        /* role: editingRoleData.permissions?.find(
           (p) => p.value === "web-auth-login"
         )
           ? "admin"
           : "user", */
-        //workingHours: editingProfileData?.workingHours,
-        deleted: editingProfileData.deleted || null,
-        deletedAt: editingProfileData.deletedAt || null,
-        deletedBy: editingProfileData.deletedBy || null,
+        //workingHours: editingRoleData?.workingHours,
+        deleted: editingRoleData.deleted || null,
+        deletedAt: editingRoleData.deletedAt || null,
+        deletedBy: editingRoleData.deletedBy || null,
         
       };
+      console.log("newUserData: ",newUserData)
 
-      dispatch(addUser(newUserData.createdBy, newUserData))
+      dispatch(addRoles( newUserData))
         .then(() => {
           setLoading(false);
           setShowAddUserModal(false);
@@ -826,9 +828,9 @@ console.log("OrganisationsStore: ",OrganisationsStore)
 
       //BU KISIMA UPDATE EDERKEN GİRMİYOR PROBLEM BURADAN KAYNAKLANIYOR İD Yİ GÖNDERMİYOR OLABİLİR
       console.log("update else")
-      //console.log("ELSE", editingProfileData?.workingHours);
+      //console.log("ELSE", editingRoleData?.workingHours);
       let obj = {};
-      /* Object.entries(editingProfileData?.workingHours).forEach(
+      /* Object.entries(editingRoleData?.workingHours).forEach(
         ([key, value]) => {
           if (!isNaN(key)) {
             let str = value.startTime.split(":");
@@ -843,20 +845,20 @@ console.log("OrganisationsStore: ",OrganisationsStore)
           }
         }
       ); */
-      //editingProfileData.workingHours = obj;
-      //console.log("ELSE SECOND", editingProfileData?.workingHours);
+      //editingRoleData.workingHours = obj;
+      //console.log("ELSE SECOND", editingRoleData?.workingHours);
       const newUserData = {
-        id: editingProfileData.id,
-        name: editingProfileData.name,
-        password: editingProfileData?.password,
-        email: editingProfileData.email,
-        createdTime: editingProfileData?.createdTime || new Date().getTime(),
-        createdBy: editingProfileData?.createdBy || authStore.id,
+        id: editingRoleData.id,
+        name: editingRoleData.name,
+        password: editingRoleData?.password,
+        email: editingRoleData.email,
+        createdTime: editingRoleData?.createdTime || new Date().getTime(),
+        createdBy: editingRoleData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
-        permissions: editingProfileData?.permissions,
-        roles:editingProfileData?.role?.value
-        //workingHours: editingProfileData?.workingHours,
+        permissions: editingRoleData?.permissions,
+        roles:editingRoleData?.role?.value
+        //workingHours: editingRoleData?.workingHours,
       };
       console.log("NUD", newUserData);
       dispatch(updateUser(newUserData.createdBy, newUserData))
@@ -865,9 +867,9 @@ console.log("OrganisationsStore: ",OrganisationsStore)
             variant: "success",
           });
           setLoading(false);
-          setEditingProfileData(null);
+          setEditingRoleData(null);
           setShowAddUserModal(false);
-          if (!editingProfileData.id) setEditingProfileData(null);
+          if (!editingRoleData.id) setEditingRoleData(null);
         })
         .catch(() => {
           enqueueSnackbar(
@@ -889,23 +891,23 @@ console.log("OrganisationsStore: ",OrganisationsStore)
         className="modal-dialog-centered"
       >
         <ModalHeader toggle={() => setShowAddUserModal(!showAddUserModal)}>
-          {editingProfileData?.id
-            ? editingProfileData.name
+          {editingRoleData?.id
+            ? editingRoleData.name
             : "Yeni Rol Ekle"}
         </ModalHeader>
         <ModalBody>
           <div className="mb-2">
-            <Label className="form-label" for="user-name">
+            <Label className="form-label" for="role-name">
               Rol İsmi:
             </Label>
             <Input
               type="text"
-              id="user-name"
+              id="role-name"
               placeholder="Rol İsmi"
-              value={editingProfileData?.name || ""}
+              value={editingRoleData?.name || ""}
               onChange={(e) =>
-                setEditingProfileData({
-                  ...editingProfileData,
+                setEditingRoleData({
+                  ...editingRoleData,
                   name: e.target.value,
                 })
               }
@@ -926,15 +928,15 @@ console.log("OrganisationsStore: ",OrganisationsStore)
               options={permissionsOptions}
               className="react-select"
               classNamePrefix="Seç"
-              //defaultValue={editingProfileData?.role || []}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
+              //defaultValue={editingRoleData?.role || []}
+              //defaultValue={editingRoleData?.roles || []}
+              //defaultValue={editingRoleData?.role.label || []}
               onChange={(value) =>{{
                 console.log("value:",value)
               }
                 
-                setEditingProfileData({
-                  ...editingProfileData,
+                setEditingRoleData({
+                  ...editingRoleData,
                   role: value.map((rol) => rol.value),
                   //role: value.label,
                 })
@@ -947,7 +949,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
           <Button color="primary" onClick={onAddUserModalButtonPressed}>
             {loading
               ? "Kaydediliyor.."
-              : !editingProfileData?.id
+              : !editingRoleData?.id
               ? "Oluştur"
               : "Güncelle"}
           </Button>
@@ -972,7 +974,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     }).then(function (result) {
       if (result.value !== null && result.value === true) {
         console.log("selectedUser: ",selectedUser);
-        dispatch(deleteUser(selectedUser.id));
+        //dispatch(deleteUser(selectedUser.id));
       }
     });
   };
@@ -1027,7 +1029,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
 
   const handleEditCategory = (selectedUser) => {
     console.log("users store selected user: ", selectedUser);
-    //console.log(editingProfileData?.workingHours);
+    //console.log(editingRoleData?.workingHours);
     setShowAddUserModal(true);
     const selectedUserPermissions = (selectedUser.permissions || []).map(
       (p) => {
@@ -1055,7 +1057,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       }
     }); */
     //selectedUser.workingHours = obj;
-    setEditingProfileData({
+    setEditingRoleData({
       
       ...selectedUser,
       permissions: selectedUserPermissions,

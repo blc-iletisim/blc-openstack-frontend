@@ -44,3 +44,56 @@ export const getRoles = () => {
         });
     };
   };
+
+
+  export const addRoles = (role) => {
+    console.log("addRoles role: ",role)
+    //console.log("userId: ",role.user.id)
+    
+    return async (dispatch) => { 
+      //console.log("userId: ",role.user.id)
+      ApplicationService.http()
+        .post(
+          "/graphql",
+         {
+          query:`
+         
+            mutation {
+              createRole(input: { name: "`+role.name+`",permissions:"`+role.roles+`" }) {
+                id
+                name
+                permissions {
+                  id
+                  name
+
+                }
+
+                createdDateTime
+                updatedDateTime
+                deletedDateTime
+              }
+            }
+
+          
+          `
+  
+         },{
+          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          
+        }
+        )
+        .then((response) => {
+          console.log("addrole response: ", response);
+         
+          dispatch({
+            type: "ADD_ROLES",
+            payload: {
+              roles: response.data.data.createRole,
+            },
+          });
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    };
+  };
