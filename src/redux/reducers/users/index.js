@@ -25,24 +25,14 @@ const DataTablesReducer = (state = initialState, action) => {
         }
 
     case "UPDATE_USER":
-      console.log("update user state: ",state)
-      console.log("action: ", action);
-      /*return {
-        ...state,
-        data: state.data.map((user) => {
-
-          if (user.uid == action.payload.user.uid) {
-            console.log(action.payload.user)
-            return {...action.payload.user}
-          }
-          return {...user};
-        })
-      };*/
+      //console.log("update user state: ",state)
+      //console.log("action: ", action.payload.data?.id);
+      
       return {
         ...state,
         data: state.data.map((user) => {
-          if (user.id === action.payload.data?.updateUser.id) {
-            return action.payload.data.updateUser;
+          if (user.id === action.payload.data?.id) {
+            return action.payload.data;
           }
           return user;
         }),
