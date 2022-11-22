@@ -140,7 +140,7 @@ export const getRoles = () => {
           query:`
           
             mutation {
-              updateRole(id: "`+role.id+`", input: { name: "`+role.name+`",permissions:"`+role.roles+`" }) {
+              updateRole(id: "`+role.id+`", input: { name: "`+role.name+`",permissions:[${role.roles}] }) {
                 id
                 name
                 permissions {
