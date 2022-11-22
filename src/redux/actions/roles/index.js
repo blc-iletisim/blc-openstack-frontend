@@ -46,34 +46,29 @@ export const getRoles = () => {
   };
 
 
-  export const addRoles = (role) => {
-    console.log("addRoles role: ",role)
-   
+  export const addRoles= (role) => {
+  
     
     return async (dispatch) => { 
-   
+     
       ApplicationService.http()
         .post(
           "/graphql",
          {
           query:`
-         
-            mutation {
-              createRole(input: { name: "`+role.name+`",permissions:"`+role.roles+`" }) {
+          mutation {
+            createRole(input: { name: "`+role.name+`",permissions:[${role.roles}] }) {
+              id
+              name
+              permissions {
                 id
                 name
-                permissions {
-                  id
-                  name
-
-                }
-
-                createdDateTime
-                updatedDateTime
-                deletedDateTime
+             
+       
               }
+              
             }
-
+          }
           
           `
   
@@ -83,7 +78,7 @@ export const getRoles = () => {
         }
         )
         .then((response) => {
-          console.log("addrole response: ", response);
+          console.log("addResponse: ",response)
          
           dispatch({
             type: "ADD_ROLES",
@@ -97,6 +92,7 @@ export const getRoles = () => {
         });
     };
   };
+  
 
   export const deleteRoles = (roleId) => {
     console.log("delete user id: ", roleId);
@@ -126,6 +122,58 @@ export const getRoles = () => {
         })
         .catch((error) => {
           console.log("error -- responsee", error);
+        });
+    };
+  };
+
+
+  export const updateRoles = (role) => {
+    console.log("updateDevice: ",role);
+   
+ 
+    return async (dispatch) => {
+      console.log(role);
+      ApplicationService.http()
+        .post(
+          "/graphql",
+         {
+          query:`
+          
+            mutation {
+              updateRole(id: "`+role.id+`", input: { name: "`+role.name+`",permissions:"`+role.roles+`" }) {
+                id
+                name
+                permissions {
+                  id
+                  name
+              
+                }
+                
+                createdDateTime
+                updatedDateTime
+                deletedDateTime
+              }
+            }
+
+          
+          `
+  
+         },{
+          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          
+        }
+        )
+        .then((response) => {
+          console.log("update response", response);
+          dispatch({
+            type: "UPDATE_ROLE",
+            payload: {
+              roles: response.data.data.roles,
+            },
+          });
+        })
+        .catch((error) => {
+          console.log("error", error);
         });
     };
   };

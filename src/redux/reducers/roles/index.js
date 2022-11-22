@@ -14,7 +14,7 @@ const rolesReducer = (state = initialState, action) => {
       case "ADD_ROLES":
         return {
           ...state,
-          roless: [...state.roles, action.payload.roles],
+          roles: [...state.roles, action.payload.roles],
         };
       case "DELETE_ROLES":
     

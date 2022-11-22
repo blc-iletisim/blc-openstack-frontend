@@ -1,4 +1,4 @@
-import { Map, List, Monitor, Users, Bell, PieChart,CheckCircle } from "react-feather";
+import { Map, List, Monitor, Users,UserCheck, Bell, PieChart,CheckCircle } from "react-feather";
 import { GrOrganization } from "react-icons/gr";
 import { BiDevices } from "react-icons/bi";
 import { HiOutlinePhotograph } from "react-icons/hi";
@@ -13,7 +13,7 @@ export default [
   {
     id: "RoleManagement",
     title: "Rol Yönetimi",
-    icon: <Users size={20} />,
+    icon: <UserCheck size={20} />,
     navLink: "/role-management",
   },
   

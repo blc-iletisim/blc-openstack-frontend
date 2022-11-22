@@ -40,10 +40,10 @@ import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 
 import {
-  getRoles,deleteRoles
+  getRoles,deleteRoles ,addRoles,updateRoles,
   
 } from "../redux/actions/roles";
-import { addRoles,} from "../redux/actions/roles";
+//import { addRoles,updateRoles,deleteRoles} from "../redux/actions/roles";
 import{getPermissions} from "../redux/actions/permissions"
 import useGetUsers from "../utility/hooks/useGetUsers";
 
@@ -126,7 +126,7 @@ const UserManagement = () => {
       minWidth: "350px",
     },
     {
-        name: "İzinler",
+        name: "Yetkiler",
         selector: "permissions",
         sortable: true,
         minWidth: "350px",
@@ -724,6 +724,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       email: "",
       organization: [],
       id:"",
+      value:"",
       //organization: [OrganisationsStore[0]],
       //permissions: [userRoles[0]],
       //workingHours: {},
@@ -732,6 +733,13 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   };
   //*****************************************************************************
   const onAddUserModalButtonPressed = () => {
+
+    //backend array format:
+    const arr=[];
+    const r=editingRoleData?.role.forEach((s) => {
+      arr.push('"'+s+'"');
+    
+    });
     setLoading(true);
     if (
       usersStore.data?.some(
@@ -779,30 +787,20 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       }
     ); */
     console.log("editingRoleData: ",editingRoleData);
-    if (!editingRoleData.id) {
+    if (!editingRoleData.value) {
       console.log("editingRoleData: ",editingRoleData);
       const newUserData = {
         name: editingRoleData.name, 
         email: editingRoleData.email,
-        password: editingRoleData?.password,
-        createdTime: editingRoleData?.createdTime || new Date().getTime(),
-        createdBy: editingRoleData?.createdBy || authStore.id,
-        lastUpdatedTime: new Date().getTime(),
-        lastUpdatedBy: authStore.id,
+       
+       
         permissions: editingRoleData?.permissions,
         id:editingRoleData.id,
-        organization:editingRoleData.organization,
-        roles:editingRoleData?.role,
-        role:editingRoleData?.role?.map((rol) => rol.value),
-        /* role: editingRoleData.permissions?.find(
-          (p) => p.value === "web-auth-login"
-        )
-          ? "admin"
-          : "user", */
-        //workingHours: editingRoleData?.workingHours,
-        deleted: editingRoleData.deleted || null,
-        deletedAt: editingRoleData.deletedAt || null,
-        deletedBy: editingRoleData.deletedBy || null,
+        
+        roles:arr,
+     
+     
+      
         
       };
       console.log("newUserData: ",newUserData)
@@ -848,20 +846,17 @@ console.log("OrganisationsStore: ",OrganisationsStore)
       //editingRoleData.workingHours = obj;
       //console.log("ELSE SECOND", editingRoleData?.workingHours);
       const newUserData = {
-        id: editingRoleData.id,
+        id: editingRoleData.value,
         name: editingRoleData.name,
-        password: editingRoleData?.password,
-        email: editingRoleData.email,
-        createdTime: editingRoleData?.createdTime || new Date().getTime(),
-        createdBy: editingRoleData?.createdBy || authStore.id,
-        lastUpdatedTime: new Date().getTime(),
-        lastUpdatedBy: authStore.id,
+       
         permissions: editingRoleData?.permissions,
-        roles:editingRoleData?.role?.value
+        roles:arr,
         //workingHours: editingRoleData?.workingHours,
       };
       console.log("NUD", newUserData);
-      dispatch(updateUser(newUserData.createdBy, newUserData))
+      console.log("update editingRoleData: ",editingRoleData)
+      console.log("roles: ",newUserData.roles)
+      dispatch(updateRoles(newUserData))
         .then(() => {
           enqueueSnackbar("Kullanıcı Güncellendi", {
             variant: "success",
@@ -869,7 +864,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
           setLoading(false);
           setEditingRoleData(null);
           setShowAddUserModal(false);
-          if (!editingRoleData.id) setEditingRoleData(null);
+          if (!editingRoleData.value) setEditingRoleData(null);
         })
         .catch(() => {
           enqueueSnackbar(
