@@ -26,7 +26,7 @@ import {
   Badge,
 } from "reactstrap";
 import { ConstructionOutlined, Edit, HowToReg, SatelliteAlt, SettingsEthernet } from "@mui/icons-material";
-import { getUsersHttp } from "@src/redux/actions/users";
+
 import moment from "moment";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useSnackbar } from "notistack";
@@ -37,7 +37,7 @@ import makeAnimated from "react-select/animated";
 import { selectThemeColors } from "@utils";
 import InputPasswordToggle from "@components/input-password-toggle";
 import { useHistory } from "react-router-dom";
-import { updateUser } from "../redux/actions/users";
+
 
 import {
   getRoles,deleteRoles ,addRoles,updateRoles,
@@ -340,8 +340,7 @@ const UserManagement = () => {
   const OrganisationsStore = useSelector((state) => state.organizations);
   const PermissionsStore = useSelector((state) => state.permissionsReducer);
   console.log("permissionsStore: ",PermissionsStore)
-  const usersStore = useSelector((state) => state.users);
- console.log("usersStore: ",usersStore); 
+
   const rolesStore = useSelector((state) =>state.rolesReducer);
   console.log("rolesStore: ",rolesStore);
   const [organizationOptions, setOrganizationOptions] = useState([]);
@@ -367,13 +366,6 @@ const UserManagement = () => {
 console.log("authStore",authStore)
 console.log("OrganisationsStore: ",OrganisationsStore)
  */
-
-  useEffect(() => {
-    dispatch(getUsersHttp());
-    if (usersStore.length > 0) {
-      setUsers(usersStore);
-    }
-  }, []);
 
   
   
@@ -404,9 +396,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
    */
   
 
-  useEffect(() => {
-    setUsers(usersStore);
-  }, [usersStore]);
+  
 
   useEffect(() => {
     setOrganizations(OrganisationsStore);
@@ -431,48 +421,25 @@ console.log("OrganisationsStore: ",OrganisationsStore)
 
 
   useEffect(() => {
-    if (usersStore.data) {
-      if (usersStore.total <= currentPage * rowsPerPage) {
+    if (rolesStore.data) {
+      if (rolesStore.total <= currentPage * rowsPerPage) {
         setCurrentPage(1);
-        setUsers(usersStore.data?.slice(0, rowsPerPage));
+        setRolesOptions(rolesStore.roles?.slice(0, rowsPerPage));
       } else {
-        setUsers(
-          usersStore.data?.slice(
+        setRolesOptions(
+          rolesStore.roles?.slice(
             currentPage * rowsPerPage - rowsPerPage,
             currentPage * rowsPerPage
           )
         );
       }
     }
-  }, [usersStore.total, usersStore]);
+  }, [rolesStore.total, rolesStore]);
 
 
 
-  useEffect(() => {
-    getUserOptions();
-  }, [usersStore]);
 
-  const getUserOptions = () => {
-    // usersStore.data.map(user =>
-    usersStore.data.forEach((user) =>
-    users.map(use =>
-      setUserOptions((userOptions) => [
-     
-        {
-          value: use.id,
-          label: use?.name,
-          color: "#00B8D9",
-          isFixed: true,
-          
-        },
-      ])
-      
-    )
-    
-    
-    )
-    
-  };
+  
 
   useEffect(() => {
     getOrganizationOptions();
@@ -540,10 +507,10 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     setSearchValue(e.target.value);
 
     if (e.target.value !== "") {
-      setUsers(
-        usersStore.data
-          .filter((user) =>
-            user.name.toLowerCase().includes(e.target.value.toLowerCase())
+      setRolesOptions(
+        rolesStore.roles
+          .filter((role) =>
+            role.name.toLowerCase().includes(e.target.value.toLowerCase())
           )
           .slice(
             currentPage * rowsPerPage - rowsPerPage,
@@ -551,8 +518,8 @@ console.log("OrganisationsStore: ",OrganisationsStore)
           )
       );
     } else {
-      setUsers(
-        usersStore.data.slice(
+      setRolesOptions(
+        rolesStore.roles.slice(
           currentPage * rowsPerPage - rowsPerPage,
           currentPage * rowsPerPage
         )
@@ -564,10 +531,10 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     setSearchOrganizationsValue(e.target.value);
 
     if (e.target.value !== "") {
-      setUsers(
-        usersStore?.data
+      setRolesOptions(
+        rolesStore?.roles
           .filter((org) =>
-            org.organization.name.toLowerCase().includes(e.target.value.toLowerCase())
+            org.name.toLowerCase().includes(e.target.value.toLowerCase())
           )
           .slice(
             currentPage * rowsPerPage - rowsPerPage,
@@ -575,8 +542,8 @@ console.log("OrganisationsStore: ",OrganisationsStore)
           )
       );
     } else {
-      setUsers(
-        usersStore?.data.slice(
+      setRolesOptions(
+        rolesStore?.roles.slice(
           currentPage * rowsPerPage - rowsPerPage,
           currentPage * rowsPerPage
         )
@@ -587,7 +554,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
     setUsers(
-      usersStore.data.slice(
+      rolesStore.roles.slice(
         (page.selected + 1) * rowsPerPage - rowsPerPage,
         (page.selected + 1) * rowsPerPage
       )
@@ -607,7 +574,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
     setUsers(
-      usersStore.data.slice(
+      rolesStore.roles.slice(
         currentPage * parseInt(e.target.value) - parseInt(e.target.value),
         currentPage * parseInt(e.target.value)
       )
@@ -624,8 +591,8 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   };
 
   const onSort = (column, direction) => {
-    setUsers(
-      usersStore.data
+    setRolesOptions(
+      rolesStore.roles
         .sort((a, b) => {
           if (a[column.selector] === b[column.selector]) return 0;
           if (direction === "asc") {
@@ -660,7 +627,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
   };
 
   const CustomPagination = () => {
-    const count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
+    const count = Number((rolesStore?.roles?.length / rowsPerPage).toFixed(1));
 
     return (
       <ReactPaginate
@@ -742,10 +709,10 @@ console.log("OrganisationsStore: ",OrganisationsStore)
     });
     setLoading(true);
     if (
-      usersStore.data?.some(
+      rolesStore.roles?.some(
         (c) =>
-          c.email === editingRoleData.email &&
-          c.id !== editingRoleData.id
+          c.name === editingRoleData.name
+         
       )
     ) {
       enqueueSnackbar(
@@ -1102,7 +1069,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
             md="3"
           >
             <Label className="mr-1" for="search-input">
-            İsime Göre Filtrele
+            Role Göre Filtrele
             </Label>
             <Input
               className="dataTable-filter"
@@ -1111,7 +1078,7 @@ console.log("OrganisationsStore: ",OrganisationsStore)
               id="search-input"
               value={searchValue}
               onChange={handleFilter}
-              placeholder="İsme Göre"
+              placeholder="Role Göre"
             />
             
           </Col>

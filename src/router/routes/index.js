@@ -17,6 +17,10 @@ const Routes = [
     path: "/role-management",
     component: lazy(() => import("../../views/RoleManagement")),
   },
+  {
+    path: "/database-management",
+    component: lazy(() => import("../../views/DatabaseManagement")),
+  },
   
   {
     path: "/login",

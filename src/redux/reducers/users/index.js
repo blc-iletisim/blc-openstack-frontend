@@ -26,7 +26,7 @@ const DataTablesReducer = (state = initialState, action) => {
 
     case "UPDATE_USER":
       //console.log("update user state: ",state)
-      //console.log("action: ", action.payload.data?.id);
+     // console.log("action: ", action.payload);
       
       return {
         ...state,

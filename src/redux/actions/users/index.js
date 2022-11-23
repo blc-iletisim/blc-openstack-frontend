@@ -12,7 +12,7 @@ export const getUsersHttp = () => {
               id
               name
               email
-              password
+              
               company
               role {
                 id
