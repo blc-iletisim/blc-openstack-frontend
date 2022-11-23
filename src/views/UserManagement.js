@@ -823,7 +823,7 @@ const UserManagement = () => {
             
           </Col>
 
-          <Col
+        {/*   <Col
             className="d-flex align-items-center justify-content-end mt-sm-0 mt-1 ml-md-auto"
             sm="6"
             md="3"
@@ -836,12 +836,12 @@ const UserManagement = () => {
               type="text"
               bsSize="sm"
               id="search-input"
-              value={searchOrganizationsValue}
-              onChange={handleOrganizationFilter}
+              //value={searchOrganizationsValue}
+              //onChange={handleOrganizationFilter}
               placeholder="Organizasyona Göre"
             />
             
-          </Col>
+          </Col> */}
 
         </Row>
         <DataTable

@@ -4,6 +4,7 @@ const initialState = {
 };
 
 const rolesReducer = (state = initialState, action) => {
+  console.log("state:",state)
   switch (action.type) {
     case "GET_ROLES":
       return {
@@ -17,27 +18,30 @@ const rolesReducer = (state = initialState, action) => {
           roles: [...state.roles, action.payload.roles],
         };
       case "DELETE_ROLES":
-    
+        console.log("roles delete state: ",state)
         return {
           ...state,
-          roles: state.roles.filter(
-            (roles) => roles.id !== action.payload.id
-          ),
+          roles: state.roles.filter( roles => roles.id != action.payload.id)
+         /*    (roles) => roles.id !== action.payload.id
+          ), */
         };
   
+
         case "UPDATE_ROLES":
-          console.log("roles update state: ",state)
-          console.log("update roles reducer",action.payload)
+          
           return {
             ...state,
-            roles: state.roles.map((roles) => {
-              if (roles.id === action.payload.roles.id) {
+            roles: state.roles.map((role) => {
+              if (role.id === action.payload.roles.id) {
                 return action.payload.roles;
               }
-              return roles;
+              return role;
             }),
           };
     }
+
+        
+  
   return state;
 };  
 export default rolesReducer;

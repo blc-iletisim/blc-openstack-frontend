@@ -166,9 +166,9 @@ export const getRoles = () => {
         .then((response) => {
           console.log("update response", response);
           dispatch({
-            type: "UPDATE_ROLE",
+            type: "UPDATE_ROLES",
             payload: {
-              roles: response.data.data.roles,
+              roles: response.data.data.updateRole,
             },
           });
         })
