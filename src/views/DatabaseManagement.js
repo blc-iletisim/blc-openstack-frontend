@@ -47,7 +47,7 @@ import { selectThemeColors } from "@utils";
 import InputPasswordToggle from "@components/input-password-toggle";
 import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
-
+import {getCategories} from "../redux/actions/categories";
 import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
@@ -158,6 +158,8 @@ const UserManagement = () => {
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
   console.log("usersStore: ", usersStore);
+  const categoriesStore = useSelector((state) => state.categoriesReducer);
+  console.log("categoriesStore: ",categoriesStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
@@ -171,7 +173,7 @@ const UserManagement = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   console.log("editingProfileData set: ", editingProfileData);
-
+  const [categoriesOptions, setCategoriesOptions] = useState([]);
   useEffect(() => {
     dispatch(getUsersHttp());
     if (usersStore.length > 0) {
@@ -184,6 +186,14 @@ const UserManagement = () => {
     console.log("rolesStore: ", rolesStore);
     if (rolesStore.length > 0) {
       setRolesOptions(rolesStore);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(getCategories());
+    console.log("categoriesStore get: ",categoriesStore);
+    if (categoriesStore.length > 0) {
+      setCategoriesOptions(categoriesStore);
     }
   }, []);
 
@@ -244,6 +254,29 @@ const UserManagement = () => {
       ])
     );
   };
+
+
+
+  useEffect(() => {
+    getCategoriesOptions();
+   }, [categoriesStore]);
+
+   const getCategoriesOptions = () => {
+    categoriesStore?.categories?.forEach((category) =>
+      setCategoriesOptions((categoriesOptions) => [
+        ...categoriesOptions,
+        {
+          value: category.id,
+          label: category?.name,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])
+    ); 
+  };
+
+
 
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
@@ -742,7 +775,7 @@ const UserManagement = () => {
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
-              options={rolesOptions}
+              options={categoriesOptions}
               className="react-select"
               classNamePrefix="Seç"
               defaultValue={editingProfileData?.role || [""]}

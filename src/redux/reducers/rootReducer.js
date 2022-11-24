@@ -6,8 +6,9 @@ import layout from "./layout";
 import users from "./users";
 import permissionsReducer from "./permissions";
 import organisationReducer from "./organisations";
-
+import categoriesReducer from "./categories";
 import rolesReducer from "./roles";
+import flavorsReducer from "./flavors"
 
 
 
@@ -19,6 +20,8 @@ const rootReducer = combineReducers({
   users,
   organisationReducer,
   rolesReducer,
+  categoriesReducer,
+  flavorsReducer,
 
 });
 

@@ -6,14 +6,15 @@ export const getCategories = () => {
       .post(
         "/graphql",{
           query:`
-          {
+    
             {
-                categories {
-                  id
-                  name
-                 
-                }
+              categories {
+                id
+                name
+              
               }
+            }
+
               
               
           `,
@@ -24,7 +25,7 @@ export const getCategories = () => {
       )
       .then((response) => {
         console.log("getCategories response: ",response)
-        const categories = response.data.data.categories;
+        const categories = response.data.data?.categories;
         dispatch({
           type: "GET_CATEGORIES",
           payload: {
