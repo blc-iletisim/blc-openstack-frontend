@@ -25,7 +25,13 @@ import {
   InputGroupText,
   Badge,
 } from "reactstrap";
-import { ConstructionOutlined, Edit, HowToReg, SatelliteAlt, SettingsEthernet } from "@mui/icons-material";
+import {
+  ConstructionOutlined,
+  Edit,
+  HowToReg,
+  SatelliteAlt,
+  SettingsEthernet,
+} from "@mui/icons-material";
 import { getUsersHttp } from "@src/redux/actions/users";
 import moment from "moment";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -39,10 +45,7 @@ import InputPasswordToggle from "@components/input-password-toggle";
 import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 
-import {
-  getRoles,
-  
-} from "../redux/actions/roles";
+import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 
@@ -50,7 +53,7 @@ const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 
 const UserManagement = () => {
- // let arrPerm = [];
+  // let arrPerm = [];
   let arrRole = [];
   let x = "";
   //
@@ -93,14 +96,14 @@ const UserManagement = () => {
       selector: "company",
       sortable: true,
       minWidth: "350px",
-    }, 
+    },
     {
       name: "Rol",
       selector: "role.name",
       sortable: true,
       minWidth: "350px",
       cell: (row) => <span>{row.role.name?.toUpperCase() || ""}</span>,
-    }, 
+    },
     {
       name: "Aksiyonlar",
       allowOverflow: false,
@@ -151,9 +154,9 @@ const UserManagement = () => {
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
-  console.log("usersStore: ",usersStore); 
-  const rolesStore = useSelector((state) =>state.rolesReducer);
-  console.log("rolesStore: ",rolesStore);
+  console.log("usersStore: ", usersStore);
+  const rolesStore = useSelector((state) => state.rolesReducer);
+  console.log("rolesStore: ", rolesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
@@ -163,8 +166,8 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(false);
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [editingProfileData, setEditingProfileData] = useState(null)
-  console.log("editingProfileData set: ", editingProfileData)
+  const [editingProfileData, setEditingProfileData] = useState(null);
+  console.log("editingProfileData set: ", editingProfileData);
 
   useEffect(() => {
     dispatch(getUsersHttp());
@@ -175,16 +178,17 @@ const UserManagement = () => {
 
   useEffect(() => {
     dispatch(getRoles());
-    console.log("rolesStore: ",rolesStore);
+    console.log("rolesStore: ", rolesStore);
     if (rolesStore.length > 0) {
       setRolesOptions(rolesStore);
     }
   }, []);
-  
+
   // useEffect(() => {
   //   setUsers(usersStore);
   // }, [usersStore]);
-
+  console.log("total", usersStore);
+  console.log("total", usersStore.total);
   useEffect(() => {
     if (usersStore.data) {
       if (usersStore.total <= currentPage * rowsPerPage) {
@@ -208,28 +212,24 @@ const UserManagement = () => {
   const getUserOptions = () => {
     // usersStore.data.map(user =>
     usersStore.data.forEach((user) =>
-    users.map(use =>
-      setUserOptions((userOptions) => [
-     
-        {
-          value: use.id,
-          label: use?.name,
-          color: "#00B8D9",
-          isFixed: true,
-          
-        },
-      ])
-      
-    )
-    )
-    
+      users.map((use) =>
+        setUserOptions((userOptions) => [
+          {
+            value: use.id,
+            label: use?.name,
+            color: "#00B8D9",
+            isFixed: true,
+          },
+        ])
+      )
+    );
   };
 
-   useEffect(() => {
+  useEffect(() => {
     getRolesOptions();
-   }, [rolesStore]);
+  }, [rolesStore]);
 
-   const getRolesOptions = () => {
+  const getRolesOptions = () => {
     rolesStore.roles?.forEach((role) =>
       setRolesOptions((rolesOptions) => [
         ...rolesOptions,
@@ -238,10 +238,9 @@ const UserManagement = () => {
           label: role?.name,
           color: "#00B8D9",
           isFixed: true,
-          
         },
       ])
-    ); 
+    );
   };
 
   const handleFilter = (e) => {
@@ -432,7 +431,7 @@ const UserManagement = () => {
       email: "",
       company: "",
       role: "",
-      id:"",
+      id: "",
     });
     setShowAddUserModal(true);
   };
@@ -442,8 +441,7 @@ const UserManagement = () => {
     if (
       usersStore.data?.some(
         (c) =>
-          c.email === editingProfileData.email &&
-          c.id !== editingProfileData.id
+          c.email === editingProfileData.email && c.id !== editingProfileData.id
       )
     ) {
       enqueueSnackbar(
@@ -466,26 +464,25 @@ const UserManagement = () => {
       return;
     }
 
-    console.log("editingProfileData: ",editingProfileData);
+    console.log("editingProfileData: ", editingProfileData);
     if (!editingProfileData.id) {
-      console.log("editingProfileData: ",editingProfileData);
+      console.log("editingProfileData: ", editingProfileData);
       const newUserData = {
-        name: editingProfileData.name, 
+        name: editingProfileData.name,
         email: editingProfileData.email,
         password: editingProfileData?.password,
-        company: editingProfileData.company, 
+        company: editingProfileData.company,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
-        id:editingProfileData.id,
-        roles:editingProfileData?.role[0],
+        id: editingProfileData.id,
+        roles: editingProfileData?.role[0],
         //role:editingProfileData?.role?.map((rol) => rol.value),
-        
+
         deleted: editingProfileData.deleted || null,
         deletedAt: editingProfileData.deletedAt || null,
         deletedBy: editingProfileData.deletedBy || null,
-        
       };
 
       dispatch(addUser(newUserData.createdBy, newUserData))
@@ -506,8 +503,7 @@ const UserManagement = () => {
           });
         });
     } else {
-
-      console.log("update else")
+      console.log("update else");
 
       const newUserData = {
         id: editingProfileData.id,
@@ -519,7 +515,7 @@ const UserManagement = () => {
         createdBy: editingProfileData?.createdBy || authStore.id,
         //lastUpdatedTime: new Date().getTime(),
         //lastUpdatedBy: authStore.id,
-        roles:editingProfileData?.role[0]
+        roles: editingProfileData?.role[0],
       };
       console.log("NUD", newUserData);
       dispatch(updateUser(newUserData.createdBy, newUserData))
@@ -557,7 +553,7 @@ const UserManagement = () => {
             : "Yeni Kullanıcı Ekle"}
         </ModalHeader>
         <ModalBody>
-        <div className="mb-2">
+          <div className="mb-2">
             <Label className="form-label" for="user-name">
               Şirket Adı:
             </Label>
@@ -567,8 +563,10 @@ const UserManagement = () => {
               placeholder="Şirket Adı"
               value={editingProfileData?.company || ""}
               onChange={(e) =>
-                setEditingProfileData({ ...editingProfileData, company: e.target.value  })
-                
+                setEditingProfileData({
+                  ...editingProfileData,
+                  company: e.target.value,
+                })
               }
             />
           </div>
@@ -589,7 +587,7 @@ const UserManagement = () => {
               }
             />
           </div>
-          {(!editingProfileData?.id  ||editingProfileData?.id) && (
+          {(!editingProfileData?.id || editingProfileData?.id) && (
             <Fragment>
               <div className="mb-2">
                 <Label className="form-label" for="email-address">
@@ -620,7 +618,6 @@ const UserManagement = () => {
                   defaultValue={editingProfileData?.password || ""}
                   onChange={(e) =>
                     setEditingProfileData({
-                      
                       ...editingProfileData,
                       password: e.target.value,
                     })
@@ -646,22 +643,22 @@ const UserManagement = () => {
               options={rolesOptions}
               className="react-select"
               classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role|| ['']}
+              defaultValue={editingProfileData?.role || [""]}
               //defaultValue={editingProfileData?.roles || []}
               //defaultValue={editingProfileData?.role.label || []}
-              onChange={(value) =>{{
-                console.log("value:",value)
-              }
-                
+              onChange={(value) => {
+                {
+                  console.log("value:", value);
+                }
+
                 setEditingProfileData({
                   ...editingProfileData,
                   role: value.map((rol) => rol.value),
                   //role: value.label,
-                })
+                });
               }}
             />
           </div>
-          
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onAddUserModalButtonPressed}>
@@ -691,7 +688,7 @@ const UserManagement = () => {
       buttonsStyling: false,
     }).then(function (result) {
       if (result.value !== null && result.value === true) {
-        console.log("selectedUser: ",selectedUser);
+        console.log("selectedUser: ", selectedUser);
         dispatch(deleteUser(selectedUser.id));
       }
     });
@@ -748,24 +745,18 @@ const UserManagement = () => {
   const handleEditCategory = (selectedUser) => {
     console.log("users store selected user: ", selectedUser);
     setShowAddUserModal(true);
-    const selectedUserRoles= (selectedUser.roles || [
-    ]).map(
-      (p) => {
-       /*  const foundPermData = userRoles.find(
+    const selectedUserRoles = (selectedUser.roles || []).map((p) => {
+      /*  const foundPermData = userRoles.find(
           (perm) => perm.value === p.authority
         );
         if (foundPermData) {
           return foundPermData;
         } */
-      }
-    );
+    });
 
- 
     setEditingProfileData({
-      
       ...selectedUser,
       role: selectedUserRoles,
-      
     });
   };
 
@@ -809,7 +800,7 @@ const UserManagement = () => {
             md="3"
           >
             <Label className="mr-1" for="search-input">
-            İsime Göre Filtrele
+              İsime Göre Filtrele
             </Label>
             <Input
               className="dataTable-filter"
@@ -820,10 +811,9 @@ const UserManagement = () => {
               onChange={handleFilter}
               placeholder="İsme Göre"
             />
-            
           </Col>
 
-        {/*   <Col
+          {/*   <Col
             className="d-flex align-items-center justify-content-end mt-sm-0 mt-1 ml-md-auto"
             sm="6"
             md="3"
@@ -842,7 +832,6 @@ const UserManagement = () => {
             />
             
           </Col> */}
-
         </Row>
         <DataTable
           noHeader

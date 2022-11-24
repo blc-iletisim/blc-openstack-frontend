@@ -2,11 +2,12 @@ import ApplicationService from "../../../services/ApplicationService";
 import { FormControlUnstyledContext } from "@mui/base";
 
 export const getRoles = () => {
-    return async (dispatch) => {
-      ApplicationService.http()
-        .post(
-          "/graphql",{
-            query:`
+  return async (dispatch) => {
+    ApplicationService.http()
+      .post(
+        "/graphql",
+        {
+          query: `
            
                 
                 {
@@ -27,37 +28,38 @@ export const getRoles = () => {
 
   
             `,
-          },{
-            headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-            
-          }    
-        )
-        .then((response) => {
-          console.log("getRoles response: ",response)
-          const roles = response.data.data.roles;
-          dispatch({
-            type: "GET_ROLES",
-            payload: {
-              roles,
-            },
-          });
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        }
+      )
+      .then((response) => {
+        console.log("getRoles response: ", response);
+        const roles = response.data.data.roles;
+        dispatch({
+          type: "GET_ROLES",
+          payload: {
+            roles,
+          },
         });
-    };
+      });
   };
+};
 
-
-  export const addRoles= (role) => {
-  
-    
-    return async (dispatch) => { 
-     
-      ApplicationService.http()
-        .post(
-          "/graphql",
-         {
-          query:`
+export const addRoles = (role) => {
+  return async (dispatch) => {
+    ApplicationService.http()
+      .post(
+        "/graphql",
+        {
+          query:
+            `
           mutation {
-            createRole(input: { name: "`+role.name+`",permissions:[${role.roles}] }) {
+            createRole(input: { name: "` +
+            role.name +
+            `",permissions:[${role.permissions}] }) {
               id
               name
               permissions {
@@ -70,77 +72,88 @@ export const getRoles = () => {
             }
           }
           
-          `
-  
-         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-          
+          `,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
         }
-        )
-        .then((response) => {
-          console.log("addResponse: ",response)
-         
-          dispatch({
-            type: "ADD_ROLES",
-            payload: {
-              roles: response.data.data.createRole,
-            },
-          });
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
-    };
-  };
-  
+      )
+      .then((response) => {
+        console.log("addResponse: ", response);
 
-  export const deleteRoles = (roleId) => {
-    console.log("delete user id: ", roleId);
-    return async (dispatch) => {
-      ApplicationService.http()
-        .post("/graphql", {
-          query:`
+        dispatch({
+          type: "ADD_ROLES",
+          payload: {
+            roles: response.data.data.createRole,
+          },
+        });
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+};
+
+export const deleteRoles = (roleId) => {
+  console.log("delete user id: ", roleId);
+  return async (dispatch) => {
+    ApplicationService.http()
+      .post(
+        "/graphql",
+        {
+          query:
+            `
           
             mutation {
-              deleteRole(id: "`+roleId+`")
+              deleteRole(id: "` +
+            roleId +
+            `")
             }
 
           `,
-        },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-          
-        })
-        .then((response) => {
-          console.log("DeleteResponse: ", response);
-          console.log("roleId:",roleId);
-          dispatch({
-            type: "DELETE_ROLES",
-            payload: {
-              id: roleId,
-            },
-          });
-        })
-        .catch((error) => {
-          console.log("error -- responsee", error);
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        }
+      )
+      .then((response) => {
+        console.log("DeleteResponse: ", response);
+        console.log("roleId:", roleId);
+        dispatch({
+          type: "DELETE_ROLES",
+          payload: {
+            id: roleId,
+          },
         });
-    };
+      })
+      .catch((error) => {
+        console.log("error -- responsee", error);
+      });
   };
+};
 
+export const updateRoles = (role) => {
+  console.log("updateDevice: ", role);
 
-  export const updateRoles = (role) => {
-    console.log("updateDevice: ",role);
-   
- 
-    return async (dispatch) => {
-      console.log(role);
-      ApplicationService.http()
-        .post(
-          "/graphql",
-         {
-          query:`
+  return async (dispatch) => {
+    console.log(role);
+    ApplicationService.http()
+      .post(
+        "/graphql",
+        {
+          query:
+            `
           
             mutation {
-              updateRole(id: "`+role.id+`", input: { name: "`+role.name+`",permissions:[${role.roles}] }) {
+              updateRole(id: "` +
+            role.id +
+            `", input: { name: "` +
+            role.name +
+            `",permissions:[${role.permissions}] }) {
                 id
                 name
                 permissions {
@@ -156,24 +169,25 @@ export const getRoles = () => {
             }
 
           
-          `
-  
-         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-          
+          `,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
         }
-        )
-        .then((response) => {
-          console.log("update response", response);
-          dispatch({
-            type: "UPDATE_ROLES",
-            payload: {
-              roles: response.data.data.updateRole,
-            },
-          });
-        })
-        .catch((error) => {
-          console.log("error", error);
+      )
+      .then((response) => {
+        console.log("update response", response);
+        dispatch({
+          type: "UPDATE_ROLES",
+          payload: {
+            roles: response.data.data.updateRole,
+          },
         });
-    };
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
   };
+};

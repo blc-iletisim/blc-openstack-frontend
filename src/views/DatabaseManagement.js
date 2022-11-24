@@ -792,16 +792,15 @@ const UserManagement = () => {
             />
           </div>
           <Card
-          
             tag="a"
             border="secondary"
             color="primary"
             outline
             style={{
-              width: "16rem",cursor: "pointer"
+              width: "16rem",
+              cursor: "pointer",
             }}
             onClick={console.log()}
-          
           >
             Click Here to Create a PAM File
           </Card>
