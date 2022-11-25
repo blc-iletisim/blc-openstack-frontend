@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import auth from "./auth";
 import navbar from "./navbar";
 import layout from "./layout";
-
+import imagesReducer from "./images"
 import users from "./users";
 import permissionsReducer from "./permissions";
 import organisationReducer from "./organisations";
@@ -24,6 +24,7 @@ const rootReducer = combineReducers({
   categoriesReducer,
   flavorsReducer,
   instancesReducer,
+  imagesReducer,
 
 });
 

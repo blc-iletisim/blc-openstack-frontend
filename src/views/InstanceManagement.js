@@ -7,7 +7,6 @@ import ApplicationService from "../services/ApplicationService";
 import {
   Card,
   CardHeader,
-  CardBody,
   CardTitle,
   Input,
   Label,
@@ -24,8 +23,6 @@ import {
   DropdownItem,
   InputGroup,
   InputGroupText,
-  Form,
-  FormGroup,
   Badge,
 } from "reactstrap";
 import {
@@ -47,11 +44,8 @@ import { selectThemeColors } from "@utils";
 import InputPasswordToggle from "@components/input-password-toggle";
 import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
-import {getCategories} from "../redux/actions/categories";
-import { getRoles } from "../redux/actions/roles";
-import { getFlavors } from "../redux/actions/flavors";
-import { getImages } from "../redux/actions/images";
 import { getInstances,addInstances } from "../redux/actions/instances";
+import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 
@@ -86,32 +80,45 @@ const UserManagement = () => {
       },
     }, */
     {
-      name: "İsim",
+      name: "Name",
       selector: "name",
       sortable: true,
       minWidth: "350px",
     },
-    {
-      name: "Email",
-      selector: "email",
+     {
+      name: "Database Configuration",
+      selector: "flavor.name",
       sortable: true,
       minWidth: "350px",
     },
     {
-      name: "Şirket",
+      name: "Created Data Time",
+      selector: "createdDateTime",
+      sortable: false,
+      minWidth: "250px",
+      cell: (row) => (
+        <span>
+          {row.createdDateTime
+            ? moment(row.createdDateTime).format("DD.MM.YYYY HH:mm:ss")
+            : "-"}
+        </span>
+      ),
+    },
+   /* {
+      name: "Database Configuration",
       selector: "company",
       sortable: true,
       minWidth: "350px",
     },
     {
-      name: "Rol",
+      name: "PEM",
       selector: "role.name",
       sortable: true,
       minWidth: "350px",
       cell: (row) => <span>{row.role.name?.toUpperCase() || ""}</span>,
-    },
+    }, */
     {
-      name: "Aksiyonlar",
+      name: "Actions",
       allowOverflow: false,
       maxWidth: "150px",
       cell: (row) => {
@@ -128,7 +135,7 @@ const UserManagement = () => {
                   onClick={() => handleEditCategory(row)}
                 >
                   <Edit size={15} />
-                  <span className="align-middle ml-50">Düzenle</span>
+                  <span className="align-middle ml-50">Update</span>
                 </DropdownItem>
                 {row.deleted === true ? (
                   <DropdownItem
@@ -146,7 +153,7 @@ const UserManagement = () => {
                     onClick={() => handleDeleteUser(row)}
                   >
                     <Trash size={15} />
-                    <span className="align-middle ml-50">Sil</span>
+                    <span className="align-middle ml-50">Delete</span>
                   </DropdownItem>
                 )}
               </DropdownMenu>
@@ -160,16 +167,11 @@ const UserManagement = () => {
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
-  console.log("usersStore: ", usersStore);
-  const flavorsStore = useSelector((state) => state.flavorsReducer);
-  console.log("flavorsStore useSelector: ",flavorsStore)
-  const categoriesStore = useSelector((state) => state.categoriesReducer);
-  console.log("categoriesStore: ",categoriesStore);
+  const instancesStore = useSelector ((state) => state.instancesReducer)
+  console.log("instancesStore: ", instancesStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
-  const [flavorsOptions, setFlavorsOptions] = useState([]);
-  console.log("flavorsOptions: ",flavorsOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -179,8 +181,21 @@ const UserManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
+  const [instances, setInstances] = useState([]);
+  const [instancesOptions, setInstancesOptions] = useState([]);
+  console.log("instances: ",instances)
   console.log("editingProfileData set: ", editingProfileData);
-  const [categoriesOptions, setCategoriesOptions] = useState([]);
+
+
+  useEffect(() => {
+    dispatch(getInstances());
+    console.log("if: ",instancesStore)
+    if (instancesStore?.length > 0) {
+      console.log("if2: ",instancesStore)
+      setInstancesOptions(instancesStore);
+    }
+  }, []);
+
   useEffect(() => {
     dispatch(getUsersHttp());
     if (usersStore.length > 0) {
@@ -196,42 +211,27 @@ const UserManagement = () => {
     }
   }, []);
 
-  
-  useEffect(() => {
-    dispatch(getFlavors());
-    console.log("flavorsStore get: ",flavorsStore);
-    if (flavorsStore.length > 0) {
-      setFlavorsOptions(flavorsStore);
-    }
-  }, []);
-
-  useEffect(() => {
-    dispatch(getCategories());
-    console.log("categoriesStore get: ",categoriesStore);
-    if (categoriesStore.length > 0) {
-      setCategoriesOptions(categoriesStore);
-    }
-  }, []);
-
   // useEffect(() => {
   //   setUsers(usersStore);
   // }, [usersStore]);
-
+  console.log("total", usersStore);
+  console.log("total", usersStore.total);
   useEffect(() => {
-    if (usersStore.data) {
-      if (usersStore.total <= currentPage * rowsPerPage) {
-        setCurrentPage(1);
-        setUsers(usersStore.data?.slice(0, rowsPerPage));
+    if (instancesStore.instances) {
+      if (instancesStore.total <= currentPage * rowsPerPage) {
+        setCurrentPage();
+        setInstances(instancesStore.instances?.slice(0, rowsPerPage));
       } else {
-        setUsers(
-          usersStore.data?.slice(
+        setInstances(
+          //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
+          instancesStore.instances?.slice(
             currentPage * rowsPerPage - rowsPerPage,
             currentPage * rowsPerPage
           )
         );
       }
     }
-  }, [usersStore.total, usersStore]);
+  }, [instancesStore.total, instancesStore]);
 
   useEffect(() => {
     getUserOptions();
@@ -254,27 +254,6 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    getFlavorsOptions();
-   }, [flavorsStore]);
-
-   const getFlavorsOptions = () => {
-    flavorsStore.flavors?.forEach((flavor) =>
-      setFlavorsOptions((flavorsOptions) => [
-        ...flavorsOptions,
-        {
-          value: flavor.id,
-          label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk
-          ,
-          color: "#00B8D9",
-          isFixed: true,
-          
-        },
-      ])
-    ); 
-  };
-
-
-  useEffect(() => {
     getRolesOptions();
   }, [rolesStore]);
 
@@ -291,29 +270,6 @@ const UserManagement = () => {
       ])
     );
   };
-
-
-
-  useEffect(() => {
-    getCategoriesOptions();
-   }, [categoriesStore]);
-
-   const getCategoriesOptions = () => {
-    categoriesStore?.categories?.forEach((category) =>
-      setCategoriesOptions((categoriesOptions) => [
-        ...categoriesOptions,
-        {
-          value: category.id,
-          label: category?.name,
-          color: "#00B8D9",
-          isFixed: true,
-          
-        },
-      ])
-    ); 
-  };
-
-
 
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
@@ -365,8 +321,8 @@ const UserManagement = () => {
 
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
-    setUsers(
-      usersStore.data.slice(
+    setInstances(
+      instancesStore.instances.slice(
         (page.selected + 1) * rowsPerPage - rowsPerPage,
         (page.selected + 1) * rowsPerPage
       )
@@ -385,8 +341,8 @@ const UserManagement = () => {
 
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
-    setUsers(
-      usersStore.data.slice(
+    setInstances(
+      instancesStore.instances.slice(
         currentPage * parseInt(e.target.value) - parseInt(e.target.value),
         currentPage * parseInt(e.target.value)
       )
@@ -403,8 +359,8 @@ const UserManagement = () => {
   // };
 
   const onSort = (column, direction) => {
-    setUsers(
-      usersStore.data
+    setInstances(
+      instancesStore.instances
         .sort((a, b) => {
           if (a[column.selector] === b[column.selector]) return 0;
           if (direction === "asc") {
@@ -439,7 +395,7 @@ const UserManagement = () => {
   // };
 
   const CustomPagination = () => {
-    const count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
+    const count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
 
     return (
       <ReactPaginate
@@ -499,9 +455,6 @@ const UserManagement = () => {
   const onAddUserButtonPressed = () => {
     setEditingProfileData({
       name: "",
-      categories:"",
-      flavors:"", 
-      pem:"",
       password: "",
       email: "",
       company: "",
@@ -512,24 +465,47 @@ const UserManagement = () => {
   };
   //*****************************************************************************
   const onAddUserModalButtonPressed = () => {
-  
+    setLoading(true);
+    if (
+      usersStore.data?.some(
+        (c) =>
+          c.email === editingProfileData.email && c.id !== editingProfileData.id
+      )
+    ) {
+      enqueueSnackbar(
+        "Bu email adresi başka bir hesap ile ilişkilendirilmiştir.",
+        {
+          variant: "error",
+          preventDuplicate: true,
+        }
+      );
+      setLoading(false);
+      return;
+    }
+
+    if (editingProfileData.password && editingProfileData.password <= 6) {
+      enqueueSnackbar("6 karakterden uzun bir şifre giriniz.", {
+        variant: "error",
+        preventDuplicate: true,
+      });
+      setLoading(false);
+      return;
+    }
 
     console.log("editingProfileData: ", editingProfileData);
-    
+    if (!editingProfileData.id) {
       console.log("editingProfileData: ", editingProfileData);
       const newUserData = {
         name: editingProfileData.name,
         email: editingProfileData.email,
         password: editingProfileData?.password,
-        categories:editingProfileData?.categories,
-        flavors: editingProfileData?.flavors,
         company: editingProfileData.company,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
         id: editingProfileData.id,
-        //roles: editingProfileData?.role[0],
+        roles: editingProfileData?.role[0],
         //role:editingProfileData?.role?.map((rol) => rol.value),
 
         deleted: editingProfileData.deleted || null,
@@ -537,7 +513,7 @@ const UserManagement = () => {
         deletedBy: editingProfileData.deletedBy || null,
       };
 
-      dispatch(addInstances( newUserData))
+      dispatch(addUser(newUserData.createdBy, newUserData))
         .then(() => {
           setLoading(false);
           setShowAddUserModal(false);
@@ -554,7 +530,42 @@ const UserManagement = () => {
             preventDuplicate: true,
           });
         });
-    
+    } else {
+      console.log("update else");
+
+      const newUserData = {
+        id: editingProfileData.id,
+        name: editingProfileData.name,
+        password: editingProfileData?.password,
+        company: editingProfileData.company,
+        email: editingProfileData.email,
+        createdTime: editingProfileData?.createdTime || new Date().getTime(),
+        createdBy: editingProfileData?.createdBy || authStore.id,
+        //lastUpdatedTime: new Date().getTime(),
+        //lastUpdatedBy: authStore.id,
+        roles: editingProfileData?.role[0],
+      };
+      console.log("NUD", newUserData);
+      dispatch(updateUser(newUserData.createdBy, newUserData))
+        .then(() => {
+          enqueueSnackbar("Kullanıcı Güncellendi", {
+            variant: "success",
+          });
+          setLoading(false);
+          setEditingProfileData(null);
+          setShowAddUserModal(false);
+          if (!editingProfileData.id) setEditingProfileData(null);
+        })
+        .catch(() => {
+          enqueueSnackbar(
+            `${newUserData.name} kullanıcısı güncellenirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
+            {
+              variant: "error",
+            }
+          );
+          setLoading(false);
+        });
+    }
   };
   //*******************************************************
   const renderUserModal = () => {
@@ -604,7 +615,48 @@ const UserManagement = () => {
               }
             />
           </div>
-        
+          {(!editingProfileData?.id || editingProfileData?.id) && (
+            <Fragment>
+              <div className="mb-2">
+                <Label className="form-label" for="email-address">
+                  Email Adresi:
+                </Label>
+                <Input
+                  type="text"
+                  id="email-address"
+                  placeholder="Kullanıcı Email Adresi"
+                  value={editingProfileData?.email || ""}
+                  onChange={(e) =>
+                    setEditingProfileData({
+                      ...editingProfileData,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <Label className="form-label" for="password">
+                  Hesap Şifresi:
+                </Label>
+                <InputPasswordToggle
+                  id="password"
+                  className="input-group-merge mb-2"
+                  htmlFor="password"
+                  placeholder="Kullanıcı Hesap Şifresi"
+                  defaultValue={editingProfileData?.password || ""}
+                  onChange={(e) =>
+                    setEditingProfileData({
+                      ...editingProfileData,
+                      password: e.target.value,
+                    })
+                  }
+                />
+                <Label className="pt-1">
+                  Şifre en az 6 karakter uzunluğunda güçlü olmalıdır.
+                </Label>
+              </div>
+            </Fragment>
+          )}
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
               Kullanıcı Rolü
@@ -740,138 +792,87 @@ const UserManagement = () => {
     <div style={{ marginTop: "2%" }}>
       <Card>
         <CardHeader className="border-bottom">
-          <CardTitle tag="h4">Database Management</CardTitle>
-        </CardHeader>
-
-        <ModalBody>
-        <div className="mb-2">
-            <Label className="form-label" for="user-name">
-              Database Name:
-            </Label>
-            <Input
-              type="text"
-              id="database-name"
-              placeholder="Database Name"
-              //value={editingProfileData?.company || ""}
-              onChange={(e) =>
-                setEditingProfileData({ ...editingProfileData, name: e.target.value  })
-                
-              }
-            />
-          </div>
-          <div className="mb-2">
-            <Label className="form-label" for="user-name">
-              UBUNTU Version:
-            </Label>
-            <Input
-              type="text"
-              id="database-name"
-              placeholder="Database Name"
-              value={"UBUNTU 20.04"}
-              
-             
-            />
-          </div>
-          <div className="mb-2">
-            <Label className="form-label" for="permissions-select">
-              Choose a Database:
-            </Label>
-            <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
-              options={categoriesOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
-              onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
-                setEditingProfileData({
-                  ...editingProfileData,
-                  categories: value.map((category) => category.value),
-                  //role: value.label,
-                });
-              }}
-            />
-          </div>
-          <div className="mb-2">
-            <Label className="form-label" for="permissions-select">
-              Choose Database Configuration:
-            </Label>
-            <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
-              options={flavorsOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
-              onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
-                setEditingProfileData({
-                  ...editingProfileData,
-                  flavors: value.map((flavor) => flavor.value),
-                  //role: value.label,
-                });
-              }}
-            />
-          </div>
-          <Card
-            tag="a"
-            border="secondary"
+          <CardTitle tag="h4">Instance Management</CardTitle>
+          {/* <Button
+            className="ml-2"
             color="primary"
-            outline
-            style={{
-              width: "16rem",
-              cursor: "pointer",
-            }}
-            onClick={console.log()}
+            onClick={onAddUserButtonPressed}
           >
-            Click Here to Create a PEM File
-          </Card>
-
-          {/* <FormGroup check>
+            <Plus size={15} />
+            <span className="align-middle ml-50">Add Instance</span>
+          </Button> */}
+        </CardHeader>
+        <Row className="mx-0 mt-1 mb-50">
+          <Col sm="6" md="2">
+            <div className="d-flex align-items-center">
+              <Label for="sort-select">Show</Label>
+              <Input
+                className="ml-1 dataTable-select"
+                type="select"
+                id="sort-select"
+                value={rowsPerPage}
+                onChange={(e) => handlePerPage(e)}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={75}>75</option>
+                <option value={100}>100</option>
+              </Input>
+            </div>
+          </Col>
+          <Col
+            className="d-flex align-items-center justify-content-end mt-sm-0 mt-1 ml-md-auto"
+            sm="6"
+            md="3"
+          >
+            <Label className="mr-1" for="search-input">
+              Filter by Name
+            </Label>
             <Input
-              type="checkbox"
-              onChange={(e) => {
-                setEditingProfileData({
-                  ...editingProfileData,
-                  workingHours: {
-                    ...editingProfileData.workingHours,
-                  },
-                });
-                console.log(editingProfileData.workingHours);
-              }}
-            />{" "}
-            <Label check>Create a PAM File</Label>
-          </FormGroup>
- */}
-          <ModalFooter>
-            <Button color="primary" onClick={onAddUserModalButtonPressed}>
-              {loading
-                ? "Saving.."
-                : !editingProfileData?.id
-                ? "Create"
-                : "Güncelle"}
-            </Button>
-          </ModalFooter>
-        </ModalBody>
+              className="dataTable-filter"
+              type="text"
+              bsSize="sm"
+              id="search-input"
+              value={searchValue}
+              onChange={handleFilter}
+              placeholder="Filter"
+            />
+          </Col>
+
+          {/*   <Col
+            className="d-flex align-items-center justify-content-end mt-sm-0 mt-1 ml-md-auto"
+            sm="6"
+            md="3"
+          >
+            <Label className="mr-1" for="search-input">
+             Şirkete Göre Filtrele
+            </Label>
+            <Input
+              className="dataTable-filter"
+              type="text"
+              bsSize="sm"
+              id="search-input"
+              //value={searchOrganizationsValue}
+              //onChange={handleOrganizationFilter}
+              placeholder="Organizasyona Göre"
+            />
+            
+          </Col> */}
+        </Row>
+        <DataTable
+          noHeader
+          pagination
+          paginationServer
+          className="react-dataTable"
+          columns={serverSideColumns}
+          sortIcon={<ChevronDown size={10} />}
+          onSort={onSort}
+          paginationComponent={CustomPagination}
+          data={[...instances]}
+          noDataComponent={<p className="p-2">Bulunamadı.</p>}
+        />
       </Card>
       {renderUserModal()}
     </div>

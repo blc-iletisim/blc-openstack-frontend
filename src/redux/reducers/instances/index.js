@@ -8,6 +8,7 @@ const initialState = {
       case "GET_INSTANCES":
         return {
           ...state,
+          total: action.payload.instances.length,
           instances: action.payload.instances,
           isError: action.payload.errorStatus,
         };
@@ -15,6 +16,7 @@ const initialState = {
       case "ADD_INSTANCE":
         return {
           ...state,
+          total: action.payload.instances.length,
           instances: [...state.instances, action.payload.instances],
         };
       

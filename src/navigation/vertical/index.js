@@ -8,6 +8,7 @@ import {
   Bell,
   PieChart,
   CheckCircle,
+  Archive
 } from "react-feather";
 import { GrOrganization } from "react-icons/gr";
 import { BiDevices } from "react-icons/bi";
@@ -30,5 +31,11 @@ export default [
     title: "Databases",
     icon: <Database size={20} />,
     navLink: "/database-management",
+  },
+  {
+    id: "InstanceManagement",
+    title: "Instances",
+    icon: <Archive size={20} />,
+    navLink: "/instance-management",
   },
 ];

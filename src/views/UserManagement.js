@@ -80,7 +80,7 @@ const UserManagement = () => {
       },
     }, */
     {
-      name: "İsim",
+      name: "Name",
       selector: "name",
       sortable: true,
       minWidth: "350px",
@@ -92,20 +92,20 @@ const UserManagement = () => {
       minWidth: "350px",
     },
     {
-      name: "Şirket",
+      name: "Company",
       selector: "company",
       sortable: true,
       minWidth: "350px",
     },
     {
-      name: "Rol",
+      name: "Role",
       selector: "role.name",
       sortable: true,
       minWidth: "350px",
       cell: (row) => <span>{row.role.name?.toUpperCase() || ""}</span>,
     },
     {
-      name: "Aksiyonlar",
+      name: "Actions",
       allowOverflow: false,
       maxWidth: "150px",
       cell: (row) => {
@@ -122,7 +122,7 @@ const UserManagement = () => {
                   onClick={() => handleEditCategory(row)}
                 >
                   <Edit size={15} />
-                  <span className="align-middle ml-50">Düzenle</span>
+                  <span className="align-middle ml-50">Update</span>
                 </DropdownItem>
                 {row.deleted === true ? (
                   <DropdownItem
@@ -140,7 +140,7 @@ const UserManagement = () => {
                     onClick={() => handleDeleteUser(row)}
                   >
                     <Trash size={15} />
-                    <span className="align-middle ml-50">Sil</span>
+                    <span className="align-middle ml-50">Delete</span>
                   </DropdownItem>
                 )}
               </DropdownMenu>
@@ -555,12 +555,12 @@ const UserManagement = () => {
         <ModalBody>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Şirket Adı:
+              Company Name:
             </Label>
             <Input
               type="text"
               id="company-name"
-              placeholder="Şirket Adı"
+              placeholder="Company Name"
               value={editingProfileData?.company || ""}
               onChange={(e) =>
                 setEditingProfileData({
@@ -572,12 +572,12 @@ const UserManagement = () => {
           </div>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Kullanıcı İsmi:
+              User Name:
             </Label>
             <Input
               type="text"
               id="user-name"
-              placeholder="Kullanıcı İsmi"
+              placeholder="User Name"
               value={editingProfileData?.name || ""}
               onChange={(e) =>
                 setEditingProfileData({
@@ -591,12 +591,12 @@ const UserManagement = () => {
             <Fragment>
               <div className="mb-2">
                 <Label className="form-label" for="email-address">
-                  Email Adresi:
+                  Email:
                 </Label>
                 <Input
                   type="text"
                   id="email-address"
-                  placeholder="Kullanıcı Email Adresi"
+                  placeholder="Email"
                   value={editingProfileData?.email || ""}
                   onChange={(e) =>
                     setEditingProfileData({
@@ -608,13 +608,13 @@ const UserManagement = () => {
               </div>
               <div className="mb-2">
                 <Label className="form-label" for="password">
-                  Hesap Şifresi:
+                  Password:
                 </Label>
                 <InputPasswordToggle
                   id="password"
                   className="input-group-merge mb-2"
                   htmlFor="password"
-                  placeholder="Kullanıcı Hesap Şifresi"
+                  placeholder="Password"
                   defaultValue={editingProfileData?.password || ""}
                   onChange={(e) =>
                     setEditingProfileData({
@@ -624,14 +624,14 @@ const UserManagement = () => {
                   }
                 />
                 <Label className="pt-1">
-                  Şifre en az 6 karakter uzunluğunda güçlü olmalıdır.
+                   Password must be more than 6 characters.
                 </Label>
               </div>
             </Fragment>
           )}
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-              Kullanıcı Rolü
+              User Role: 
             </Label>
             <Select
               id="permissions-select"
@@ -764,20 +764,20 @@ const UserManagement = () => {
     <div style={{ marginTop: "2%" }}>
       <Card>
         <CardHeader className="border-bottom">
-          <CardTitle tag="h4">Kullanıcı Yönetimi</CardTitle>
+          <CardTitle tag="h4">User Management</CardTitle>
           <Button
             className="ml-2"
             color="primary"
             onClick={onAddUserButtonPressed}
           >
             <Plus size={15} />
-            <span className="align-middle ml-50">Kullanıcı Ekle</span>
+            <span className="align-middle ml-50">Add User</span>
           </Button>
         </CardHeader>
         <Row className="mx-0 mt-1 mb-50">
           <Col sm="6" md="2">
             <div className="d-flex align-items-center">
-              <Label for="sort-select">Göster</Label>
+              <Label for="sort-select">Show</Label>
               <Input
                 className="ml-1 dataTable-select"
                 type="select"
@@ -800,7 +800,7 @@ const UserManagement = () => {
             md="3"
           >
             <Label className="mr-1" for="search-input">
-              İsime Göre Filtrele
+              Filter by Name
             </Label>
             <Input
               className="dataTable-filter"
@@ -809,7 +809,7 @@ const UserManagement = () => {
               id="search-input"
               value={searchValue}
               onChange={handleFilter}
-              placeholder="İsme Göre"
+              placeholder="Filter"
             />
           </Col>
 

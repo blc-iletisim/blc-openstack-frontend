@@ -58,7 +58,16 @@ export const getInstances = () => {
 
 export const addInstances = (instance) => {
   console.log("addInstances instance: ",instance)
- 
+
+  //Multi selection olması gerekiyorsa aşağıdaki kısımın yorumunu açıp flavors ve categories kısımlarında bu arrayleri gönder (ek olarak [${role.roles}] bu formatta yazmayı unutma)
+
+/*   const arrFlavors=[];
+  const r=instance?.flavors.forEach((s) => {
+    arrFlavors.push('"'+s+'"'); });
+    const arrCategories=[];
+    const r2=instance?.categories.forEach((s) => {
+      arrCategories.push('"'+s+'"'); });
+   */
   
   return async (dispatch) => { 
     
@@ -69,7 +78,7 @@ export const addInstances = (instance) => {
         query:`
         
             mutation {
-                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance?.flavors?.id+`",categories:"`+instance?.categories?.id+`",image:"c83a84bd-f521-46ea-8830-4e93975ce101"}){
+                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance?.flavors+`",categories:"`+instance?.categories+`",image:"c83a84bd-f521-46ea-8830-4e93975ce101"}){
                 id
                 name
                 pem {
