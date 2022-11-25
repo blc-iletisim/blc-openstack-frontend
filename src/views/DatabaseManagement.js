@@ -49,6 +49,8 @@ import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 import {getCategories} from "../redux/actions/categories";
 import { getRoles } from "../redux/actions/roles";
+import { getFlavors } from "../redux/actions/flavors";
+import { getInstances,addInstances } from "../redux/actions/instances";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 
@@ -158,11 +160,15 @@ const UserManagement = () => {
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
   console.log("usersStore: ", usersStore);
+  const flavorsStore = useSelector((state) => state.flavorsReducer);
+  console.log("flavorsStore useSelector: ",flavorsStore)
   const categoriesStore = useSelector((state) => state.categoriesReducer);
   console.log("categoriesStore: ",categoriesStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
+  const [flavorsOptions, setFlavorsOptions] = useState([]);
+  console.log("flavorsOptions: ",flavorsOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -186,6 +192,15 @@ const UserManagement = () => {
     console.log("rolesStore: ", rolesStore);
     if (rolesStore.length > 0) {
       setRolesOptions(rolesStore);
+    }
+  }, []);
+
+  
+  useEffect(() => {
+    dispatch(getFlavors());
+    console.log("flavorsStore get: ",flavorsStore);
+    if (flavorsStore.length > 0) {
+      setFlavorsOptions(flavorsStore);
     }
   }, []);
 
@@ -236,6 +251,27 @@ const UserManagement = () => {
       )
     );
   };
+
+  useEffect(() => {
+    getFlavorsOptions();
+   }, [flavorsStore]);
+
+   const getFlavorsOptions = () => {
+    flavorsStore.flavors?.forEach((flavor) =>
+      setFlavorsOptions((flavorsOptions) => [
+        ...flavorsOptions,
+        {
+          value: flavor.id,
+          label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk
+          ,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])
+    ); 
+  };
+
 
   useEffect(() => {
     getRolesOptions();
@@ -462,6 +498,9 @@ const UserManagement = () => {
   const onAddUserButtonPressed = () => {
     setEditingProfileData({
       name: "",
+      categories:"",
+      flavors:"", 
+      pem:"",
       password: "",
       email: "",
       company: "",
@@ -472,47 +511,24 @@ const UserManagement = () => {
   };
   //*****************************************************************************
   const onAddUserModalButtonPressed = () => {
-    setLoading(true);
-    if (
-      usersStore.data?.some(
-        (c) =>
-          c.email === editingProfileData.email && c.id !== editingProfileData.id
-      )
-    ) {
-      enqueueSnackbar(
-        "Bu email adresi başka bir hesap ile ilişkilendirilmiştir.",
-        {
-          variant: "error",
-          preventDuplicate: true,
-        }
-      );
-      setLoading(false);
-      return;
-    }
-
-    if (editingProfileData.password && editingProfileData.password <= 6) {
-      enqueueSnackbar("6 karakterden uzun bir şifre giriniz.", {
-        variant: "error",
-        preventDuplicate: true,
-      });
-      setLoading(false);
-      return;
-    }
+  
 
     console.log("editingProfileData: ", editingProfileData);
-    if (!editingProfileData.id) {
+    
       console.log("editingProfileData: ", editingProfileData);
       const newUserData = {
         name: editingProfileData.name,
         email: editingProfileData.email,
         password: editingProfileData?.password,
+        categories:editingProfileData?.categories,
+        flavors: editingProfileData?.flavors,
         company: editingProfileData.company,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
         id: editingProfileData.id,
-        roles: editingProfileData?.role[0],
+        //roles: editingProfileData?.role[0],
         //role:editingProfileData?.role?.map((rol) => rol.value),
 
         deleted: editingProfileData.deleted || null,
@@ -520,7 +536,7 @@ const UserManagement = () => {
         deletedBy: editingProfileData.deletedBy || null,
       };
 
-      dispatch(addUser(newUserData.createdBy, newUserData))
+      dispatch(addInstances( newUserData))
         .then(() => {
           setLoading(false);
           setShowAddUserModal(false);
@@ -537,42 +553,7 @@ const UserManagement = () => {
             preventDuplicate: true,
           });
         });
-    } else {
-      console.log("update else");
-
-      const newUserData = {
-        id: editingProfileData.id,
-        name: editingProfileData.name,
-        password: editingProfileData?.password,
-        company: editingProfileData.company,
-        email: editingProfileData.email,
-        createdTime: editingProfileData?.createdTime || new Date().getTime(),
-        createdBy: editingProfileData?.createdBy || authStore.id,
-        //lastUpdatedTime: new Date().getTime(),
-        //lastUpdatedBy: authStore.id,
-        roles: editingProfileData?.role[0],
-      };
-      console.log("NUD", newUserData);
-      dispatch(updateUser(newUserData.createdBy, newUserData))
-        .then(() => {
-          enqueueSnackbar("Kullanıcı Güncellendi", {
-            variant: "success",
-          });
-          setLoading(false);
-          setEditingProfileData(null);
-          setShowAddUserModal(false);
-          if (!editingProfileData.id) setEditingProfileData(null);
-        })
-        .catch(() => {
-          enqueueSnackbar(
-            `${newUserData.name} kullanıcısı güncellenirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
-            {
-              variant: "error",
-            }
-          );
-          setLoading(false);
-        });
-    }
+    
   };
   //*******************************************************
   const renderUserModal = () => {
@@ -622,9 +603,7 @@ const UserManagement = () => {
               }
             />
           </div>
-          {(!editingProfileData?.id || editingProfileData?.id) && (
-            <Fragment></Fragment>
-          )}
+        
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
               Kullanıcı Rolü
@@ -764,9 +743,37 @@ const UserManagement = () => {
         </CardHeader>
 
         <ModalBody>
+        <div className="mb-2">
+            <Label className="form-label" for="user-name">
+              Database Name:
+            </Label>
+            <Input
+              type="text"
+              id="database-name"
+              placeholder="Database Name"
+              //value={editingProfileData?.company || ""}
+              onChange={(e) =>
+                setEditingProfileData({ ...editingProfileData, name: e.target.value  })
+                
+              }
+            />
+          </div>
+          <div className="mb-2">
+            <Label className="form-label" for="user-name">
+              UBUNTU Version:
+            </Label>
+            <Input
+              type="text"
+              id="database-name"
+              placeholder="Database Name"
+              value={"UBUNTU 20.04"}
+              
+             
+            />
+          </div>
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-              Choose a Database
+              Choose a Database:
             </Label>
             <Select
               id="permissions-select"
@@ -788,7 +795,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  role: value.map((rol) => rol.value),
+                  categories: value.map((category) => category.value),
                   //role: value.label,
                 });
               }}
@@ -796,7 +803,7 @@ const UserManagement = () => {
           </div>
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-              Choose Database Configuration
+              Choose Database Configuration:
             </Label>
             <Select
               id="permissions-select"
@@ -805,7 +812,7 @@ const UserManagement = () => {
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
-              options={rolesOptions}
+              options={flavorsOptions}
               className="react-select"
               classNamePrefix="Seç"
               defaultValue={editingProfileData?.role || [""]}
@@ -818,7 +825,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  role: value.map((rol) => rol.value),
+                  flavors: value.map((flavor) => flavor.value),
                   //role: value.label,
                 });
               }}
@@ -836,7 +843,7 @@ const UserManagement = () => {
             onClick={console.log()}
           
           >
-            Click Here to Create a PAM File
+            Click Here to Create a PEM File
           </Card>
 
           {/* <FormGroup check>

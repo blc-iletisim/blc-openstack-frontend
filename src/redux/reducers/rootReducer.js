@@ -9,6 +9,7 @@ import organisationReducer from "./organisations";
 import categoriesReducer from "./categories";
 import rolesReducer from "./roles";
 import flavorsReducer from "./flavors"
+import instancesReducer from "./instances"
 
 
 
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   rolesReducer,
   categoriesReducer,
   flavorsReducer,
+  instancesReducer,
 
 });
 
