@@ -25,6 +25,18 @@ const Routes = [
     path: "/database-management",
     component: lazy(() => import("../../views/DatabaseManagement")),
   },
+  {
+    path: "/docker-management",
+    component: lazy(() => import("../../views/DockerManagement")),
+  },
+  {
+    path: "/hadoop-management",
+    component: lazy(() => import("../../views/HadoopManagement")),
+  },
+  {
+    path: "/kubernetes-management",
+    component: lazy(() => import("../../views/KubernetesManagement")),
+  },
   
   {
     path: "/login",

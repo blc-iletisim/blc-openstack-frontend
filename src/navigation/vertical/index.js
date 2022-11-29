@@ -33,6 +33,24 @@ export default [
     navLink: "/database-management",
   },
   {
+    id: "DockerManagement",
+    title: "Docker",
+    icon: <Database size={20} />,
+    navLink: "/docker-management",
+  },
+  {
+    id: "HadoopManagement",
+    title: "Docker",
+    icon: <Database size={20} />,
+    navLink: "/hadoop-management",
+  },
+  {
+    id: "KubernetesManagement",
+    title: "Kubernetes",
+    icon: <Database size={20} />,
+    navLink: "/kubernetes-management",
+  },
+  {
     id: "InstanceManagement",
     title: "Instances",
     icon: <Archive size={20} />,
