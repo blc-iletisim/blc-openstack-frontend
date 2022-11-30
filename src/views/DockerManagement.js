@@ -773,6 +773,19 @@ const UserManagement = () => {
             />
           </div>
           <div className="mb-2">
+            <Label className="form-label" for="user-name">
+              Database:
+            </Label>
+            <Input
+              type="text"
+              id="database-name"
+              placeholder="Database Name"
+              value={"DOCKER"}
+              
+             
+            />
+          </div>
+         {/*  <div className="mb-2">
             <Label className="form-label" for="permissions-select">
               Choose a Database:
             </Label>
@@ -801,7 +814,7 @@ const UserManagement = () => {
                 });
               }}
             />
-          </div>
+          </div> */}
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
               Choose Database Configuration:
@@ -826,6 +839,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
+                  categories:"ff34bb35-d274-46ea-8295-00a03ad5ffd5",
                   flavors: value.map((flavor) => flavor.value),
                   //role: value.label,
                 });

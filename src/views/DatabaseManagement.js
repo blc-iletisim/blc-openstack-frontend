@@ -299,7 +299,8 @@ const UserManagement = () => {
    }, [categoriesStore]);
 
    const getCategoriesOptions = () => {
-    categoriesStore?.categories?.forEach((category) =>
+    //splice ile sadece mongodb, postgresql alındı:
+    categoriesStore?.categories.splice(3, 2)?.forEach((category) =>
       setCategoriesOptions((categoriesOptions) => [
         ...categoriesOptions,
         {
@@ -868,7 +869,7 @@ const UserManagement = () => {
                 ? "Saving.."
                 : !editingProfileData?.id
                 ? "Create"
-                : "Güncelle"}
+                : "Update"}
             </Button>
           </ModalFooter>
         </ModalBody>

@@ -19,6 +19,18 @@ const initialState = {
           total: action.payload.instances.length,
           instances: [...state.instances, action.payload.instances],
         };
+        case "DELETE_INSTANCE":
+          return {
+            ...state,
+            total: action.payload.instances.length,
+            instances: [...state.instances, action.payload.instances],
+          };
+          case "UPDATE_INSTANCE":
+            return {
+              ...state,
+              total: action.payload.instances.length,
+              instances: [...state.instances, action.payload.instances],
+            };
       
     }
     return state;

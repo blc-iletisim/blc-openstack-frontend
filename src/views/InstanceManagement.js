@@ -44,10 +44,11 @@ import { selectThemeColors } from "@utils";
 import InputPasswordToggle from "@components/input-password-toggle";
 import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
-import { getInstances,addInstances } from "../redux/actions/instances";
+import { getInstances,addInstances,deleteInstance,updateInstance } from "../redux/actions/instances";
 import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
+import { getFlavors } from "../redux/actions/flavors";
 
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
@@ -85,6 +86,12 @@ const UserManagement = () => {
       sortable: true,
       minWidth: "350px",
     },
+    /* {
+      name: "Database",
+      selector: "categories.name",
+      sortable: true,
+      minWidth: "350px",
+    }, */
      {
       name: "Database Configuration",
       selector: "flavor.name",
@@ -150,7 +157,7 @@ const UserManagement = () => {
                   <DropdownItem
                     tag="a"
                     className="w-100"
-                    onClick={() => handleDeleteUser(row)}
+                    onClick={() => handleDeleteInstance(row)}
                   >
                     <Trash size={15} />
                     <span className="align-middle ml-50">Delete</span>
@@ -165,13 +172,16 @@ const UserManagement = () => {
   ];
 
   const dispatch = useDispatch();
+  const categoriesStore = useSelector((state) => state.categoriesReducer);
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
   const instancesStore = useSelector ((state) => state.instancesReducer)
   console.log("instancesStore: ", instancesStore);
+  const flavorsStore = useSelector((state) => state.flavorsReducer);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
+  const [flavorsOptions, setFlavorsOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -185,7 +195,7 @@ const UserManagement = () => {
   const [instancesOptions, setInstancesOptions] = useState([]);
   console.log("instances: ",instances)
   console.log("editingProfileData set: ", editingProfileData);
-
+  const [categoriesOptions, setCategoriesOptions] = useState([]);
 
   useEffect(() => {
     dispatch(getInstances());
@@ -210,6 +220,35 @@ const UserManagement = () => {
       setRolesOptions(rolesStore);
     }
   }, []);
+  useEffect(() => {
+    dispatch(getFlavors());
+    console.log("flavorsStore get: ",flavorsStore);
+    if (flavorsStore.length > 0) {
+      setFlavorsOptions(flavorsStore);
+    }
+  }, []);
+
+  useEffect(() => {
+    getFlavorsOptions();
+   }, [flavorsStore]);
+
+   const getFlavorsOptions = () => {
+    flavorsStore.flavors?.forEach((flavor) =>
+      setFlavorsOptions((flavorsOptions) => [
+        ...flavorsOptions,
+        {
+          value: flavor.id,
+          label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk
+          ,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])
+    ); 
+  };
+
+
 
   // useEffect(() => {
   //   setUsers(usersStore);
@@ -252,6 +291,28 @@ const UserManagement = () => {
       )
     );
   };
+
+  useEffect(() => {
+    getCategoriesOptions();
+   }, [categoriesStore]);
+
+   const getCategoriesOptions = () => {
+    //splice ile sadece mongodb, postgresql alındı:
+    categoriesStore?.categories?.forEach((category) =>
+      setCategoriesOptions((categoriesOptions) => [
+        ...categoriesOptions,
+        {
+          value: category.id,
+          label: category?.name,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])
+    ); 
+  };
+
+
 
   useEffect(() => {
     getRolesOptions();
@@ -464,6 +525,7 @@ const UserManagement = () => {
     setShowAddUserModal(true);
   };
   //*****************************************************************************
+ 
   const onAddUserModalButtonPressed = () => {
     setLoading(true);
     if (
@@ -513,7 +575,7 @@ const UserManagement = () => {
         deletedBy: editingProfileData.deletedBy || null,
       };
 
-      dispatch(addUser(newUserData.createdBy, newUserData))
+      dispatch(updateInstance(newUserData.createdBy, newUserData))
         .then(() => {
           setLoading(false);
           setShowAddUserModal(false);
@@ -548,7 +610,7 @@ const UserManagement = () => {
       console.log("NUD", newUserData);
       dispatch(updateUser(newUserData.createdBy, newUserData))
         .then(() => {
-          enqueueSnackbar("Kullanıcı Güncellendi", {
+          enqueueSnackbar("Instance Updated", {
             variant: "success",
           });
           setLoading(false);
@@ -581,85 +643,39 @@ const UserManagement = () => {
             : "Yeni Kullanıcı Ekle"}
         </ModalHeader>
         <ModalBody>
-          <div className="mb-2">
+        <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Şirket Adı:
+              Database Name:
             </Label>
             <Input
               type="text"
-              id="company-name"
-              placeholder="Şirket Adı"
-              value={editingProfileData?.company || ""}
+              id="database-name"
+              placeholder="Database Name"
+              //value={editingProfileData?.company || ""}
               onChange={(e) =>
-                setEditingProfileData({
-                  ...editingProfileData,
-                  company: e.target.value,
-                })
+                setEditingProfileData({ ...editingProfileData, name: e.target.value  })
+                
               }
             />
           </div>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Kullanıcı İsmi:
+              UBUNTU Version:
             </Label>
             <Input
               type="text"
-              id="user-name"
-              placeholder="Kullanıcı İsmi"
-              value={editingProfileData?.name || ""}
-              onChange={(e) =>
-                setEditingProfileData({
-                  ...editingProfileData,
-                  name: e.target.value,
-                })
-              }
+              id="database-name"
+              placeholder="Database Name"
+              value={"UBUNTU 20.04"}
+              
+             
             />
           </div>
-          {(!editingProfileData?.id || editingProfileData?.id) && (
+          
             <Fragment>
-              <div className="mb-2">
-                <Label className="form-label" for="email-address">
-                  Email Adresi:
-                </Label>
-                <Input
-                  type="text"
-                  id="email-address"
-                  placeholder="Kullanıcı Email Adresi"
-                  value={editingProfileData?.email || ""}
-                  onChange={(e) =>
-                    setEditingProfileData({
-                      ...editingProfileData,
-                      email: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="mb-2">
-                <Label className="form-label" for="password">
-                  Hesap Şifresi:
-                </Label>
-                <InputPasswordToggle
-                  id="password"
-                  className="input-group-merge mb-2"
-                  htmlFor="password"
-                  placeholder="Kullanıcı Hesap Şifresi"
-                  defaultValue={editingProfileData?.password || ""}
-                  onChange={(e) =>
-                    setEditingProfileData({
-                      ...editingProfileData,
-                      password: e.target.value,
-                    })
-                  }
-                />
-                <Label className="pt-1">
-                  Şifre en az 6 karakter uzunluğunda güçlü olmalıdır.
-                </Label>
-              </div>
-            </Fragment>
-          )}
-          <div className="mb-2">
+            <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-              Kullanıcı Rolü
+              Choose a Database:
             </Label>
             <Select
               id="permissions-select"
@@ -668,7 +684,7 @@ const UserManagement = () => {
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
-              options={rolesOptions}
+              options={categoriesOptions}
               className="react-select"
               classNamePrefix="Seç"
               defaultValue={editingProfileData?.role || [""]}
@@ -681,29 +697,76 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  role: value.map((rol) => rol.value),
+                  categories: value.map((category) => category.value),
                   //role: value.label,
                 });
               }}
             />
           </div>
+          <div className="mb-2">
+            <Label className="form-label" for="permissions-select">
+              Choose Database Configuration:
+            </Label>
+            <Select
+              id="permissions-select"
+              isClearable={false}
+              theme={selectThemeColors}
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              isMulti
+              options={flavorsOptions}
+              className="react-select"
+              classNamePrefix="Seç"
+              defaultValue={editingProfileData?.role || [""]}
+              //defaultValue={editingProfileData?.roles || []}
+              //defaultValue={editingProfileData?.role.label || []}
+              onChange={(value) => {
+                {
+                  console.log("value:", value);
+                }
+
+                setEditingProfileData({
+                  ...editingProfileData,
+                  flavors: value.map((flavor) => flavor.value),
+                  //role: value.label,
+                });
+              }}
+            />
+          </div>
+            </Fragment>
+          
+            <Card
+            tag="a"
+            border="secondary"
+            color="primary"
+            outline
+            style={{
+              width: "16rem",
+              cursor: "pointer",
+            }}
+            onClick={console.log()}
+          >
+            Click Here to Create a PEM File
+          </Card>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={onAddUserModalButtonPressed}>
-            {loading
-              ? "Kaydediliyor.."
-              : !editingProfileData?.id
-              ? "Oluştur"
-              : "Güncelle"}
-          </Button>
+        <Button color="primary" onClick={onAddUserModalButtonPressed}>
+              {loading
+                ? "Saving.."
+                : !editingProfileData?.id
+                ? "Create"
+                : "Update"}
+            </Button>
         </ModalFooter>
       </Modal>
     );
   };
 
-  const handleDeleteUser = (selectedUser) => {
+  const handleDeleteInstance = (selectedInstance) => {
+    console.log("delete")
+    console.log("selectedInstance",selectedInstance)
     return Swal.fire({
-      title: `${selectedUser.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
+      title: `${selectedInstance.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
       text: "Silinen hesaplar tekrar aktif edilebilir, ancak aynı email adresi ile tekrar hesap oluşturulamaz. Tüm yetkileri kaldırılacaktır!",
       icon: "warning",
       showCancelButton: true,
@@ -716,15 +779,15 @@ const UserManagement = () => {
       buttonsStyling: false,
     }).then(function (result) {
       if (result.value !== null && result.value === true) {
-        console.log("selectedUser: ", selectedUser);
-        dispatch(deleteUser(selectedUser.id));
+        console.log("selectedInstance: ", selectedInstance);
+        dispatch(deleteInstance(selectedInstance.id));
       }
     });
   };
 
-  const handleUnDeleteCategory = (selectedUser) => {
+  const handleUnDeleteCategory = (selectedInstance) => {
     // return Swal.fire({
-    //   title: `${selectedUser.name} Kullanıcısını Aktif Etmek İstediğinize Emin misiniz?`,
+    //   title: `${selectedInstance.name} Kullanıcısını Aktif Etmek İstediğinize Emin misiniz?`,
     //   text: "",
     //   icon: "warning",
     //   showCancelButton: true,
@@ -738,11 +801,11 @@ const UserManagement = () => {
     // }).then(function (result) {
     //   if (result.value) {
     //     let permissions = {};
-    //     selectedUser.permissions.forEach((p) => {
+    //     selectedInstance.permissions.forEach((p) => {
     //       permissions[p.value] = true;
     //     });
-    //     set(ref(database, `users/${selectedUser.uid}`), {
-    //       ...selectedUser,
+    //     set(ref(database, `users/${selectedInstance.uid}`), {
+    //       ...selectedInstance,
     //       permissions,
     //       lastUpdatedTime: new Date().getTime(),
     //       lastUpdatedBy: authStore.uid,
@@ -752,7 +815,7 @@ const UserManagement = () => {
     //     })
     //       .then(() => {
     //         enqueueSnackbar(
-    //           `${selectedUser.name} kullanıcısı başarıyla aktif edildi.`,
+    //           `${selectedInstance.name} kullanıcısı başarıyla aktif edildi.`,
     //           {
     //             variant: "success",
     //           }
@@ -760,7 +823,7 @@ const UserManagement = () => {
     //       })
     //       .catch(() =>
     //         enqueueSnackbar(
-    //           `${selectedUser.name} Kullanıcısı aktif edilirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
+    //           `${selectedInstance.name} Kullanıcısı aktif edilirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
     //           {
     //             variant: "error",
     //           }
@@ -770,10 +833,10 @@ const UserManagement = () => {
     // });
   };
 
-  const handleEditCategory = (selectedUser) => {
-    console.log("users store selected user: ", selectedUser);
+  const handleEditCategory = (selectedInstance) => {
+    console.log("users store selected user: ", selectedInstance);
     setShowAddUserModal(true);
-    const selectedUserRoles = (selectedUser.roles || []).map((p) => {
+    const selectedUserRoles = (selectedInstance.roles || []).map((p) => {
       /*  const foundPermData = userRoles.find(
           (perm) => perm.value === p.authority
         );
@@ -783,7 +846,7 @@ const UserManagement = () => {
     });
 
     setEditingProfileData({
-      ...selectedUser,
+      ...selectedInstance,
       role: selectedUserRoles,
     });
   };

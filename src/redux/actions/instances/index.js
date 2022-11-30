@@ -133,3 +133,75 @@ export const addInstances = (instance) => {
   };
 };
 
+
+export const updateInstance = (instance) => {
+  console.log("updateInstance: ",instance);
+  
+  if (instance.personel === undefined) {
+    instance.personel = { id: instance?.user?.id, name: "" };
+  }
+  return async (dispatch) => {
+    
+    ApplicationService.http()
+      .post(
+        "/graphql",
+       {
+        query:`
+       
+        
+        `
+
+       },{
+        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        
+      }
+      )
+      .then((response) => {
+        console.log("update response", response);
+        dispatch({
+          type: "UPDATE_INSTANCE",
+          payload: {
+            instances: response.data.data.updateInstance,
+          },
+        });
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+};
+
+export const deleteInstance = (instanceId) => {
+  console.log("delete instance id: ", instanceId);
+  return async (dispatch) => {
+    ApplicationService.http()
+      .post("/graphql", {
+        query:`
+              mutation {
+          deleteInstance(id: "`+instanceId+`")
+        }
+
+        `,
+      },{
+        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        
+      })
+      .then((response) => {
+        console.log("DeleteResponse: ", response);
+        console.log("instanceId:",instanceId);
+        dispatch({
+          type: "DELETE_INSTANCE",
+          payload: {
+            id: instanceId,
+          },
+        });
+      })
+      .catch((error) => {
+        console.log("error -- responsee", error);
+      });
+  };
+
+
+  
+};
+

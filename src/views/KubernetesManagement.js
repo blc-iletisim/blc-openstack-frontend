@@ -740,7 +740,7 @@ const UserManagement = () => {
     <div style={{ marginTop: "2%" }}>
       <Card>
         <CardHeader className="border-bottom">
-          <CardTitle tag="h4">Kubernetes Management</CardTitle>
+          <CardTitle tag="h4">KUBERNETES Management</CardTitle>
         </CardHeader>
 
         <ModalBody>
@@ -773,6 +773,19 @@ const UserManagement = () => {
             />
           </div>
           <div className="mb-2">
+            <Label className="form-label" for="user-name">
+              Database:
+            </Label>
+            <Input
+              type="text"
+              id="database-name"
+              placeholder="Database Name"
+              value={"KUBERNETES"}
+              
+             
+            />
+          </div>
+          {/* <div className="mb-2">
             <Label className="form-label" for="permissions-select">
               Choose a Database:
             </Label>
@@ -801,7 +814,7 @@ const UserManagement = () => {
                 });
               }}
             />
-          </div>
+          </div> */}
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
               Choose Database Configuration:
@@ -826,6 +839,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
+                  categories:"980cb1a9-35f3-462c-a2fd-eac3c1aa1c13",
                   flavors: value.map((flavor) => flavor.value),
                   //role: value.label,
                 });
