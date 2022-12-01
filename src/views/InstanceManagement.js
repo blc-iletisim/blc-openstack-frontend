@@ -49,6 +49,7 @@ import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 import { getFlavors } from "../redux/actions/flavors";
+import { getCategories} from "../redux/actions/categories";
 
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
@@ -86,14 +87,15 @@ const UserManagement = () => {
       sortable: true,
       minWidth: "350px",
     },
-    /* {
+    {
       name: "Database",
-      selector: "categories.name",
+      selector: "categories[0].name",
       sortable: true,
       minWidth: "350px",
-    }, */
+      
+    },
      {
-      name: "Database Configuration",
+      name: "Configuration",
       selector: "flavor.name",
       sortable: true,
       minWidth: "350px",
@@ -173,6 +175,7 @@ const UserManagement = () => {
 
   const dispatch = useDispatch();
   const categoriesStore = useSelector((state) => state.categoriesReducer);
+  console.log("categoriesStore: ",categoriesStore)
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
   const instancesStore = useSelector ((state) => state.instancesReducer)
@@ -192,10 +195,12 @@ const UserManagement = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   const [instances, setInstances] = useState([]);
+  console.log("instances: ",instances)
   const [instancesOptions, setInstancesOptions] = useState([]);
   console.log("instances: ",instances)
   console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
+  console.log("categoriesOptions: ",categoriesOptions)
 
   useEffect(() => {
     dispatch(getInstances());
@@ -225,6 +230,13 @@ const UserManagement = () => {
     console.log("flavorsStore get: ",flavorsStore);
     if (flavorsStore.length > 0) {
       setFlavorsOptions(flavorsStore);
+    }
+  }, []);
+  useEffect(() => {
+    dispatch(getCategories());
+    
+    if (categoriesStore.length > 0) {
+      setCategoriesOptions(categoriesStore);
     }
   }, []);
 
@@ -521,6 +533,9 @@ const UserManagement = () => {
       company: "",
       role: "",
       id: "",
+      flavors:"",
+      categories:"",
+      company:"",
     });
     setShowAddUserModal(true);
   };
@@ -555,12 +570,15 @@ const UserManagement = () => {
     }
 
     console.log("editingProfileData: ", editingProfileData);
-    if (!editingProfileData.id) {
+    if (true) {
       console.log("editingProfileData: ", editingProfileData);
       const newUserData = {
         name: editingProfileData.name,
         email: editingProfileData.email,
         password: editingProfileData?.password,
+        company: editingProfileData.company,
+        categories:editingProfileData?.categories,
+        flavors: editingProfileData?.flavors,
         company: editingProfileData.company,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
@@ -575,7 +593,7 @@ const UserManagement = () => {
         deletedBy: editingProfileData.deletedBy || null,
       };
 
-      dispatch(updateInstance(newUserData.createdBy, newUserData))
+      dispatch(updateInstance( newUserData))
         .then(() => {
           setLoading(false);
           setShowAddUserModal(false);
@@ -645,12 +663,12 @@ const UserManagement = () => {
         <ModalBody>
         <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Database Name:
+            Instance Name:
             </Label>
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Instance Name"
               //value={editingProfileData?.company || ""}
               onChange={(e) =>
                 setEditingProfileData({ ...editingProfileData, name: e.target.value  })
@@ -665,7 +683,7 @@ const UserManagement = () => {
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Ubuntu Name"
               value={"UBUNTU 20.04"}
               
              
@@ -761,6 +779,49 @@ const UserManagement = () => {
       </Modal>
     );
   };
+  const ExpandableTable = ({ data }) => {
+    console.log("ExpandableTable data: ",data)
+    const createdByUser = usersStore?.data?.find(
+      (user) => user?.id === data?.createdBy
+    );
+    const lastUpdatedByUser = usersStore?.data.find(
+      (user) => user?.id === data?.lastUpdatedBy
+    );
+
+    return (
+      <div className="expandable-content p-2">
+        <p>
+          <h4 className="font-weight-bold">{data?.title}</h4>
+        </p>
+        <p>
+          <span>{data?.content}</span>
+        </p>
+        
+        <p className="font-small-3">
+          <span className="font-weight-bold">Image:</span>{" "}
+          {data.image.name}{" "}
+        </p>
+        <p className="font-small-3">
+          <span className="font-weight-bold">Root Disk:</span>{" "}
+          {data.flavor.root_disk}{" "}
+        </p>
+        <p className="font-small-3">
+          <span className="font-weight-bold">Ram Size:</span>{" "}
+          {data?.flavor.ram_size}{" GB "}
+         
+        </p>
+        <p className="font-small-3 mt-2">
+          <span className="font-weight-bold">Cpu Size:</span>{" "}
+          {data?.flavor?.cpu_size}{" "}
+         
+        </p>
+        
+       
+        
+      </div>
+    );
+  };
+
 
   const handleDeleteInstance = (selectedInstance) => {
     console.log("delete")
@@ -928,6 +989,9 @@ const UserManagement = () => {
           noHeader
           pagination
           paginationServer
+          expandableRows
+          expandOnRowClicked
+          expandableRowsComponent={<ExpandableTable />}
           className="react-dataTable"
           columns={serverSideColumns}
           sortIcon={<ChevronDown size={10} />}

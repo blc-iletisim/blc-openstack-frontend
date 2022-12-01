@@ -11,18 +11,19 @@ export const getInstances = () => {
                 instances {
                 id
                 name
-                pem {
-                    id
-                    name
-                    pem_url
-            
-                }
+               
                 flavor {
                     id
                     name
-                
+                    cpu_size
+                    ram_size
+                    root_disk
                 }
-            
+                image {
+                  id
+                  name
+                 
+                }
             
                 categories {
                     id
@@ -78,15 +79,10 @@ export const addInstances = (instance) => {
         query:`
         
             mutation {
-                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance?.flavors+`",categories:"`+instance?.categories+`",image:"c83a84bd-f521-46ea-8830-4e93975ce101"}){
+                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance?.flavors+`",categories:"`+instance?.categories+`",image:"c83a84bd-f521-46ea-8830-4e93975ce101",pem:"c83a84bd-f521-46ea-8830-4e93975ce101"}){
                 id
                 name
-                pem {
-                    id
-                    name
-                    pem_url
-                
-                }
+               
                 flavor {
                     id
                     name
@@ -123,7 +119,7 @@ export const addInstances = (instance) => {
         dispatch({
           type: "ADD_INSTANCE",
           payload: {
-            devices: response.data.data.createDevice,
+            instances: response.data.data.createInstance,
           },
         });
       })
@@ -148,6 +144,43 @@ export const updateInstance = (instance) => {
        {
         query:`
        
+mutation {
+  updateInstance(id: "`+instance.id+`", input: {categories:"`+instance.categories+`",flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
+    id
+    name
+    flavor {
+      id
+      name
+      cpu_size
+      ram_size
+      root_disk
+ 
+    }
+    image {
+      id
+      name
+
+    }
+    user {
+      id
+      name
+      email
+
+      company
+  
+    }
+    categories {
+      id
+      name
+
+
+    }
+    createdDateTime
+    updatedDateTime
+    deletedDateTime
+  }
+}
+
         
         `
 

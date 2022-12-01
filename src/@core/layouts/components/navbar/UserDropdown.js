@@ -14,12 +14,14 @@ import { handleLogout } from '@store/actions/auth'
 
 // ** Third Party Components
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap'
-import { User, Mail, CheckSquare, MessageSquare, Settings, CreditCard, HelpCircle, Power } from 'react-feather'
+import { User, Mail, CheckSquare, MessageSquare, Settings, CreditCard, HelpCircle, Power,LogOut } from 'react-feather'
 import {useSnackbar} from "notistack";
+import { Logout } from '@mui/icons-material'
 
 const UserDropdown = () => {
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth);
+  console.log("auth: ",auth)
   const { enqueueSnackbar } = useSnackbar();
   const history = useHistory();
 
@@ -27,7 +29,7 @@ const UserDropdown = () => {
     <UncontrolledDropdown tag='li' className='dropdown-user nav-item'>
       <DropdownToggle href='/' tag='a' className='nav-link dropdown-user-link' onClick={e => e.preventDefault()}>
         <div className='user-nav d-sm-flex d-none'>
-          <span className='user-name font-weight-bold'>{auth?.user?.name}</span>
+          <span className='user-name font-weight-bold'>{auth?.user?.name} <Logout size={14} className='mr-75' /></span>
           
         </div>
       </DropdownToggle>

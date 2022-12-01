@@ -21,7 +21,8 @@ export default [
   {
     id: "UserManagement",
     title: "User Management",
-    icon: <Users size={18} />,
+     //icon: <Users size={18} />,
+     icon:  <Icon icon="carbon:id-management" />,
     navLink: "/user-management",
   },
   {
@@ -33,7 +34,8 @@ export default [
   {
     id: "DatabaseManagement",
     title: "Databases",
-    icon: <Database size={18} />,
+    //icon: <Database size={18} />,
+    icon: <Icon icon="material-symbols:database" />,
     navLink: "/database-management",
   },
   {
@@ -44,7 +46,7 @@ export default [
   },
   {
     id: "HadoopManagement",
-    title: "Docker",
+    title: "Hadoop",
     icon: <Icon icon="grommet-icons:hadoop" width="28" height="28" />,
     navLink: "/hadoop-management",
   },

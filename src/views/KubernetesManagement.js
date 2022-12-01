@@ -746,12 +746,12 @@ const UserManagement = () => {
         <ModalBody>
         <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Database Name:
+            Instance Name:
             </Label>
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Instance Name"
               //value={editingProfileData?.company || ""}
               onChange={(e) =>
                 setEditingProfileData({ ...editingProfileData, name: e.target.value  })
@@ -766,7 +766,7 @@ const UserManagement = () => {
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Ubuntu Name"
               value={"UBUNTU 20.04"}
               
              
@@ -774,12 +774,12 @@ const UserManagement = () => {
           </div>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Database:
+            Instance Name:
             </Label>
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Instance Name"
               value={"KUBERNETES"}
               
              
@@ -839,7 +839,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  categories:"980cb1a9-35f3-462c-a2fd-eac3c1aa1c13",
+                  categories:"eca4c99a-f455-452d-9078-f6cb4d97df58",
                   flavors: value.map((flavor) => flavor.value),
                   //role: value.label,
                 });

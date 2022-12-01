@@ -521,7 +521,7 @@ const UserManagement = () => {
         name: editingProfileData.name,
         email: editingProfileData.email,
         password: editingProfileData?.password,
-        categories:editingProfileData?.categories,
+        categories:editingProfileData?.categories.split(','),
         flavors: editingProfileData?.flavors,
         company: editingProfileData.company,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
@@ -746,12 +746,12 @@ const UserManagement = () => {
         <ModalBody>
         <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Database Name:
+            Instance Name:
             </Label>
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Instance Name"
               //value={editingProfileData?.company || ""}
               onChange={(e) =>
                 setEditingProfileData({ ...editingProfileData, name: e.target.value  })
@@ -766,7 +766,7 @@ const UserManagement = () => {
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Ubuntu Name"
               value={"UBUNTU 20.04"}
               
              
@@ -774,12 +774,12 @@ const UserManagement = () => {
           </div>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Database:
+              Instance Name:
             </Label>
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Instance Name"
               value={"DOCKER"}
               
              
@@ -839,7 +839,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  categories:"ff34bb35-d274-46ea-8295-00a03ad5ffd5",
+                  categories:"49a72176-7304-4f10-8cfb-82892be117b4",
                   flavors: value.map((flavor) => flavor.value),
                   //role: value.label,
                 });

@@ -747,12 +747,12 @@ const UserManagement = () => {
         <ModalBody>
         <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Database Name:
+              Instance Name:
             </Label>
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Instance Name"
               //value={editingProfileData?.company || ""}
               onChange={(e) =>
                 setEditingProfileData({ ...editingProfileData, name: e.target.value  })
@@ -767,7 +767,7 @@ const UserManagement = () => {
             <Input
               type="text"
               id="database-name"
-              placeholder="Database Name"
+              placeholder="Ubuntu Name"
               value={"UBUNTU 20.04"}
               
              
