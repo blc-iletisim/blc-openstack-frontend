@@ -16,6 +16,7 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import backgroundImage from "@src/assets/images/background_dot.png";
+//import backgroundImage2 from "@src/assets/images/blc-logo-5.png";
 import {ThemeColors} from "@src/utility/context/ThemeColors";
 import {useDispatch, useSelector} from "react-redux";
 import {useSnackbar} from "notistack";
@@ -72,7 +73,7 @@ const Login = (props) => {
     dispatch(handleLogin(email, password)).then((data) => {
       setLoading(false);
       enqueueSnackbar(
-        "Giriş başarılı " + data.user.name + ". Yönlendiriliyorsunuz...",
+        "Login is successful " + data.user.name + "...",
         {
           variant: "success",
           preventDuplicate: true,
@@ -156,7 +157,7 @@ const Login = (props) => {
                             fontWeight: 600,
                           }}
                         >
-                          Tekrar Hoşgeldiniz
+                          Welcome Back
                         </Typography>
                         <Typography
                           variant="caption"
@@ -169,8 +170,7 @@ const Login = (props) => {
                             maxWidth: 300,
                           }}
                         >
-                          Devam etmek için yetkilendirilmiş kullanıcı
-                          bilgilerinizi giriniz.
+                          Enter your authorized user informations to continue.
                         </Typography>
                       </Stack>
                     </Grid>
@@ -188,7 +188,7 @@ const Login = (props) => {
                       sx={{ ...colors.primary.light }}
                     >
                       <InputLabel htmlFor="outlined-adornment-email-login">
-                        Email Adresi
+                        Email 
                       </InputLabel>
                       <OutlinedInput
                         id="login-email-input"
@@ -197,7 +197,7 @@ const Login = (props) => {
                         name="email"
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        label="Email Adresi"
+                        label="Email"
                         inputProps={{}}
                       />
                     </FormControl>
@@ -211,7 +211,7 @@ const Login = (props) => {
                       }}
                     >
                       <InputLabel htmlFor="outlined-adornment-password-login">
-                        Şifre
+                        Password
                       </InputLabel>
                       <OutlinedInput
                         id="outlined-adornment-password-login"
@@ -272,7 +272,7 @@ const Login = (props) => {
                         color="secondary"
                         id="login-form-submit-button"
                       >
-                        Giriş Yap
+                        Login
                       </Button>
                     </Box>
                   </form>
