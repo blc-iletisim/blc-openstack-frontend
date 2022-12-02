@@ -54,7 +54,13 @@ import { getImages } from "../redux/actions/images";
 import { getInstances,addInstances } from "../redux/actions/instances";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
+import {
+  createPem
+} from "../redux/actions/pem";
+import { FileUploader } from "react-drag-drop-files";
 
+
+const fileTypes = ["PEM"];
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 
@@ -496,6 +502,9 @@ const UserManagement = () => {
   //   );
   // };
 
+  const onAddPemButtonPressed = () =>{
+    setShowAddUserModal(true);
+  }
   const onAddUserButtonPressed = () => {
     setEditingProfileData({
       name: "",
@@ -567,27 +576,26 @@ const UserManagement = () => {
         <ModalHeader toggle={() => setShowAddUserModal(!showAddUserModal)}>
           {editingProfileData?.id
             ? editingProfileData.name
-            : "Yeni Kullanıcı Ekle"}
+            : "Create a PEM File"}
         </ModalHeader>
         <ModalBody>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Şirket Adı:
+              Name:
             </Label>
             <Input
               type="text"
-              id="company-name"
-              placeholder="Şirket Adı"
-              value={editingProfileData?.company || ""}
+              id="pem-name"
+              placeholder="PEM Name"
+              //value={editingProfileData?.company || ""}
               onChange={(e) =>
-                setEditingProfileData({
-                  ...editingProfileData,
-                  company: e.target.value,
-                })
+                //console.log("pem name: ",e)
+                hanglePemName(e.target.value)
               }
             />
           </div>
-          <div className="mb-2">
+          <FileUploader handleChange={console.log()} name="file" types={fileTypes} />
+          {/* <div className="mb-2">
             <Label className="form-label" for="user-name">
               Kullanıcı İsmi:
             </Label>
@@ -634,20 +642,23 @@ const UserManagement = () => {
                 });
               }}
             />
-          </div>
+          </div> */}
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onAddUserModalButtonPressed}>
             {loading
-              ? "Kaydediliyor.."
+              ? "Creating.."
               : !editingProfileData?.id
-              ? "Oluştur"
-              : "Güncelle"}
+              ? "Create"
+              : "Update"}
           </Button>
         </ModalFooter>
       </Modal>
     );
   };
+  const hanglePemName = (pemName) =>{
+    dispatch(createPem(pemName))
+  }
 
   const handleDeleteUser = (selectedUser) => {
     return Swal.fire({
@@ -846,7 +857,17 @@ const UserManagement = () => {
               }}
             />
           </div>
-          <Card
+          <Button
+          size="sm"
+            className="ml-2"
+            //color="primary"
+            color="info"
+            onClick={onAddPemButtonPressed}
+          >
+            <Plus size={15} />
+            <span className="align-middle ml-50">Create a PEM File</span>
+          </Button>
+        {/*   <Card
             tag="a"
             border="secondary"
             color="primary"
@@ -858,7 +879,7 @@ const UserManagement = () => {
             onClick={console.log()}
           >
             Click Here to Create a PEM File
-          </Card>
+          </Card> */}
 
           {/* <FormGroup check>
             <Input

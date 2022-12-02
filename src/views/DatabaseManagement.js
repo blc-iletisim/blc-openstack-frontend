@@ -54,9 +54,15 @@ import { getImages } from "../redux/actions/images";
 import { getInstances,addInstances } from "../redux/actions/instances";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
+import {
+  createPem
+} from "../redux/actions/pem";
+import { FileUploader } from "react-drag-drop-files";
 
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
+
+const fileTypes = ["PEM"];
 
 const UserManagement = () => {
   // let arrPerm = [];
@@ -156,7 +162,6 @@ const UserManagement = () => {
       },
     },
   ];
-
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
@@ -179,6 +184,10 @@ const UserManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
+  const [editingPemData,setEditingPemData] = useState(null);
+  const [file, setFile] = useState();
+ 
+
   console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   useEffect(() => {
@@ -497,12 +506,22 @@ const UserManagement = () => {
   //   );
   // };
 
+  
+
+  //PEM file upload: 
+ /*  function handleChange(e) {
+    console.log(e.target.files);
+    setFile(URL.createObjectURL(e.target.files[0]));
+} */
+  const onAddPemButtonPressed = () =>{
+    setShowAddUserModal(true);
+  }
   const onAddUserButtonPressed = () => {
     setEditingProfileData({
       name: "",
       categories:"",
       flavors:"", 
-      pem:"",
+      //pemName:"",
       password: "",
       email: "",
       company: "",
@@ -511,6 +530,7 @@ const UserManagement = () => {
     });
     setShowAddUserModal(true);
   };
+  
   //*****************************************************************************
   const onAddUserModalButtonPressed = () => {
   
@@ -518,31 +538,33 @@ const UserManagement = () => {
     console.log("editingProfileData: ", editingProfileData);
     
       console.log("editingProfileData: ", editingProfileData);
+
+      
       const newUserData = {
-        name: editingProfileData.name,
-        email: editingProfileData.email,
+        name: editingProfileData?.name,
+        email: editingProfileData?.email,
         password: editingProfileData?.password,
         categories:editingProfileData?.categories,
         flavors: editingProfileData?.flavors,
-        company: editingProfileData.company,
+        company: editingProfileData?.company,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
-        lastUpdatedBy: authStore.id,
-        id: editingProfileData.id,
+        lastUpdatedBy: authStore?.id,
+        id: editingProfileData?.id,
         //roles: editingProfileData?.role[0],
         //role:editingProfileData?.role?.map((rol) => rol.value),
 
-        deleted: editingProfileData.deleted || null,
-        deletedAt: editingProfileData.deletedAt || null,
-        deletedBy: editingProfileData.deletedBy || null,
+        deleted: editingProfileData?.deleted || null,
+        deletedAt: editingProfileData?.deletedAt || null,
+        deletedBy: editingProfileData?.deletedBy || null,
       };
 
       dispatch(addInstances( newUserData))
         .then(() => {
           setLoading(false);
           setShowAddUserModal(false);
-          enqueueSnackbar("Kullanıcı başarıyla eklendi.", {
+          enqueueSnackbar("Successfull.", {
             variant: "success",
             preventDuplicate: true,
           });
@@ -550,11 +572,33 @@ const UserManagement = () => {
         .catch(() => {
           setLoading(false);
           setShowAddUserModal(false);
-          enqueueSnackbar("Kullanıcı eklenirken bir hata oluştu.", {
+          enqueueSnackbar("Error.", {
             variant: "error",
             preventDuplicate: true,
           });
         });
+//pem için dispatch kısımı düzelt
+
+       /*  const newPemData = {
+          name: editingPemData?.name
+        }
+        dispatch(createPem(newPemData))
+        .then(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Successfull.", {
+            variant: "success",
+            preventDuplicate: true,
+          });
+        })
+        .catch(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Error.", {
+            variant: "error",
+            preventDuplicate: true,
+          });
+        }); */
     
   };
   //*******************************************************
@@ -568,27 +612,37 @@ const UserManagement = () => {
         <ModalHeader toggle={() => setShowAddUserModal(!showAddUserModal)}>
           {editingProfileData?.id
             ? editingProfileData.name
-            : "Yeni Kullanıcı Ekle"}
+            : "Create a PEM File"}
         </ModalHeader>
         <ModalBody>
           <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Şirket Adı:
+              Name:
             </Label>
             <Input
               type="text"
-              id="company-name"
-              placeholder="Şirket Adı"
-              value={editingProfileData?.company || ""}
+              id="pem-name"
+              placeholder="PEM Name"
+              //value={editingProfileData?.company || ""}
               onChange={(e) =>
-                setEditingProfileData({
-                  ...editingProfileData,
-                  company: e.target.value,
-                })
+                //console.log("pem name: ",e)
+
+                // !!!!!her harf girişi için dispatch atmaması için doğrudan gönderme değeri alttaki gibi gönder düzeltip: 
+                // setEditingPemData({ ...editingPemData, name: e.target.value  })
+               handlePemName(e.target.value)
               }
             />
           </div>
-          <div className="mb-2">
+        {/*   <div className="App">
+            <h7>To use an existing PEM file please choose to file: </h7>
+            <input type="file" 
+            //onChange={handleChange}
+             />
+        {     <img src={file} /> }
+  
+        </div> */}
+        <FileUploader handleChange={console.log()} name="file" types={fileTypes} />
+          {/* <div className="mb-2">
             <Label className="form-label" for="user-name">
               Kullanıcı İsmi:
             </Label>
@@ -635,20 +689,24 @@ const UserManagement = () => {
                 });
               }}
             />
-          </div>
+          </div> */}
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onAddUserModalButtonPressed}>
             {loading
-              ? "Kaydediliyor.."
+              ? "Creating.."
               : !editingProfileData?.id
-              ? "Oluştur"
-              : "Güncelle"}
+              ? "Create"
+              : "Update"}
           </Button>
         </ModalFooter>
       </Modal>
     );
   };
+  const handlePemName = (pemName) =>{
+    
+    dispatch(createPem(pemName))
+  }
 
   const handleDeleteUser = (selectedUser) => {
     return Swal.fire({
@@ -670,6 +728,7 @@ const UserManagement = () => {
       }
     });
   };
+  
 
   const handleUnDeleteCategory = (selectedUser) => {
     // return Swal.fire({
@@ -833,7 +892,25 @@ const UserManagement = () => {
               }}
             />
           </div>
-          <Card
+
+          <Button
+          size="sm"
+            className="ml-2"
+            //color="primary"
+            color="info"
+            onClick={onAddPemButtonPressed}
+          >
+            <Plus size={15} />
+            <span className="align-middle ml-50">Create a PEM File</span>
+          </Button>
+         {/*  <Button color="info" onClick={console.log()}>
+              {loading
+                ? "Saving.."
+                : !editingProfileData?.id
+                ? "Click Here to Click Here to Create a PEM File"
+                : "Update"}
+            </Button> */}
+         {/*  <Card
             tag="a"
             border="secondary"
             color="primary"
@@ -845,7 +922,7 @@ const UserManagement = () => {
             onClick={console.log()}
           >
             Click Here to Create a PEM File
-          </Card>
+          </Card> */}
 
           {/* <FormGroup check>
             <Input
@@ -864,7 +941,7 @@ const UserManagement = () => {
           </FormGroup>
  */}
           <ModalFooter>
-            <Button color="primary" onClick={onAddUserModalButtonPressed}>
+            <Button color="primary"  onClick={onAddUserModalButtonPressed}>
               {loading
                 ? "Saving.."
                 : !editingProfileData?.id

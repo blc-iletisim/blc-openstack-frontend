@@ -41,7 +41,6 @@ import {
   addRoles,
   updateRoles,
 } from "../redux/actions/roles";
-//import { addRoles,updateRoles,deleteRoles} from "../redux/actions/roles";
 import { getPermissions } from "../redux/actions/permissions";
 
 const Swal = withReactContent(SweetAlert);

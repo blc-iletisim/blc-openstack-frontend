@@ -5,7 +5,7 @@ export const createPem= (name) => {
     ApplicationService.http()
       .post("/pem/createPem", {},{
         params: {
-            name: name,
+          file_name: name,
         },
         headers: {
           "Content-Type": "application/json",
