@@ -266,6 +266,7 @@ const UserManagement = () => {
    }, [flavorsStore]);
 
    const getFlavorsOptions = () => {
+    if ( flavorsOptions.length === 0 ) {
     flavorsStore.flavors?.forEach((flavor) =>
       setFlavorsOptions((flavorsOptions) => [
         ...flavorsOptions,
@@ -278,7 +279,7 @@ const UserManagement = () => {
           
         },
       ])
-    ); 
+    ) }
   };
 
 

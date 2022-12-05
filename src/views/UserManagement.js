@@ -158,6 +158,7 @@ const UserManagement = () => {
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
+  console.log("rolesOptions: ",rolesOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -178,8 +179,8 @@ const UserManagement = () => {
 
   useEffect(() => {
     dispatch(getRoles());
-    console.log("rolesStore: ", rolesStore);
-    if (rolesStore.length > 0) {
+    console.log("rolesStore dispatch: ", rolesStore);
+    if (rolesStore.length > 0 && rolesOptions.length === 0 ) {
       setRolesOptions(rolesStore);
     }
   }, []);
@@ -226,10 +227,12 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
+   
     getRolesOptions();
   }, [rolesStore]);
 
   const getRolesOptions = () => {
+    if ( rolesOptions.length === 0 ) {
     rolesStore.roles?.forEach((role) =>
       setRolesOptions((rolesOptions) => [
         ...rolesOptions,
@@ -240,7 +243,7 @@ const UserManagement = () => {
           isFixed: true,
         },
       ])
-    );
+    ) }
   };
 
   const handleFilter = (e) => {

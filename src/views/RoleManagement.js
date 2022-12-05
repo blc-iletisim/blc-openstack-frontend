@@ -137,7 +137,7 @@ const RoleManagement = () => {
   //console.log("rolesOptions: ", rolesOptions);
   const { enqueueSnackbar } = useSnackbar();
   const [permissionsOptions, setPermissionsOptions] = useState([]);
-  //console.log("permissionsOptions: ", permissionsOptions);
+  console.log("permissionsOptions: ", permissionsOptions);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [roles, setRoles] = useState([]);
@@ -184,6 +184,7 @@ const RoleManagement = () => {
   }, [PermissionsStore]);
 
   const getPermissionsOptions = () => {
+    if ( permissionsOptions.length === 0 ) {
     PermissionsStore.permissions?.forEach((permission) =>
       setPermissionsOptions((permissionsOptions) => [
         ...permissionsOptions,
@@ -194,7 +195,7 @@ const RoleManagement = () => {
           isFixed: true,
         },
       ])
-    );
+    ) }
   };
 
   useEffect(() => {
@@ -379,7 +380,7 @@ const RoleManagement = () => {
 
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-              Permissions
+              Permissions:
             </Label>
             <Select
               id="permissions-select"

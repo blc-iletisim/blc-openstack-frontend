@@ -190,6 +190,7 @@ const UserManagement = () => {
 
   console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
+  console.log("categoriesOptions: ",categoriesOptions)
   useEffect(() => {
     dispatch(getUsersHttp());
     if (usersStore.length > 0) {
@@ -267,6 +268,7 @@ const UserManagement = () => {
    }, [flavorsStore]);
 
    const getFlavorsOptions = () => {
+    if ( flavorsOptions.length === 0 ) {
     flavorsStore.flavors?.forEach((flavor) =>
       setFlavorsOptions((flavorsOptions) => [
         ...flavorsOptions,
@@ -279,7 +281,7 @@ const UserManagement = () => {
           
         },
       ])
-    ); 
+    ) }
   };
 
 
@@ -309,6 +311,7 @@ const UserManagement = () => {
 
    const getCategoriesOptions = () => {
     //splice ile sadece mongodb, postgresql alındı:
+    if ( categoriesOptions.length === 0 ) {
     categoriesStore?.categories.splice(3, 2)?.forEach((category) =>
       setCategoriesOptions((categoriesOptions) => [
         ...categoriesOptions,
@@ -320,7 +323,7 @@ const UserManagement = () => {
           
         },
       ])
-    ); 
+    ) }
   };
 
 
