@@ -514,6 +514,9 @@ const UserManagement = () => {
     setFile(URL.createObjectURL(e.target.files[0]));
 } */
   const onAddPemButtonPressed = () =>{
+    setEditingPemData({
+      name: "",
+    });
     setShowAddUserModal(true);
   }
   const onAddUserButtonPressed = () => {
@@ -528,6 +531,7 @@ const UserManagement = () => {
       role: "",
       id: "",
     });
+  
     setShowAddUserModal(true);
   };
   
@@ -601,6 +605,61 @@ const UserManagement = () => {
         }); */
     
   };
+
+
+  const onAddPemModalButtonPressed = () => {
+  
+
+      
+      const newPemData = {
+        name: editingPemData?.name,
+        
+      };
+      console.log("newPemData: ",newPemData)
+
+      dispatch(createPem(newPemData.name))
+        .then(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Successfull.", {
+            variant: "success",
+            preventDuplicate: true,
+          });
+        })
+        .catch(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Error.", {
+            variant: "error",
+            preventDuplicate: true,
+          });
+        });
+//pem için dispatch kısımı düzelt
+
+       /*  const newPemData = {
+          name: editingPemData?.name
+        }
+        dispatch(createPem(newPemData))
+        .then(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Successfull.", {
+            variant: "success",
+            preventDuplicate: true,
+          });
+        })
+        .catch(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Error.", {
+            variant: "error",
+            preventDuplicate: true,
+          });
+        }); */
+    
+  };
+
+
   //*******************************************************
   const renderUserModal = () => {
     return (
@@ -628,8 +687,10 @@ const UserManagement = () => {
                 //console.log("pem name: ",e)
 
                 // !!!!!her harf girişi için dispatch atmaması için doğrudan gönderme değeri alttaki gibi gönder düzeltip: 
-                // setEditingPemData({ ...editingPemData, name: e.target.value  })
-               handlePemName(e.target.value)
+                 setEditingPemData({ 
+                  ...editingPemData, 
+                  name: e.target.value  })
+              // handlePemName(e.target.value)
               }
             />
           </div>
@@ -641,6 +702,9 @@ const UserManagement = () => {
         {     <img src={file} /> }
   
         </div> */}
+        <Label className="form-label" for="user-name">
+          To Use an Existing PEM File:
+            </Label>
         <FileUploader handleChange={console.log()} name="file" types={fileTypes} />
           {/* <div className="mb-2">
             <Label className="form-label" for="user-name">
@@ -692,7 +756,10 @@ const UserManagement = () => {
           </div> */}
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={onAddUserModalButtonPressed}>
+          <Button color="primary" 
+          //onClick={onAddUserModalButtonPressed}
+          onClick={onAddPemModalButtonPressed}
+          >
             {loading
               ? "Creating.."
               : !editingProfileData?.id

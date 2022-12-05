@@ -186,6 +186,7 @@ const UserManagement = () => {
   const [editingProfileData, setEditingProfileData] = useState(null);
   console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
+  const [editingPemData,setEditingPemData] = useState(null);
   useEffect(() => {
     dispatch(getUsersHttp());
     if (usersStore.length > 0) {
@@ -502,6 +503,9 @@ const UserManagement = () => {
   // };
 
   const onAddPemButtonPressed = () =>{
+    setEditingPemData({
+      name: "",
+    });
     setShowAddUserModal(true);
   }
 
@@ -565,6 +569,60 @@ const UserManagement = () => {
         });
     
   };
+
+
+
+  const onAddPemModalButtonPressed = () => {
+  
+
+      
+    const newPemData = {
+      name: editingPemData?.name,
+      
+    };
+    console.log("newPemData: ",newPemData)
+
+    dispatch(createPem(newPemData.name))
+      .then(() => {
+        setLoading(false);
+        setShowAddUserModal(false);
+        enqueueSnackbar("Successfull.", {
+          variant: "success",
+          preventDuplicate: true,
+        });
+      })
+      .catch(() => {
+        setLoading(false);
+        setShowAddUserModal(false);
+        enqueueSnackbar("Error.", {
+          variant: "error",
+          preventDuplicate: true,
+        });
+      });
+//pem için dispatch kısımı düzelt
+
+     /*  const newPemData = {
+        name: editingPemData?.name
+      }
+      dispatch(createPem(newPemData))
+      .then(() => {
+        setLoading(false);
+        setShowAddUserModal(false);
+        enqueueSnackbar("Successfull.", {
+          variant: "success",
+          preventDuplicate: true,
+        });
+      })
+      .catch(() => {
+        setLoading(false);
+        setShowAddUserModal(false);
+        enqueueSnackbar("Error.", {
+          variant: "error",
+          preventDuplicate: true,
+        });
+      }); */
+  
+};
   //*******************************************************
   const renderUserModal = () => {
     return (
@@ -590,10 +648,16 @@ const UserManagement = () => {
               //value={editingProfileData?.company || ""}
               onChange={(e) =>
                 //console.log("pem name: ",e)
-                hanglePemName(e.target.value)
+                setEditingPemData({ 
+                  ...editingPemData, 
+                  name: e.target.value  })
+              // handlePemName(e.target.value)
               }
             />
           </div>
+          <Label className="form-label" for="user-name">
+          To Use an Existing PEM File:
+            </Label>
           <FileUploader handleChange={console.log()} name="file" types={fileTypes} />
           {/* <div className="mb-2">
             <Label className="form-label" for="user-name">
@@ -645,7 +709,7 @@ const UserManagement = () => {
           </div> */}
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={onAddUserModalButtonPressed}>
+          <Button color="primary" onClick={onAddPemModalButtonPressed}>
             {loading
               ? "Creating.."
               : !editingProfileData?.id
