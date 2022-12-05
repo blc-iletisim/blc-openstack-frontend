@@ -669,7 +669,7 @@ const UserManagement = () => {
               type="text"
               id="database-name"
               placeholder="Instance Name"
-              //value={editingProfileData?.company || ""}
+              defaultValue={editingProfileData?.name || ""}
               onChange={(e) =>
                 setEditingProfileData({ ...editingProfileData, name: e.target.value  })
                 

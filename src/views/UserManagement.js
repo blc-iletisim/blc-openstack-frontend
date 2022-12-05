@@ -169,6 +169,7 @@ const UserManagement = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   console.log("editingProfileData set: ", editingProfileData);
+  console.log("editingProfileData role: ",editingProfileData?.role)
 
   useEffect(() => {
     dispatch(getUsersHttp());
@@ -514,6 +515,7 @@ const UserManagement = () => {
         password: editingProfileData?.password,
         company: editingProfileData.company,
         email: editingProfileData.email,
+        password: editingProfileData?.password,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         //lastUpdatedTime: new Date().getTime(),
@@ -618,7 +620,7 @@ const UserManagement = () => {
                   className="input-group-merge mb-2"
                   htmlFor="password"
                   placeholder="Password"
-                  defaultValue={editingProfileData?.password || ""}
+                  //defaultValue={editingProfileData?.password || ""}
                   onChange={(e) =>
                     setEditingProfileData({
                       ...editingProfileData,
@@ -646,7 +648,12 @@ const UserManagement = () => {
               options={rolesOptions}
               className="react-select"
               classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
+
+            /*    defaultValue={{
+              label:editingProfileData?.roleName || "",
+              value: 0,
+            }} */
+           defaultValue={editingProfileData?.roleName|| [""]}
               //defaultValue={editingProfileData?.roles || []}
               //defaultValue={editingProfileData?.role.label || []}
               onChange={(value) => {
@@ -656,6 +663,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
+                  roleName: value.map((rol)=>rol.label),
                   role: value.map((rol) => rol.value),
                   //role: value.label,
                 });
