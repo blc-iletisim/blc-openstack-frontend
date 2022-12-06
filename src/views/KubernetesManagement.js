@@ -64,104 +64,7 @@ const fileTypes = ["PEM"];
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 
-const UserManagement = () => {
-  // let arrPerm = [];
-  let arrRole = [];
-  let x = "";
-  //
-  const [userPermissionsArr, setUserPermissionsArr] = useState([]);
-  const [userRolesArr, setRolesArr] = useState([]);
-  const [hourText, setHourText] = useState();
-
-  const serverSideColumns = [
-    /* {
-      name: "Aktiflik",
-      selector: "deleted",
-      sortable: true,
-      width: "100px",
-      cell: (row) => {
-        return (
-          <Badge
-            color={row.deleted === true ? "danger" : "success"}
-            variant="dot"
-            className="text-center align-self-center"
-          >
-            {row.deleted === true ? "Pasif" : "Aktif"}
-          </Badge>
-        );
-      },
-    }, */
-    {
-      name: "İsim",
-      selector: "name",
-      sortable: true,
-      minWidth: "350px",
-    },
-    {
-      name: "Email",
-      selector: "email",
-      sortable: true,
-      minWidth: "350px",
-    },
-    {
-      name: "Şirket",
-      selector: "company",
-      sortable: true,
-      minWidth: "350px",
-    },
-    {
-      name: "Rol",
-      selector: "role.name",
-      sortable: true,
-      minWidth: "350px",
-      cell: (row) => <span>{row.role.name?.toUpperCase() || ""}</span>,
-    },
-    {
-      name: "Aksiyonlar",
-      allowOverflow: false,
-      maxWidth: "150px",
-      cell: (row) => {
-        return (
-          <div className="d-flex">
-            <UncontrolledDropdown>
-              <DropdownToggle className="pl-1" tag="span">
-                <MoreVertical size={15} />
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem
-                  tag="a"
-                  className="w-100"
-                  onClick={() => handleEditCategory(row)}
-                >
-                  <Edit size={15} />
-                  <span className="align-middle ml-50">Düzenle</span>
-                </DropdownItem>
-                {row.deleted === true ? (
-                  <DropdownItem
-                    tag="a"
-                    className="w-100"
-                    onClick={() => handleUnDeleteCategory(row)}
-                  >
-                    <HowToReg size={15} />
-                    <span className="align-middle ml-50">Aktif Et</span>
-                  </DropdownItem>
-                ) : (
-                  <DropdownItem
-                    tag="a"
-                    className="w-100"
-                    onClick={() => handleDeleteUser(row)}
-                  >
-                    <Trash size={15} />
-                    <span className="align-middle ml-50">Sil</span>
-                  </DropdownItem>
-                )}
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </div>
-        );
-      },
-    },
-  ];
+const KubernetesManagement = () => {
 
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
@@ -221,10 +124,6 @@ const UserManagement = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   setUsers(usersStore);
-  // }, [usersStore]);
-
   useEffect(() => {
     if (usersStore.data) {
       if (usersStore.total <= currentPage * rowsPerPage) {
@@ -281,7 +180,6 @@ const UserManagement = () => {
       ])
     ) }
   };
-
 
   useEffect(() => {
     getRolesOptions();
@@ -348,30 +246,6 @@ const UserManagement = () => {
     }
   };
 
-  // const handleOrganizationFilter = (e) => {
-  //   setSearchOrganizationsValue(e.target.value);
-
-  //   if (e.target.value !== "") {
-  //     setUsers(
-  //       usersStore?.data
-  //         .filter((org) =>
-  //           org.organization.name.toLowerCase().includes(e.target.value.toLowerCase())
-  //         )
-  //         .slice(
-  //           currentPage * rowsPerPage - rowsPerPage,
-  //           currentPage * rowsPerPage
-  //         )
-  //     );
-  //   } else {
-  //     setUsers(
-  //       usersStore?.data.slice(
-  //         currentPage * rowsPerPage - rowsPerPage,
-  //         currentPage * rowsPerPage
-  //       )
-  //     );
-  //   }
-  // };
-
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
     setUsers(
@@ -382,16 +256,6 @@ const UserManagement = () => {
     );
   };
 
-  // const handlePagination2 = (page) => {
-  //   setCurrentPage(page.selected + 1);
-  //   setOrganizations(
-  //     OrganisationsStore?.data?.slice(
-  //       (page.selected + 1) * rowsPerPage - rowsPerPage,
-  //       (page.selected + 1) * rowsPerPage
-  //     )
-  //   );
-  // };
-
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
     setUsers(
@@ -401,16 +265,7 @@ const UserManagement = () => {
       )
     );
   };
-  // const handlePerPage2 = (e) => {
-  //   setRowsPerPage(parseInt(e.target.value));
-  //   setOrganizations(
-  //     OrganisationsStore?.data?.slice(
-  //       currentPage * parseInt(e.target.value) - parseInt(e.target.value),
-  //       currentPage * parseInt(e.target.value)
-  //     )
-  //   );
-  // };
-
+ 
   const onSort = (column, direction) => {
     setUsers(
       usersStore.data
@@ -428,24 +283,6 @@ const UserManagement = () => {
         )
     );
   };
-
-  // const onSort2 = (column, direction) => {
-  //   setOrganizations(
-  //     OrganisationsStore?.data
-  //       .sort((a, b) => {
-  //         if (a[column.selector] === b[column.selector]) return 0;
-  //         if (direction === "asc") {
-  //           return a[column.selector] > b[column.selector] ? 1 : -1;
-  //         } else {
-  //           return a[column.selector] < b[column.selector] ? 1 : -1;
-  //         }
-  //       })
-  //       .slice(
-  //         currentPage * rowsPerPage - rowsPerPage,
-  //         currentPage * rowsPerPage
-  //       )
-  //   );
-  // };
 
   const CustomPagination = () => {
     const count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
@@ -475,35 +312,6 @@ const UserManagement = () => {
       />
     );
   };
-
-  // const CustomPagination2 = () => {
-  //   const count = Number((OrganisationsStore?.data?.length / rowsPerPage).toFixed(1));
-
-  //   return (
-  //     <ReactPaginate
-  //       previousLabel={""}
-  //       nextLabel={""}
-  //       breakLabel="..."
-  //       pageCount={count || 1}
-  //       marginPagesDisplayed={2}
-  //       pageRangeDisplayed={2}
-  //       activeClassName="active"
-  //       forcePage={currentPage !== 0 ? currentPage - 1 : 0}
-  //       onPageChange={(page) => handlePagination2(page)}
-  //       pageClassName={"page-item"}
-  //       nextLinkClassName={"page-link"}
-  //       nextClassName={"page-item next"}
-  //       previousClassName={"page-item prev"}
-  //       previousLinkClassName={"page-link"}
-  //       pageLinkClassName={"page-link"}
-  //       breakClassName="page-item"
-  //       breakLinkClassName="page-link"
-  //       containerClassName={
-  //         "pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
-  //       }
-  //     />
-  //   );
-  // };
 
   const onAddPemButtonPressed = () =>{
     setEditingPemData({
@@ -535,21 +343,13 @@ const UserManagement = () => {
       const newUserData = {
         name: editingProfileData.name,
         email: editingProfileData.email,
-        password: editingProfileData?.password,
         categories:editingProfileData?.categories,
         flavors: editingProfileData?.flavors,
-        company: editingProfileData.company,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
-        lastUpdatedBy: authStore.id,
         id: editingProfileData.id,
-        //roles: editingProfileData?.role[0],
-        //role:editingProfileData?.role?.map((rol) => rol.value),
-
-        deleted: editingProfileData.deleted || null,
         deletedAt: editingProfileData.deletedAt || null,
-        deletedBy: editingProfileData.deletedBy || null,
       };
 
       dispatch(addInstances( newUserData))
@@ -573,9 +373,6 @@ const UserManagement = () => {
   };
 
   const onAddPemModalButtonPressed = () => {
-  
-
-      
     const newPemData = {
       name: editingPemData?.name,
       
@@ -599,29 +396,6 @@ const UserManagement = () => {
           preventDuplicate: true,
         });
       });
-//pem için dispatch kısımı düzelt
-
-     /*  const newPemData = {
-        name: editingPemData?.name
-      }
-      dispatch(createPem(newPemData))
-      .then(() => {
-        setLoading(false);
-        setShowAddUserModal(false);
-        enqueueSnackbar("Successfull.", {
-          variant: "success",
-          preventDuplicate: true,
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-        setShowAddUserModal(false);
-        enqueueSnackbar("Error.", {
-          variant: "error",
-          preventDuplicate: true,
-        });
-      }); */
-  
 };
 
   //*******************************************************
@@ -659,54 +433,6 @@ const UserManagement = () => {
           To Use an Existing PEM File:
             </Label>
           <FileUploader handleChange={console.log()} name="file" types={fileTypes} />
-          {/* <div className="mb-2">
-            <Label className="form-label" for="user-name">
-              Kullanıcı İsmi:
-            </Label>
-            <Input
-              type="text"
-              id="user-name"
-              placeholder="Kullanıcı İsmi"
-              value={editingProfileData?.name || ""}
-              onChange={(e) =>
-                setEditingProfileData({
-                  ...editingProfileData,
-                  name: e.target.value,
-                })
-              }
-            />
-          </div>
-        
-          <div className="mb-2">
-            <Label className="form-label" for="permissions-select">
-              Kullanıcı Rolü
-            </Label>
-            <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
-              options={rolesOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
-              onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
-                setEditingProfileData({
-                  ...editingProfileData,
-                  role: value.map((rol) => rol.value),
-                  //role: value.label,
-                });
-              }}
-            />
-          </div> */}
         </ModalBody>
         <ModalFooter>
         <Button color="primary" onClick={onAddPemModalButtonPressed}>
@@ -720,9 +446,9 @@ const UserManagement = () => {
       </Modal>
     );
   };
-  const hanglePemName = (pemName) =>{
+/*   const hanglePemName = (pemName) =>{
     dispatch(createPem(pemName))
-  }
+  } */
 
   const handleDeleteUser = (selectedUser) => {
     return Swal.fire({
@@ -743,54 +469,6 @@ const UserManagement = () => {
         dispatch(deleteUser(selectedUser.id));
       }
     });
-  };
-
-  const handleUnDeleteCategory = (selectedUser) => {
-    // return Swal.fire({
-    //   title: `${selectedUser.name} Kullanıcısını Aktif Etmek İstediğinize Emin misiniz?`,
-    //   text: "",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonText: "Aktif Et",
-    //   cancelButtonText: "İptal",
-    //   customClass: {
-    //     confirmButton: "btn btn-primary",
-    //     cancelButton: "btn btn-danger ml-1",
-    //   },
-    //   buttonsStyling: false,
-    // }).then(function (result) {
-    //   if (result.value) {
-    //     let permissions = {};
-    //     selectedUser.permissions.forEach((p) => {
-    //       permissions[p.value] = true;
-    //     });
-    //     set(ref(database, `users/${selectedUser.uid}`), {
-    //       ...selectedUser,
-    //       permissions,
-    //       lastUpdatedTime: new Date().getTime(),
-    //       lastUpdatedBy: authStore.uid,
-    //       deleted: false,
-    //       deletedAt: null,
-    //       deletedBy: null,
-    //     })
-    //       .then(() => {
-    //         enqueueSnackbar(
-    //           `${selectedUser.name} kullanıcısı başarıyla aktif edildi.`,
-    //           {
-    //             variant: "success",
-    //           }
-    //         );
-    //       })
-    //       .catch(() =>
-    //         enqueueSnackbar(
-    //           `${selectedUser.name} Kullanıcısı aktif edilirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
-    //           {
-    //             variant: "error",
-    //           }
-    //         )
-    //       );
-    //   }
-    // });
   };
 
   const handleEditCategory = (selectedUser) => {
@@ -860,36 +538,7 @@ const UserManagement = () => {
              
             />
           </div>
-          {/* <div className="mb-2">
-            <Label className="form-label" for="permissions-select">
-              Choose a Database:
-            </Label>
-            <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
-              options={categoriesOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
-              onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
-                setEditingProfileData({
-                  ...editingProfileData,
-                  categories: value.map((category) => category.value),
-                  //role: value.label,
-                });
-              }}
-            />
-          </div> */}
+      
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
               Choose Database Configuration:
@@ -977,4 +626,4 @@ const UserManagement = () => {
   );
 };
 
-export default memo(UserManagement);
+export default memo(KubernetesManagement);

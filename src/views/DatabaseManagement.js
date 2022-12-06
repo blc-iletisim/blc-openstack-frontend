@@ -64,7 +64,7 @@ const animatedComponents = makeAnimated();
 
 const fileTypes = ["PEM"];
 
-const UserManagement = () => {
+const DatabaseManagement = () => {
   
 
   const dispatch = useDispatch();
@@ -693,4 +693,4 @@ const UserManagement = () => {
   );
 };
 
-export default memo(UserManagement);
+export default memo(DatabaseManagement);

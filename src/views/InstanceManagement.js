@@ -54,7 +54,7 @@ import { getCategories} from "../redux/actions/categories";
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 
-const UserManagement = () => {
+const InstanceManagement = () => {
   // let arrPerm = [];
   let arrRole = [];
   let x = "";
@@ -1006,4 +1006,4 @@ const UserManagement = () => {
   );
 };
 
-export default memo(UserManagement);
+export default memo(InstanceManagement);
