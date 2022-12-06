@@ -1,10 +1,17 @@
 // assets
-import { LoginOutlined, ProfileOutlined } from '@ant-design/icons';
+import { DatabaseOutlined, ProfileOutlined } from '@ant-design/icons';
+import { FaDocker } from 'react-icons/fa';
+import { GrHadoop } from 'react-icons/gr';
+import { SiKubernetes } from 'react-icons/si';
+import { BsFillInboxesFill } from 'react-icons/bs';
 
 // icons
 const icons = {
-    LoginOutlined,
-    ProfileOutlined
+    DatabaseOutlined,
+    FaDocker,
+    GrHadoop,
+    SiKubernetes,
+    BsFillInboxesFill
 };
 
 // ==============================|| MENU ITEMS - EXTRA PAGES ||============================== //
@@ -15,11 +22,11 @@ const services = {
     type: 'group',
     children: [
         {
-            id: 'database',
-            title: 'Database',
+            id: 'databases',
+            title: 'Databases',
             type: 'item',
             url: '/databases',
-            icon: icons.LoginOutlined,
+            icon: icons.DatabaseOutlined,
             target: false
         },
         {
@@ -27,7 +34,7 @@ const services = {
             title: 'Docker',
             type: 'item',
             url: '/docker',
-            icon: icons.ProfileOutlined,
+            icon: icons.FaDocker,
             target: false
         },
         {
@@ -35,7 +42,7 @@ const services = {
             title: 'Hadoop',
             type: 'item',
             url: '/hadoop',
-            icon: icons.ProfileOutlined,
+            icon: icons.GrHadoop,
             target: false
         },
         {
@@ -43,14 +50,14 @@ const services = {
             title: 'Kubernetes',
             type: 'item',
             url: '/kubernetes',
-            icon: icons.ProfileOutlined,
+            icon: icons.SiKubernetes,
             target: false
         },{
-            id: 'instance',
-            title: 'Instance',
+            id: 'instances',
+            title: 'Instances',
             type: 'item',
-            url: '/instance',
-            icon: icons.ProfileOutlined,
+            url: '/instances',
+            icon: icons.BsFillInboxesFill,
             target: false
         }
     ]
