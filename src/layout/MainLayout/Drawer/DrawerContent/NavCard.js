@@ -17,7 +17,7 @@ const NavCard = () => (
             <Stack alignItems="center">
                 <Typography variant="h5">Mantis Pro</Typography>
                 <Typography variant="h6" color="secondary">
-                    Checkout pro features
+                     pro features
                 </Typography>
             </Stack>
             <AnimateButton>
