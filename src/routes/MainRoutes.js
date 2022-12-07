@@ -5,10 +5,15 @@ import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
 
 // render - dashboard
-const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
+const Dashboard = Loadable(lazy(() => import('pages/dashboard')));
 const UserManagement = Loadable(lazy(() => import('pages/management/userManagement')));
 const RoleManagement = Loadable(lazy(() => import('pages/management/roleManagement')));
 
+const Databases = Loadable(lazy(() => import('pages/services/databases')));
+const Docker = Loadable(lazy(() => import('pages/services/docker')));
+const Kubernetes = Loadable(lazy(() => import('pages/services/kubernetes')));
+const Hadoop = Loadable(lazy(() => import('pages/services/hadoop')));
+const Instances = Loadable(lazy(() => import('pages/services/instances')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -17,15 +22,19 @@ const MainRoutes = {
     element: <MainLayout />,
     children: [
         {
+            path: '',
+            element: <Dashboard />
+        },
+        {
             path: 'management',
             children: [
                 {
                     path: 'users',
-                    element: <DashboardDefault />
+                    element: <UserManagement />
                 },
                 {
                     path: 'roles',
-                    element: <DashboardDefault />
+                    element: <RoleManagement />
                 }
             ]
         },
@@ -34,23 +43,23 @@ const MainRoutes = {
             children: [
                 {
                     path: 'databases',
-                    element: <DashboardDefault />
+                    element: <Databases />
                 },
                 {
                     path: 'docker',
-                    element: <DashboardDefault />
+                    element: <Docker />
                 },
                 {
                     path: 'hadoop',
-                    element: <DashboardDefault />
+                    element: <Hadoop />
                 },
                 {
                     path: 'kubernetes',
-                    element: <DashboardDefault />
+                    element: <Kubernetes/>
                 },
                 {
                     path: 'instances',
-                    element: <DashboardDefault />
+                    element: <Instances />
                 }
             ]
         }

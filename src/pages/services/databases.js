@@ -30,7 +30,7 @@ const actionSX = {
 
 
 
-    const UserManagement = () =>{
+    const Databases = () =>{
     const [slot, setSlot] = useState('week');
 
     return (
@@ -40,7 +40,7 @@ const actionSX = {
             <Grid item xs={12} md={7} lg={12}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item>
-                        <Typography variant="h5">Recent Orders</Typography>
+                        <Typography variant="h5">Databases</Typography>
                     </Grid>
                     <Grid item />
                 </Grid>
@@ -48,9 +48,8 @@ const actionSX = {
                     <OrdersTable />
                 </MainCard>
             </Grid>
-
         </Grid>
     );
 };
 
-export default UserManagement;
+export default Databases;
