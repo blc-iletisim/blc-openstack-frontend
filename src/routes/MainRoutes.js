@@ -6,15 +6,9 @@ import MainLayout from 'layout/MainLayout';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
+const UserManagement = Loadable(lazy(() => import('pages/management/userManagement')));
+const RoleManagement = Loadable(lazy(() => import('pages/management/roleManagement')));
 
-// render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
-
-// render - utilities
-const Typography = Loadable(lazy(() => import('pages/components-overview/Typography')));
-const Color = Loadable(lazy(() => import('pages/components-overview/Color')));
-const Shadow = Loadable(lazy(() => import('pages/components-overview/Shadow')));
-const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -23,37 +17,42 @@ const MainRoutes = {
     element: <MainLayout />,
     children: [
         {
-            path: '/',
-            element: <DashboardDefault />
-        },
-        {
-            path: 'color',
-            element: <Color />
-        },
-        {
-            path: 'dashboard',
+            path: 'management',
             children: [
                 {
-                    path: 'default',
+                    path: 'users',
+                    element: <DashboardDefault />
+                },
+                {
+                    path: 'roles',
                     element: <DashboardDefault />
                 }
             ]
         },
         {
-            path: 'sample-page',
-            element: <SamplePage />
-        },
-        {
-            path: 'shadow',
-            element: <Shadow />
-        },
-        {
-            path: 'typography',
-            element: <Typography />
-        },
-        {
-            path: 'icons/ant',
-            element: <AntIcons />
+            path: 'services',
+            children: [
+                {
+                    path: 'databases',
+                    element: <DashboardDefault />
+                },
+                {
+                    path: 'docker',
+                    element: <DashboardDefault />
+                },
+                {
+                    path: 'hadoop',
+                    element: <DashboardDefault />
+                },
+                {
+                    path: 'kubernetes',
+                    element: <DashboardDefault />
+                },
+                {
+                    path: 'instances',
+                    element: <DashboardDefault />
+                }
+            ]
         }
     ]
 };

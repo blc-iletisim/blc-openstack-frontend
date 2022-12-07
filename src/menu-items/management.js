@@ -18,7 +18,7 @@ const management = {
             id: 'userManagement',
             title: 'User Management',
             type: 'item',
-            url: '/users',
+            url: 'management/users',
             icon: icons.UserOutlined,
             breadcrumbs: false
         },
@@ -26,7 +26,7 @@ const management = {
             id: 'roleManagement',
             title: 'RoleManagement',
             type: 'item',
-            url: '/roles',
+            url: 'management/roles',
             icon: icons.UserSwitchOutlined,
             breadcrumbs: false
         }
