@@ -77,7 +77,7 @@ const RoleManagement = () => {
       sortable: true,
       minWidth: "350px",
       cell: (row) => (
-        <span>{row.permissions?.map((perm) => perm.name + "  , ")}</span>
+        <span>{row.permissions?.map((perm) => perm?.name)+""}</span>
       ),
     },
     {
@@ -145,21 +145,14 @@ const RoleManagement = () => {
   const [showAddRoleModal, setShowAddRoleModal] = useState(false);
   const [editingRoleData, setEditingRoleData] = useState(null);
   //const [per, setPer] = useState(null);
-  //console.log("editingRoleData set: ", editingRoleData);
+  console.log("editingRoleData set: ", editingRoleData);
 
   useEffect(() => {
+    dispatch(getPermissions());
     dispatch(getRoles());
     console.log("rolesStore: ", rolesStore);
     if (rolesStore.length > 0) {
       setRolesOptions(rolesStore);
-    }
-  }, []);
-
-  useEffect(() => {
-    dispatch(getPermissions());
-    console.log("permissionsStore: ", PermissionsStore);
-    if (PermissionsStore.length > 0) {
-      setPermissionsOptions(PermissionsStore);
     }
   }, []);
 
@@ -180,41 +173,17 @@ const RoleManagement = () => {
   }, [rolesStore.total, rolesStore]);
 
   useEffect(() => {
-    getPermissionsOptions();
-  }, [PermissionsStore]);
-
-  const getPermissionsOptions = () => {
-    if ( permissionsOptions.length === 0 ) {
-    PermissionsStore.permissions?.forEach((permission) =>
-      setPermissionsOptions((permissionsOptions) => [
-        ...permissionsOptions,
-        {
-          value: permission.id,
-          label: permission?.name,
-          color: "#00B8D9",
-          isFixed: true,
-        },
-      ])
-    ) }
-  };
-
-  useEffect(() => {
-    getRolesOptions();
-  }, [rolesStore]);
-
-  const getRolesOptions = () => {
-    rolesStore.roles?.forEach((rol) =>
-      setRolesOptions((rolesOptions) => [
-        {
-          value: rol.id,
-          label: rol?.name,
-          permissions: rol.permissions,
-          color: "#00B8D9",
-          isFixed: true,
-        },
-      ])
+    setPermissionsOptions(
+      PermissionsStore?.permissions?.map((permission) => {
+     return {
+        value: permission?.id,
+        label: permission?.name,
+        color: "#00B8D9",
+        isFixed: true,
+      };
+    })
     );
-  };
+  }, [PermissionsStore]);
 
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
@@ -265,17 +234,17 @@ const RoleManagement = () => {
   };
 
   const onAddRoleButtonPressed = () => {
-    setEditingRoleData({
-      name: "",
-      id: "",
-      permissions: "",
-    });
+    setEditingRoleData({id: null});
     setShowAddRoleModal(true);
   };
   const onAddRoleModalButtonPressed = () => {
     const arr = [];
-    const r = editingRoleData?.role.forEach((s) => {
-      arr.push('"' + s + '"');
+    const r = editingRoleData?.permissions.forEach((s) => {
+      if(s?.value){
+        arr.push('"' + s?.value + '"');
+      }else{
+        arr.push('"' + s + '"');
+      }
     });
     setLoading(true);
     if (
@@ -392,15 +361,11 @@ const RoleManagement = () => {
               options={permissionsOptions}
               className="react-select"
               classNamePrefix="Select"
-              defaultValue={editingRoleData?.role || []}
+              defaultValue={editingRoleData?.permissions}
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingRoleData({
                   ...editingRoleData,
-                  role: value.map((rol) => rol.value),
+                  permissions: value,
                 });
               }}
             />
@@ -487,20 +452,15 @@ const RoleManagement = () => {
 
   const handleEditRole = (selectedRole) => {
     setShowAddRoleModal(true);
-    const selectedRolePermissions = (selectedRole.permissions || []).map(
-      (p) => {
-        /*  const foundPermData = userRoles.find(
-          (perm) => perm.value === p.authority
-        );
-        if (foundPermData) {
-          return foundPermData;
-        } */
-      }
+    selectedRole.permissions = selectedRole.permissions?.map(
+      (x) => ({
+        value: x.id,
+        label:x.name
+      })
     );
-
     setEditingRoleData({
       ...selectedRole,
-      permissions: selectedRolePermissions,
+      permissions: selectedRole.permissions,
     });
   };
 
