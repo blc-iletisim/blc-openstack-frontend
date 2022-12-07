@@ -55,7 +55,7 @@ import { getInstances,addInstances } from "../redux/actions/instances";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 import {
-  createPem
+  createPem,uploadPem,getPem
 } from "../redux/actions/pem";
 import { FileUploader } from "react-drag-drop-files";
 
@@ -228,7 +228,12 @@ const DatabaseManagement = () => {
   };
 
 
-
+  const handleChangePem = (file) => {
+    console.log("handleChangePem file:",file)
+    setEditingPemData({ 
+      ...editingPemData, 
+      file: file  })
+  };
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
 
@@ -394,27 +399,49 @@ const DatabaseManagement = () => {
   const onAddPemModalButtonPressed = () => {      
       const newPemData = {
         name: editingPemData?.name,
+        file:editingPemData?.file,
         
       };
       console.log("newPemData: ",newPemData)
 
-      dispatch(createPem(newPemData.name))
-        .then(() => {
-          setLoading(false);
-          setShowAddUserModal(false);
-          enqueueSnackbar("Successfull.", {
-            variant: "success",
-            preventDuplicate: true,
-          });
-        })
-        .catch(() => {
-          setLoading(false);
-          setShowAddUserModal(false);
-          enqueueSnackbar("Error.", {
-            variant: "error",
-            preventDuplicate: true,
-          });
-        });
+      //3.durum hem isim hem dosya yükleme durumunda hata veren bir yazı yazdır!!!
+        if(newPemData.file===null){
+          dispatch(createPem(newPemData.name))
+          .then(() => {
+            setLoading(false);
+            setShowAddUserModal(false);
+            enqueueSnackbar("Successfull.", {
+              variant: "success",
+              preventDuplicate: true,
+            });
+          })
+          .catch(() => {
+            setLoading(false);
+            setShowAddUserModal(false);
+            enqueueSnackbar("Error.", {
+              variant: "error",
+              preventDuplicate: true,
+            });
+          });}
+              else{dispatch(uploadPem(newPemData.file))
+                .then(() => {
+                  setLoading(false);
+                  setShowAddUserModal(false);
+                  enqueueSnackbar("Successfull.", {
+                    variant: "success",
+                    preventDuplicate: true,
+                  });
+                })
+                .catch(() => {
+                  setLoading(false);
+                  setShowAddUserModal(false);
+                  enqueueSnackbar("Error.", {
+                    variant: "error",
+                    preventDuplicate: true,
+                  });
+                });}
+
+        
 //pem için dispatch kısımı düzelt
 
        /*  const newPemData = {
@@ -484,7 +511,7 @@ const DatabaseManagement = () => {
         <Label className="form-label" for="user-name">
           To Use an Existing PEM File:
             </Label>
-        <FileUploader handleChange={console.log()} name="file" types={fileTypes} />
+        <FileUploader handleChange={handleChangePem} name="file" types={fileTypes} />
 
         </ModalBody>
         <ModalFooter>
