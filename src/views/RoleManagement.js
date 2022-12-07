@@ -305,7 +305,7 @@ const RoleManagement = () => {
         .then(() => {
           setLoading(false);
           setShowAddRoleModal(false);
-          enqueueSnackbar("Role successfully added.", {
+          enqueueSnackbar("Role added successfully.", {
             variant: "success",
             preventDuplicate: true,
           });
@@ -313,7 +313,7 @@ const RoleManagement = () => {
         .catch(() => {
           setLoading(false);
           setShowAddRoleModal(false);
-          enqueueSnackbar("Role failed added .", {
+          enqueueSnackbar("Role failed added.", {
             variant: "error",
             preventDuplicate: true,
           });
