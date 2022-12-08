@@ -64,61 +64,20 @@ export const getPem = (user_id) => {
 
 
 export const uploadPem= (file) => {
-  console.log("uploadPem:", file);
-  let formData = new FormData();
-  //const formData = new FormData();
-/*   formData.append('file', {
-    uri: "path",
-    name: Math.random() + ('image.jpg'),
-    type: 'image/jpeg',
-  }); */
- //formData.append('file',file)
-
-
- //formData.append('data', file, { filename : 'document.pem' });
-
-/*  formData.append('file', Buffer.from(file), {
-  filename: 'image1.jpg', 
-  filepath: 'photos/image1.jpg',
-  contentType: 'image/jpeg',
-  knownLength: 19803
-});
- */
- /* formData.append('file', {
- 
-  uri: "ath",
-  name: Math.random() + ('image.jpg'),
-  type: 'image/jpeg',
-}); */
-formData.append("file", file);
-//formData.append('file', file);
-//formData.append('file', file.File);
-var options = { content: formData };
-  console.log("formData: ",formData)
-  console.log("options: ", options);
-  
-
-
-//formData boş geliyor buna çevirmede problem olabilir 
-
-  /* const formData = new FormData();
-  formData.append('fileUpload', file); */
+console.log("files: ",file)
   return async (dispatch) => {
     ApplicationService.http()
-      .post("/pem/uploadFile", {},{
-        params: {
-          //file:file
-        file:formData
-          //file: options.content,
-        },
+      .post("/pem/uploadFile", file,{
+      
         headers: {
-          //"Content-Type": "application/x-www-form-urlencoded",
-         //"Content-Type": "application/json",
-         "Content-Type": "multipart/form-data",
-         //'content-type': 'multipart/form-data',
+          Accept: 'application/json',
+          //'Content-Type': `multipart/form-data; boundary=${file.getBoundary()}`,
+          //'Content-Type': `multipart/form-data`,
+          //"Content-Type":  "multipart/form-data",
           Authorization:
             "Bearer " + (await localStorage.getItem("accessToken")),
         },
+        
       })
       .then((response) => {
         console.log("uploadPEM Response: ",response.data)
@@ -131,7 +90,7 @@ var options = { content: formData };
         });
       })
       .catch((error) => {
-        console.log("error", error);
+        console.log("error1", error);
       });
   };
   
