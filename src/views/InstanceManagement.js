@@ -273,7 +273,7 @@ const InstanceManagement = () => {
   useEffect(() => {
     if (instancesStore.instances) {
       if (instancesStore.total <= currentPage * rowsPerPage) {
-        setCurrentPage();
+        setCurrentPage(1);
         setInstances(instancesStore.instances?.slice(0, rowsPerPage));
       } else {
         setInstances(
