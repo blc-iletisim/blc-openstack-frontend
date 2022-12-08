@@ -452,15 +452,15 @@ const RoleManagement = () => {
 
   const handleEditRole = (selectedRole) => {
     setShowAddRoleModal(true);
-    selectedRole.permissions = selectedRole.permissions?.map(
+    const selectedRolePermissions = selectedRole.permissions?.map(
       (x) => ({
         value: x.id,
         label:x.name
       })
-    );
+    )
     setEditingRoleData({
       ...selectedRole,
-      permissions: selectedRole.permissions,
+      permissions: selectedRolePermissions,
     });
   };
 
