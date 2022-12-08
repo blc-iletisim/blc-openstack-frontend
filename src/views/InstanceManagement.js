@@ -88,10 +88,13 @@ const InstanceManagement = () => {
       minWidth: "350px",
     },
     {
-      name: "Database",
-      selector: "categories[0].name",
+      name: "Services",
+      selector: "categories",
       sortable: true,
       minWidth: "350px",
+      cell: (row) => (
+        <span>{row.categories?.map((perm) => perm?.name)+""}</span>
+      ),
       
     },
      {
@@ -528,20 +531,23 @@ const InstanceManagement = () => {
   const onAddUserButtonPressed = () => {
     setEditingProfileData({
       name: "",
-      password: "",
-      email: "",
-      company: "",
-      role: "",
       id: "",
       flavors:"",
       categories:"",
-      company:"",
     });
     setShowAddUserModal(true);
   };
   //*****************************************************************************
  
   const onAddUserModalButtonPressed = () => {
+    const arr = [];
+    const r = editingProfileData?.categories.forEach((s) => {
+      if(s?.value){
+        arr.push('"' + s?.value + '"');
+      }else{
+        arr.push('"' + s + '"');
+      }
+    });
     setLoading(true);
     if (
       usersStore.data?.some(
@@ -573,21 +579,14 @@ const InstanceManagement = () => {
     if (true) {
       console.log("editingProfileData: ", editingProfileData);
       const newUserData = {
-        name: editingProfileData.name,
-        email: editingProfileData.email,
-        password: editingProfileData?.password,
-        company: editingProfileData.company,
-        categories:editingProfileData?.categories,
-        flavors: editingProfileData?.flavors,
-        company: editingProfileData.company,
+        name: editingProfileData?.name,
+        categories: arr,
+        flavors: editingProfileData?.flavors.value,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
         id: editingProfileData.id,
-        roles: editingProfileData?.role[0],
-        //role:editingProfileData?.role?.map((rol) => rol.value),
-
         deleted: editingProfileData.deleted || null,
         deletedAt: editingProfileData.deletedAt || null,
         deletedBy: editingProfileData.deletedBy || null,
@@ -705,18 +704,11 @@ const InstanceManagement = () => {
               options={categoriesOptions}
               className="react-select"
               classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
+              defaultValue={editingProfileData?.categories}
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingProfileData({
                   ...editingProfileData,
-                  categories: value.map((category) => category.value),
-                  //role: value.label,
+                  categories: value,
                 });
               }}
             />
@@ -729,24 +721,17 @@ const InstanceManagement = () => {
               id="permissions-select"
               isClearable={false}
               theme={selectThemeColors}
-              closeMenuOnSelect={false}
+              closeMenuOnSelect={true}
               components={animatedComponents}
-              isMulti
+              //isMulti
               options={flavorsOptions}
               className="react-select"
               classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
+              defaultValue={editingProfileData?.flavors}
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingProfileData({
                   ...editingProfileData,
-                  flavors: value.map((flavor) => flavor.value),
-                  //role: value.label,
+                  flavors: value,
                 });
               }}
             />
@@ -895,20 +880,24 @@ const InstanceManagement = () => {
   };
 
   const handleEditCategory = (selectedInstance) => {
-    console.log("users store selected user: ", selectedInstance);
+    console.log("selected instance: ", selectedInstance);
     setShowAddUserModal(true);
-    const selectedUserRoles = (selectedInstance.roles || []).map((p) => {
-      /*  const foundPermData = userRoles.find(
-          (perm) => perm.value === p.authority
-        );
-        if (foundPermData) {
-          return foundPermData;
-        } */
-    });
-
+    const selectedCategories = selectedInstance.categories?.map(
+      (x) => ({
+        value: x.id,
+        label:x.name
+      })
+    )
     setEditingProfileData({
       ...selectedInstance,
-      role: selectedUserRoles,
+      categories: selectedCategories,
+      flavors:{label:selectedInstance.flavor.name +":"+
+        " cpu size: " + selectedInstance.flavor.cpu_size +
+         "," + 
+         " ram size: "+ selectedInstance.flavor.ram_size +
+         "," +
+         " root disk: "+ selectedInstance.flavor.root_disk,
+         value:selectedInstance.flavor.id},
     });
   };
 
