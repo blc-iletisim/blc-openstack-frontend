@@ -31,7 +31,7 @@ import {
   HowToReg,
   SatelliteAlt,
   SettingsEthernet,
-} from "@mui/icons-material";
+  } from "@mui/icons-material";
 import { getUsersHttp } from "@src/redux/actions/users";
 import moment from "moment";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -145,7 +145,6 @@ const UserManagement = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   console.log("editingProfileData set: ", editingProfileData);
-  console.log("editingProfileData role: ",editingProfileData?.role)
 
   useEffect(() => {
     dispatch(getUsersHttp());
@@ -320,7 +319,7 @@ const UserManagement = () => {
       password: "",
       email: "",
       company: "",
-      role: "",
+      roles: "",
       id: "",
     });
     setShowAddUserModal(true);
@@ -335,7 +334,7 @@ const UserManagement = () => {
       )
     ) {
       enqueueSnackbar(
-        "Bu email adresi başka bir hesap ile ilişkilendirilmiştir.",
+        "There is a user with this email.",
         {
           variant: "error",
           preventDuplicate: true,
@@ -346,7 +345,7 @@ const UserManagement = () => {
     }
 
     if (editingProfileData.password && editingProfileData.password <= 6) {
-      enqueueSnackbar("6 karakterden uzun bir şifre giriniz.", {
+      enqueueSnackbar("Enter a password longer than 6 characters.", {
         variant: "error",
         preventDuplicate: true,
       });
@@ -367,9 +366,7 @@ const UserManagement = () => {
         lastUpdatedTime: new Date().getTime(),
         lastUpdatedBy: authStore.id,
         id: editingProfileData.id,
-        roles: editingProfileData?.role[0],
-        //role:editingProfileData?.role?.map((rol) => rol.value),
-
+        roles: editingProfileData?.roles,
         deleted: editingProfileData.deleted || null,
         deletedAt: editingProfileData.deletedAt || null,
         deletedBy: editingProfileData.deletedBy || null,
@@ -379,7 +376,7 @@ const UserManagement = () => {
         .then(() => {
           setLoading(false);
           setShowAddUserModal(false);
-          enqueueSnackbar("Kullanıcı başarıyla eklendi.", {
+          enqueueSnackbar("User added successfully.", {
             variant: "success",
             preventDuplicate: true,
           });
@@ -387,7 +384,7 @@ const UserManagement = () => {
         .catch(() => {
           setLoading(false);
           setShowAddUserModal(false);
-          enqueueSnackbar("Kullanıcı eklenirken bir hata oluştu.", {
+          enqueueSnackbar("An error occurred while adding the user.", {
             variant: "error",
             preventDuplicate: true,
           });
@@ -404,12 +401,12 @@ const UserManagement = () => {
         password: editingProfileData?.password,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
-        roles: editingProfileData?.role[0],
+        roles: editingProfileData?.roles,
       };
       console.log("NUD", newUserData);
       dispatch(updateUser(newUserData.createdBy, newUserData))
         .then(() => {
-          enqueueSnackbar("Kullanıcı Güncellendi", {
+          enqueueSnackbar("User Updated", {
             variant: "success",
           });
           setLoading(false);
@@ -419,7 +416,7 @@ const UserManagement = () => {
         })
         .catch(() => {
           enqueueSnackbar(
-            `${newUserData.name} kullanıcısı güncellenirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
+            `A server connection error occurred while updating the ${newUserData.name} user, please try again.`,
             {
               variant: "error",
             }
@@ -439,7 +436,7 @@ const UserManagement = () => {
         <ModalHeader toggle={() => setShowAddUserModal(!showAddUserModal)}>
           {editingProfileData?.id
             ? editingProfileData.name
-            : "Yeni Kullanıcı Ekle"}
+            : "Add New User"}
         </ModalHeader>
         <ModalBody>
           <div className="mb-2">
@@ -526,20 +523,15 @@ const UserManagement = () => {
               id="permissions-select"
               isClearable={false}
               theme={selectThemeColors}
-              closeMenuOnSelect={false}
+              closeMenuOnSelect={true}
               components={animatedComponents}
-              isMulti
               options={rolesOptions}
               className="react-select"
-              classNamePrefix="Seç"
-
-            /*    defaultValue={{
-              label:editingProfileData?.roleName || "",
-              value: 0,
-            }} */
-           defaultValue={editingProfileData?.roleName|| [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
+              classNamePrefix="Select"
+              defaultValue={{
+                label:editingProfileData?.role?.name || "",
+                value: editingProfileData?.role?.id || "",
+              }} 
               onChange={(value) => {
                 {
                   console.log("value:", value);
@@ -547,9 +539,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  roleName: value.map((rol)=>rol.label),
-                  role: value.map((rol) => rol.value),
-                  //role: value.label,
+                  roles: value.value,
                 });
               }}
             />
@@ -558,10 +548,10 @@ const UserManagement = () => {
         <ModalFooter>
           <Button color="primary" onClick={onAddUserModalButtonPressed}>
             {loading
-              ? "Kaydediliyor.."
+              ? "Loading.."
               : !editingProfileData?.id
-              ? "Oluştur"
-              : "Güncelle"}
+              ? "Create"
+              : "Update"}
           </Button>
         </ModalFooter>
       </Modal>
@@ -570,12 +560,12 @@ const UserManagement = () => {
 
   const handleDeleteUser = (selectedUser) => {
     return Swal.fire({
-      title: `${selectedUser.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
-      text: "Silinen hesaplar tekrar aktif edilebilir, ancak aynı email adresi ile tekrar hesap oluşturulamaz. Tüm yetkileri kaldırılacaktır!",
+      title: `Are you sure you want to delete the ${selectedUser.name} user?`,
+      text: "Deleted users can be reactivated. But all permissions will be removed!!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Sil",
-      cancelButtonText: "İptal",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
       customClass: {
         confirmButton: "btn btn-primary",
         cancelButton: "btn btn-danger ml-1",
@@ -651,7 +641,7 @@ const UserManagement = () => {
 
     setEditingProfileData({
       ...selectedUser,
-      role: selectedUserRoles,
+      roles: selectedUserRoles,
     });
   };
 
