@@ -39,9 +39,10 @@ class ApplicationService {
         .post(url, data, config)
         .then((data) => {
           resolve(data.data);
+          console.log("dataaa: ",data.data);
         })
         .catch((err) => {
-          reject(err);
+          reject("error" + err);
         });
     });
   };

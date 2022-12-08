@@ -227,21 +227,33 @@ const DatabaseManagement = () => {
     ) }
   };
 
-
-  const handleChangePem = (file) => {
-    console.log("handleChangePem file:",file)
-    setEditingPemData({ 
-      ...editingPemData, 
-      file: file  })
-  };
+  let formData = new FormData();
+  const handleChangePem = (e) => {
+    console.log("e: ",e)
+    console.log("handleChangePem file:",e?.target?.files[0])
+    
+    if(e){
+      formData.append('file',e)
+      setEditingPemData({ 
+        ...editingPemData, 
+        file: formData })
+    }};
+    
+   /*  if(e.target&&e.target.files[0]){
+      formData.append('file',e?.target?.files[0])
+      setEditingPemData({ 
+        ...editingPemData, 
+        file: formData })
+    }}; */
+  
   const handleFilter = (e) => {
-    setSearchValue(e.target.value);
+    setSearchValue(e?.target?.value);
 
-    if (e.target.value !== "") {
+    if (e?.target?.value !== "") {
       setUsers(
         usersStore.data
           .filter((user) =>
-            user.name.toLowerCase().includes(e.target.value.toLowerCase())
+            user.name.toLowerCase().includes(e?.target?.value?.toLowerCase())
           )
           .slice(
             currentPage * rowsPerPage - rowsPerPage,
@@ -340,6 +352,10 @@ const DatabaseManagement = () => {
     setShowAddUserModal(true);
   }
   const onAddUserButtonPressed = () => {
+    setEditingPemData({
+      name:"",
+      file:"",
+    })
     setEditingProfileData({
       name: "",
       categories:"",
@@ -350,6 +366,7 @@ const DatabaseManagement = () => {
       company: "",
       role: "",
       id: "",
+      file:"",
     });
   
     setShowAddUserModal(true);
@@ -404,8 +421,9 @@ const DatabaseManagement = () => {
       };
       console.log("newPemData: ",newPemData)
 
-      //3.durum hem isim hem dosya yükleme durumunda hata veren bir yazı yazdır!!!
-        if(newPemData.file===null){
+      //Name ve file girilip girilmemesine göre filtreleme yapıldı girilmemesi durumunda hata veriyor diğer kısımlara da ekle!!!!
+        if(newPemData.name!==null &&newPemData.file===undefined ){
+          console.log("iff")
           dispatch(createPem(newPemData.name))
           .then(() => {
             setLoading(false);
@@ -423,7 +441,8 @@ const DatabaseManagement = () => {
               preventDuplicate: true,
             });
           });}
-              else{dispatch(uploadPem(newPemData.file))
+              else if(newPemData.file!==null&&newPemData.name==="")
+              {dispatch(uploadPem(newPemData.file))
                 .then(() => {
                   setLoading(false);
                   setShowAddUserModal(false);
@@ -440,6 +459,12 @@ const DatabaseManagement = () => {
                     preventDuplicate: true,
                   });
                 });}
+                else{
+                  enqueueSnackbar("ERROR...Upload an existing PEM file or create a new one with name.", {
+                    variant: "error",
+                    preventDuplicate: true,
+                  });
+                }
 
         
 //pem için dispatch kısımı düzelt
@@ -500,19 +525,23 @@ const DatabaseManagement = () => {
               }
             />
           </div>
-        {/*   <div className="App">
-            <h7>To use an existing PEM file please choose to file: </h7>
-            <input type="file" 
-            //onChange={handleChange}
-             />
+          {/* Aşağıdaki kod pem upload için çalışıyor veritabanında kontrolüde gerçekleşti diğeri çalışmazsa bunu aktif et*/}
+      {/*     <div className="App">
+            <h6>To use an existing PEM file please choose to file: </h6>
+            <form encType='multipart/form-data'>
+              <input type="file" onChange={((e) =>handleChangePem(e))}      
+              defaultValue=""
+              />
+              </form>
+            
         {     <img src={file} /> }
   
         </div> */}
         <Label className="form-label" for="user-name">
           To Use an Existing PEM File:
             </Label>
-        <FileUploader handleChange={handleChangePem} name="file" types={fileTypes} />
-
+         <FileUploader handleChange={handleChangePem} name="file" types={fileTypes} />
+ 
         </ModalBody>
         <ModalFooter>
           <Button color="primary" 
