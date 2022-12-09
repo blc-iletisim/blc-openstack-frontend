@@ -55,7 +55,7 @@ import { getInstances,addInstances } from "../redux/actions/instances";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 import {
-  createPem
+  createPem,uploadPem,getPem
 } from "../redux/actions/pem";
 import { FileUploader } from "react-drag-drop-files";
 
@@ -216,6 +216,26 @@ const HadoopManagement = () => {
     ); 
   };
 
+  let formData = new FormData();
+  const handleChangePem = (e) => {
+    console.log("e: ",e)
+    console.log("handleChangePem file:",e?.target?.files[0])
+    
+    if(e){
+      formData.append('file',e)
+      setEditingPemData({ 
+        ...editingPemData, 
+        file: formData })
+    }};
+    
+   /*  if(e.target&&e.target.files[0]){
+      formData.append('file',e?.target?.files[0])
+      setEditingPemData({ 
+        ...editingPemData, 
+        file: formData })
+    }}; */
+
+
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
 
@@ -316,6 +336,10 @@ const HadoopManagement = () => {
   }
 
   const onAddUserButtonPressed = () => {
+    setEditingPemData({
+      name:"",
+      file:"",
+    })
     setEditingProfileData({
       name: "",
       categories:"",
@@ -326,6 +350,7 @@ const HadoopManagement = () => {
       company: "",
       role: "",
       id: "",
+      file:"",
     });
     setShowAddUserModal(true);
   };
@@ -370,14 +395,66 @@ const HadoopManagement = () => {
 
 
 
-  const onAddPemModalButtonPressed = () => {
-    
+  const onAddPemModalButtonPressed = () => {      
     const newPemData = {
       name: editingPemData?.name,
+      file:editingPemData?.file,
+      
     };
     console.log("newPemData: ",newPemData)
 
-    dispatch(createPem(newPemData.name))
+    //Name ve file girilip girilmemesine göre filtreleme yapıldı girilmemesi durumunda hata veriyor diğer kısımlara da ekle!!!!
+      if(newPemData.name!==null &&newPemData.file===undefined){
+        console.log("iff")
+        dispatch(createPem(newPemData.name))
+        .then(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Successfull.", {
+            variant: "success",
+            preventDuplicate: true,
+          });
+        })
+        .catch(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Error.", {
+            variant: "error",
+            preventDuplicate: true,
+          });
+        });}
+            else if(newPemData.file!==null&&newPemData.name==="")
+            {dispatch(uploadPem(newPemData.file))
+              .then(() => {
+                setLoading(false);
+                setShowAddUserModal(false);
+                enqueueSnackbar("Successfull.", {
+                  variant: "success",
+                  preventDuplicate: true,
+                });
+              })
+              .catch(() => {
+                setLoading(false);
+                setShowAddUserModal(false);
+                enqueueSnackbar("Error.", {
+                  variant: "error",
+                  preventDuplicate: true,
+                });
+              });}
+              else{
+                enqueueSnackbar("ERROR...Upload an existing PEM file or create a new one with name.", {
+                  variant: "error",
+                  preventDuplicate: true,
+                });
+              }
+
+      
+//pem için dispatch kısımı düzelt
+
+     /*  const newPemData = {
+        name: editingPemData?.name
+      }
+      dispatch(createPem(newPemData))
       .then(() => {
         setLoading(false);
         setShowAddUserModal(false);
@@ -393,8 +470,8 @@ const HadoopManagement = () => {
           variant: "error",
           preventDuplicate: true,
         });
-      });
-
+      }); */
+  
 };
   //*******************************************************
   const renderUserModal = () => {
@@ -431,7 +508,7 @@ const HadoopManagement = () => {
           <Label className="form-label" for="user-name">
           To Use an Existing PEM File:
             </Label>
-          <FileUploader handleChange={console.log()} name="file" types={fileTypes} />
+            <FileUploader handleChange={handleChangePem} name="file" types={fileTypes} />
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onAddPemModalButtonPressed}>
