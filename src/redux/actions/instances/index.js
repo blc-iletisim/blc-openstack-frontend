@@ -79,7 +79,7 @@ export const addInstances = (instance) => {
         query:`
         
             mutation {
-                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance?.flavors+`",categories:[${instance?.categories}],image:"41502b09-5ee0-456a-81be-e50f5f1c43b1",pem:"c83a84bd-f521-46ea-8830-4e93975ce102"}){
+                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance?.flavors+`",categories:[${instance?.categories}],image:"c83a84bd-f521-46ea-8830-4e93975ce101",pem:"`+instance.pem+`"}){
                 id
                 name
                
@@ -111,7 +111,7 @@ export const addInstances = (instance) => {
        },{
         headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
         
-      }
+      }   
       )
       .then((response) => {
         console.log("addDevice response: ", response);

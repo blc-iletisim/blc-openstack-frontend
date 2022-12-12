@@ -76,7 +76,13 @@ const KubernetesManagement = () => {
   console.log("categoriesStore: ",categoriesStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
+  console.log("rolesStore: ", rolesStore);
+  const pemsStore = useSelector((state) => state.pemReducer);
+  console.log("pemsStore: ",pemsStore)
+  const imagesStore = useSelector((state) => state.imagesReducer);
+  console.log("imagesStore: ",imagesStore)
   const [rolesOptions, setRolesOptions] = useState([]);
+  const [imagesOptions, setImagesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
   console.log("flavorsOptions: ",flavorsOptions)
   const { enqueueSnackbar } = useSnackbar();
@@ -91,6 +97,9 @@ const KubernetesManagement = () => {
   console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [editingPemData,setEditingPemData] = useState(null);
+  const [pemsOptions, setPemsOptions] = useState([]);
+  console.log("pemsOptions: ",pemsOptions)
+  
 
   useEffect(() => {
     dispatch(getUsersHttp());
@@ -107,6 +116,21 @@ const KubernetesManagement = () => {
     }
   }, []);
 
+  useEffect(() => {
+    dispatch(getImages());
+    console.log("imagesStore: ", imagesStore);
+    if (imagesStore.length > 0) {
+      setImagesOptions(imagesStore);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(getPem());
+    console.log("pemsStore get: ",pemsStore);
+    if (pemsStore.length > 0) {
+      setPemsOptions(pemsStore);
+    }
+  }, []);
   
   useEffect(() => {
     dispatch(getFlavors());
@@ -178,6 +202,27 @@ const KubernetesManagement = () => {
           
         },
       ])
+    ) }
+  };
+
+  useEffect(() => {
+    getPemsOptions();
+   }, [pemsStore]);
+
+   const getPemsOptions = () => {
+    if ( pemsOptions.length === 0   ) {
+    pemsStore.pems[0]?.forEach((pem) =>{
+      setPemsOptions((pemsOptions) => [
+        ...pemsOptions,
+        {
+          value: pem?.id,
+          label: pem?.name
+          ,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])}
     ) }
   };
 
@@ -367,13 +412,15 @@ const KubernetesManagement = () => {
       const newUserData = {
         name: editingProfileData.name,
         email: editingProfileData.email,
-        categories:editingProfileData?.categories,
+        categories:editingProfileData?.categories.split(','),
         flavors: editingProfileData?.flavors,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
         id: editingProfileData.id,
         deletedAt: editingProfileData.deletedAt || null,
+        pem:editingProfileData?.pem,
+        images:imagesStore.images[1].id,
       };
 
       dispatch(addInstances( newUserData))
@@ -640,10 +687,41 @@ const KubernetesManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  categories:"eca4c99a-f455-452d-9078-f6cb4d97df58",
+                  categories:categoriesStore.categories[1].id,
                   flavors: value.map((flavor) => flavor.value),
                   //role: value.label,
                 });
+              }}
+            />
+          </div>
+          <div className="mb-2">
+            <Label className="form-label" for="permissions-select">
+              Choose Existing PEM:
+            </Label>
+            <Select
+              id="permissions-select"
+              isClearable={false}
+              theme={selectThemeColors}
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              isMulti
+              options={pemsOptions}
+              className="react-select"
+              classNamePrefix="Seç"
+             // defaultValue={editingProfileData?.role || [""]}
+              //defaultValue={editingProfileData?.roles || []}
+              //defaultValue={editingProfileData?.role.label || []}
+              onChange={(value) => {
+                {
+                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
+                  console.log("value:", value);
+                }
+ 
+                setEditingProfileData({
+                  ...editingProfileData,
+                  pem: value[0]?.value,
+                  
+                }); 
               }}
             />
           </div>

@@ -76,6 +76,10 @@ const DockerManagement = () => {
   const categoriesStore = useSelector((state) => state.categoriesReducer);
   console.log("categoriesStore: ",categoriesStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
+  const pemsStore = useSelector((state) => state.pemReducer);
+  console.log("pemsStore: ",pemsStore)
+  const imagesStore = useSelector((state) => state.imagesReducer);
+  console.log("imagesStore: ",imagesStore)
   console.log("rolesStore: ", rolesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
@@ -92,6 +96,8 @@ const DockerManagement = () => {
   console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [editingPemData,setEditingPemData] = useState(null);
+  const [pemsOptions, setPemsOptions] = useState([]);
+  console.log("pemsOptions: ",pemsOptions)
   
   useEffect(() => {
     dispatch(getUsersHttp());
@@ -107,7 +113,13 @@ const DockerManagement = () => {
       setRolesOptions(rolesStore);
     }
   }, []);
-
+  useEffect(() => {
+    dispatch(getPem());
+    console.log("pemsStore get: ",pemsStore);
+    if (pemsStore.length > 0) {
+      setPemsOptions(pemsStore);
+    }
+  }, []);
   
   useEffect(() => {
     dispatch(getFlavors());
@@ -165,6 +177,26 @@ const DockerManagement = () => {
     );
   };
 
+  useEffect(() => {
+    getPemsOptions();
+   }, [pemsStore]);
+
+   const getPemsOptions = () => {
+    if ( pemsOptions.length === 0   ) {
+    pemsStore.pems[0]?.forEach((pem) =>{
+      setPemsOptions((pemsOptions) => [
+        ...pemsOptions,
+        {
+          value: pem?.id,
+          label: pem?.name
+          ,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])}
+    ) }
+  };
   useEffect(() => {
     getFlavorsOptions();
    }, [flavorsStore]);
@@ -467,6 +499,8 @@ const DockerManagement = () => {
         lastUpdatedTime: new Date().getTime(),    
         id: editingProfileData.id,
         deletedAt: editingProfileData.deletedAt || null,
+        pem:editingProfileData?.pem,
+        images:imagesStore.images[1].id,
         
       };
 
@@ -720,10 +754,41 @@ const DockerManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  categories:"49a72176-7304-4f10-8cfb-82892be117b4",
+                  categories:categoriesStore.categories[2].id,
                   flavors: value.map((flavor) => flavor.value),
                   //role: value.label,
                 });
+              }}
+            />
+          </div>
+          <div className="mb-2">
+            <Label className="form-label" for="permissions-select">
+              Choose Existing PEM:
+            </Label>
+            <Select
+              id="permissions-select"
+              isClearable={false}
+              theme={selectThemeColors}
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              isMulti
+              options={pemsOptions}
+              className="react-select"
+              classNamePrefix="Seç"
+             // defaultValue={editingProfileData?.role || [""]}
+              //defaultValue={editingProfileData?.roles || []}
+              //defaultValue={editingProfileData?.role.label || []}
+              onChange={(value) => {
+                {
+                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
+                  console.log("value:", value);
+                }
+ 
+                setEditingProfileData({
+                  ...editingProfileData,
+                  pem: value[0]?.value,
+                  
+                }); 
               }}
             />
           </div>

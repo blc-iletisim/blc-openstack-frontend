@@ -50,6 +50,7 @@ import { updateUser } from "../redux/actions/users";
 import {getCategories} from "../redux/actions/categories";
 import { getRoles } from "../redux/actions/roles";
 import { getFlavors } from "../redux/actions/flavors";
+
 import { getImages } from "../redux/actions/images";
 import { getInstances,addInstances } from "../redux/actions/instances";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
@@ -75,11 +76,17 @@ const DatabaseManagement = () => {
   console.log("flavorsStore useSelector: ",flavorsStore)
   const categoriesStore = useSelector((state) => state.categoriesReducer);
   console.log("categoriesStore: ",categoriesStore);
+  const pemsStore = useSelector((state) => state.pemReducer);
+  console.log("pemsStore: ",pemsStore)
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
+  const imagesStore = useSelector((state) => state.imagesReducer);
+  console.log("imagesStore: ", imagesStore);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
   console.log("flavorsOptions: ",flavorsOptions)
+  const [pemsOptions, setPemsOptions] = useState([]);
+  console.log("pemsOptions: ",pemsOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -89,6 +96,7 @@ const DatabaseManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
+  console.log("editingProfileData:",editingProfileData)
   const [editingPemData,setEditingPemData] = useState(null);
   const [file, setFile] = useState();
  
@@ -117,6 +125,14 @@ const DatabaseManagement = () => {
     console.log("flavorsStore get: ",flavorsStore);
     if (flavorsStore.length > 0) {
       setFlavorsOptions(flavorsStore);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(getPem());
+    console.log("pemsStore get: ",pemsStore);
+    if (pemsStore.length > 0 && pemsOptions.length===0) {
+      setPemsOptions(pemsStore);
     }
   }, []);
 
@@ -184,6 +200,29 @@ const DatabaseManagement = () => {
       ])
     ) }
   };
+
+
+  useEffect(() => {
+    getPemsOptions();
+   }, [pemsStore]);
+
+   const getPemsOptions = () => {
+    if ( pemsOptions.length === 0   ) {
+    pemsStore.pems[0]?.forEach((pem) =>{
+      setPemsOptions((pemsOptions) => [
+        ...pemsOptions,
+        {
+          value: pem?.id,
+          label: pem?.name
+          ,
+          color: "#00B8D9",
+          isFixed: true,
+          
+        },
+      ])}
+    ) }
+  };
+
 
 
   useEffect(() => {
@@ -360,6 +399,7 @@ const DatabaseManagement = () => {
       name: "",
       categories:"",
       flavors:"", 
+      pem:"",
       //pemName:"",
       password: "",
       email: "",
@@ -367,6 +407,7 @@ const DatabaseManagement = () => {
       role: "",
       id: "",
       file:"",
+      images:"",
     });
   
     setShowAddUserModal(true);
@@ -390,6 +431,8 @@ const DatabaseManagement = () => {
         lastUpdatedTime: new Date().getTime(),
         id: editingProfileData?.id,
         deletedAt: editingProfileData?.deletedAt || null,
+        pem:editingProfileData?.pem,
+        images:imagesStore.images[1].id,
       
       };
 //console.log( "newDatabaseData:"  , newDatabaseData)
@@ -685,7 +728,37 @@ const DatabaseManagement = () => {
               }}
             />
           </div>
-
+          <div className="mb-2">
+            <Label className="form-label" for="permissions-select">
+              Choose Existing PEM:
+            </Label>
+            <Select
+              id="permissions-select"
+              isClearable={false}
+              theme={selectThemeColors}
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              isMulti
+              options={pemsOptions}
+              className="react-select"
+              classNamePrefix="Seç"
+             // defaultValue={editingProfileData?.role || [""]}
+              //defaultValue={editingProfileData?.roles || []}
+              //defaultValue={editingProfileData?.role.label || []}
+              onChange={(value) => {
+                {
+                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
+                  console.log("value:", value);
+                }
+ 
+                setEditingProfileData({
+                  ...editingProfileData,
+                  pem: value[0]?.value,
+                  
+                }); 
+              }}
+            />
+          </div>
           <Button
           size="sm"
             className="ml-2"
