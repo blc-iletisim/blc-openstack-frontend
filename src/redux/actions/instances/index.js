@@ -59,7 +59,37 @@ export const getInstances = () => {
 
 export const addInstances = (instance) => {
   console.log("addInstances instance: ",instance)
+  
+  
+/*   const flavorsArray = [];
+  instance?.flavors?.forEach((flavor) => {
+    if (flavor) {
+      flavorsArray.push('"' + flavor + '"');
+    } else {
+      flavorsArray.push('"' + flavor + '"');
+    }
+    console.log("flavorsArray: ", flavorsArray);
+  }); */
+  const categoriesArray = [];
+  instance?.categories?.forEach((category) => {
+    if (category) {
+      categoriesArray.push('"' + category + '"');
+    } else {
+      categoriesArray.push('"' + category + '"');
+    }
+    console.log("categoriesArray: ", categoriesArray);
+  });
+  /* const pemArray = [];
+  instance?.pem?.forEach((pem) => {
+    if (pem) {
+      pemArray.push('"' + pem + '"');
+    } else {
+      pemArray.push('"' + pem + '"');
+    }
+    console.log("pemArray: ", pemArray);
+  }); */
 
+  console.log("Arrays: ","categoriesArray: ", categoriesArray);
   //Multi selection olması gerekiyorsa aşağıdaki kısımın yorumunu açıp flavors ve categories kısımlarında bu arrayleri gönder (ek olarak [${role.roles}] bu formatta yazmayı unutma)
 
 /*   const arrFlavors=[];
@@ -79,7 +109,7 @@ export const addInstances = (instance) => {
         query:`
         
             mutation {
-                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance?.flavors+`",categories:[${instance?.categories}],image:"c83a84bd-f521-46ea-8830-4e93975ce101",pem:"`+instance.pem+`"}){
+                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance.flavors+`",categories:[${categoriesArray}],image:"`+instance.images+`",pem:"`+instance.pem+`"}){
                 id
                 name
                
@@ -114,7 +144,7 @@ export const addInstances = (instance) => {
       }   
       )
       .then((response) => {
-        console.log("addDevice response: ", response);
+        console.log("addInstance response: ", response);
        
         dispatch({
           type: "ADD_INSTANCE",
