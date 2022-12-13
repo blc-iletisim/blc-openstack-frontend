@@ -92,6 +92,7 @@ const HadoopManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userOptions, setUserOptions] = useState([]);
+  const [imagesOptions, setImagesOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   console.log("editingProfileData set: ", editingProfileData);
@@ -132,6 +133,15 @@ const HadoopManagement = () => {
       setPemsOptions(pemsStore);
     }
   }, []);
+
+  useEffect(() => {
+    dispatch(getImages());
+    console.log("imagesStore: ", imagesStore);
+    if (imagesStore.length > 0) {
+      setImagesOptions(imagesStore);
+    }
+  }, []);
+
 
   useEffect(() => {
     dispatch(getCategories());

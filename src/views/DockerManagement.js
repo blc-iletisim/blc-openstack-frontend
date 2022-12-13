@@ -96,6 +96,7 @@ const DockerManagement = () => {
   console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [editingPemData,setEditingPemData] = useState(null);
+  const [imagesOptions, setImagesOptions] = useState([]);
   const [pemsOptions, setPemsOptions] = useState([]);
   console.log("pemsOptions: ",pemsOptions)
   
@@ -128,6 +129,15 @@ const DockerManagement = () => {
       setFlavorsOptions(flavorsStore);
     }
   }, []);
+
+  useEffect(() => {
+    dispatch(getImages());
+    console.log("imagesStore: ", imagesStore);
+    if (imagesStore.length > 0) {
+      setImagesOptions(imagesStore);
+    }
+  }, []);
+
 
   useEffect(() => {
     dispatch(getCategories());

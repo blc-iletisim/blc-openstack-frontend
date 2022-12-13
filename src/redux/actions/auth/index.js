@@ -7,29 +7,19 @@ export const handleLogin = (email, password) => async (dispatch) => {
     const res = await ApplicationService.httpWithoutAuthorization().post("/graphql", {
       query: `
      
+        
         mutation {
           login(input: { email: "`+email+`", password: "`+password+`" }) {
-            
+          
             accessToken
             refreshToken
-            type
-            role
-            email
-            user {
-              id
-              name
-              email
-              password
-              company
+
           
-              createdDateTime
-              updatedDateTime
-              deletedDateTime
-            }
-            
+
             deletedDateTime
           }
         }
+
 
       
       

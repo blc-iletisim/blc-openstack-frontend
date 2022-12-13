@@ -11,7 +11,8 @@ import {
   Archive,
   Target,
   Cloud,
-  Package
+  Package,
+  Briefcase
 } from "react-feather";
 import { GrOrganization } from "react-icons/gr";
 import { BiDevices } from "react-icons/bi";
@@ -61,5 +62,11 @@ export default [
     title: "Instances",
     icon: <Archive size={18} />,
     navLink: "/instance-management",
+  },
+  {
+    id: "OrganizationManagement",
+    title: "Organization",
+    icon: <Briefcase size={18} />,
+    navLink: "/pem-management",
   },
 ];

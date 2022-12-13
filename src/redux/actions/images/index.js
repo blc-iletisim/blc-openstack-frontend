@@ -7,17 +7,16 @@ export const getImages = () => {
         "/graphql",{
           query:`
     
-           
-            {
+                        
+              {
                 images {
-                id
-                name
-                createdDateTime
-                updatedDateTime
-                deletedDateTime
+                  id
+                  name
+                  createdDateTime
+                  updatedDateTime
+                  deletedDateTime
                 }
-            }
-            
+              }
 
               
               
@@ -29,7 +28,7 @@ export const getImages = () => {
       )
       .then((response) => {
         console.log("getImages response: ",response)
-        const images = response.data.data?.images;
+        const images = response.data.data.images;
         dispatch({
           type: "GET_IMAGES",
           payload: {

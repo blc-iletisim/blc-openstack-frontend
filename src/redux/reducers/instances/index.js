@@ -4,11 +4,13 @@ const initialState = {
   };
   
   const instancesReducer = (state = initialState, action) => {
+    console.log("instanceAction: ",action)
+    console.log("instanceState: ",state)
     switch (action.type) {
       case "GET_INSTANCES":
         return {
           ...state,
-          total: action.payload.instances.length,
+          total: action.payload.instances?.length,
           instances: action.payload.instances,
           isError: action.payload.errorStatus,
         };
@@ -16,19 +18,19 @@ const initialState = {
       case "ADD_INSTANCE":
         return {
           ...state,
-          total: action.payload.instances.length,
+          total: action.payload.instances?.length,
           instances: [...state.instances, action.payload.instances],
         };
         case "DELETE_INSTANCE":
           return {
             ...state,
-            total: action.payload.instances.length,
+            total: action.payload.instances?.length,
             instances: [...state.instances, action.payload.instances],
           };
           case "UPDATE_INSTANCE":
             return {
               ...state,
-              total: action.payload.instances.length,
+              total: action.payload.instances?.length,
               instances: [...state.instances, action.payload.instances],
             };
       

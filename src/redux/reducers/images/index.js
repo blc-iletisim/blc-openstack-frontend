@@ -4,6 +4,8 @@ const initialState = {
   };
   
   const imagesReducer = (state = initialState, action) => {
+    console.log("action: ",action)
+    console.log("state: ",state)
     switch (action.type) {
       case "GET_IMAGES":
         return {

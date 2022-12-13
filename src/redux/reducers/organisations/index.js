@@ -1,46 +1,56 @@
 const initialState = {
-    data: [],
-    total: 0,
-  };
-  
-  const DataTablesReducer = (state = initialState, action) => {
-    switch (action.type) {
-      case "GET_ANNOUNCEMENTS":
-        return {
-          ...state,
-          data: action.payload.announcements,
-          total: action.payload.announcements.length,
-        };
-      case "UPDATE_ANNOUNCEMENT":
-        console.log("reducer update data: ",state)
-        return {
-          ...state,
-          data: state.data.map((announcement) => {
-            if (announcement.id === action.payload.id) {
-              return action.payload;
+  dataOrganization: [],
+  total:0,
+};
+
+const organisationReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "GET_ORGANISATIONS":
+      //console.log("action.payload",action.payload)
+      return {
+        ...state,
+        dataOrganization: action.payload.organisations,
+        total: action.payload.organisations.length,
+        //dataOrganization: [...action.payload.organisations],
+      };
+    case "ADD_ORGANIZATION":
+      return {
+        ...state,
+        dataOrganization: [
+          ...state.dataOrganization,
+          action.payload.organisation,
+        ],
+      };
+    case "UPDATE_ORGANIZATION":
+      return {
+        ...state,
+        dataOrganization: [
+          ...state.dataOrganization.map((organisation) => {
+            if (organisation.id === action.payload.organisation.id) {
+              return action.payload.organisation;
             }
-            return announcement;
+            return organisation;
           }),
-        };
-      case "ADD_ANNOUNCEMENT":
-        return {
-          ...state,
-          data: [...state.data, action.payload],
-          total: state.total + 1,
-        };
-      case "DELETE_ANNOUNCEMENT":
-        return {
-          ...state,
-          data: state.data.filter((announcement) => {
-            return announcement.id !== action.payload.id;
-          }),
-          total: state.total - 1,
-        };
-  
-      default:
-        return state;
-    }
-  };
-  
-  export default DataTablesReducer;
-  
+        ],
+      };
+
+    case "DELETE_ORGANIZATION":
+      
+      return{
+       ...state,
+        dataOrganization:[
+          ...state.dataOrganization.filter(organisation => organisation.id != action.payload.id)
+
+        ]
+        /* ...state,
+        organisation: state.organiation.filter(
+          (org) => org.id !== action.payload.id
+        ), */
+      };
+
+    default:
+      return state;
+  }
+};
+
+export default organisationReducer;

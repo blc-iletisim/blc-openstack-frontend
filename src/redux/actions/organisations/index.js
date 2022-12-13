@@ -6,28 +6,21 @@ export const getOrganisations = () => {
     ApplicationService.http()
       .post("/graphql", {
         query:`
-        {
-          organizations {
-            id
-            name
-            users {
+        
+          {
+            companies{
               id
               name
-              email
-           
-             
+              users {
+                id
+                name
+                email
+              }
               createdDateTime
               updatedDateTime
               deletedDateTime
             }
-            createdDateTime
-            updatedDateTime
-            deletedDateTime
           }
-        }
-        
-       
-        
         
         `,
       },{
@@ -36,7 +29,7 @@ export const getOrganisations = () => {
       }   )
       .then((response) => {
         console.log("Organisation get response: ",response)
-        const organisations = response.data.data.organizations;
+        const organisations = response.data.data.companies;
         dispatch({
           type: "GET_ORGANISATIONS",
           payload: {
@@ -49,36 +42,32 @@ export const getOrganisations = () => {
       });
   };
 };
-//get hariç yeni sorguların eklenmesi lazım!!!
+
 export const addOrganization = (data) => {
   console.log("data: ", data);
-  console.log("dataId: ",data.responsibleUser);
   return async (dispatch) => {
     ApplicationService.http().post(
       "/graphql",
      {
       query:`
-      mutation {
-        createOrganization(input: { name: "`+data.name+`" }) {
-          id
-          name
-          users {
+     
+        mutation {
+          createCompany(input: { name: "`+data.name+`" }) {
             id
             name
-         
-        
-           
+            users {
+              id
+              name
+              email
+            
+            }
             createdDateTime
             updatedDateTime
             deletedDateTime
           }
-          createdDateTime
-          updatedDateTime
-          deletedDateTime
         }
-      }
-      
-      
+
+              
       
       `
 
@@ -93,7 +82,7 @@ export const addOrganization = (data) => {
         dispatch({
           type: "ADD_ORGANIZATION",
           payload: {
-            organisation: response.data.data.createOrganization,
+            organisation: response.data.data.createCompany,
           },
         });
       })
@@ -111,27 +100,21 @@ export const updateOrganization = (data) => {
         "/graphql",
         {
           query:`
-          
-            mutation {
-              updateOrganization(id: "`+data.id+`", input: { name: "`+data.name+`" }) {
-                id
-                name
-                users {
+      
+              mutation {
+                updateCompany(id: "`+data.id+`", input: { name: "`+data.name+`" }) {
                   id
                   name
-                  email
-                  
-
+                  users {
+                    id
+                    name
+                    email
+                  }
                   createdDateTime
                   updatedDateTime
-              
+                  deletedDateTime
                 }
-               
-                createdDateTime
-                updatedDateTime
-                deletedDateTime
               }
-            }
 
           `
   
@@ -142,7 +125,7 @@ export const updateOrganization = (data) => {
       )
       .then((response) => {
         console.log("update organisation response: ", response);
-        const organisation = response.data.data.updateOrganization;
+        const organisation = response.data.data.updateCompany;
         dispatch({
           type: "UPDATE_ORGANIZATION",
           payload: {
@@ -162,10 +145,11 @@ export const deleteOrganization = (id) => {
     ApplicationService.http()
       .post("/graphql", {
         query:`
-        mutation {
-          deleteOrganization(id: "`+id+`")
-        }
-        
+       
+            mutation {
+              deleteCompany(id: "`+id+`")
+            }
+
         `,
       },{
         headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}

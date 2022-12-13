@@ -173,45 +173,46 @@ export const updateInstance = (instance) => {
         "/graphql",
        {
         query:`
-       
-mutation {
-  updateInstance(id: "`+instance.id+`", input: {categories:[${instance?.categories}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
-    id
-    name
-    flavor {
-      id
-      name
-      cpu_size
-      ram_size
-      root_disk
- 
-    }
-    image {
-      id
-      name
-
-    }
-    user {
-      id
-      name
-      email
-
-      company
-  
-    }
-    categories {
-      id
-      name
 
 
-    }
-    createdDateTime
-    updatedDateTime
-    deletedDateTime
-  }
-}
-
+        mutation {
+          updateInstance(id: "`+instance.id+`", input: {categories:[${instance?.categories}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
+            id
+            name
+            pemName
+            flavor {
+              id
+              name
+              cpu_size
+              ram_size
+              root_disk
+           
+            }
+            image {
+              id
+              name
+          
+            }
+            user {
+              id
+              name
+              email
         
+             
+            }
+            categories {
+              id
+              name
+        
+         
+            }
+            createdDateTime
+            updatedDateTime
+            deletedDateTime
+          }
+        }
+        
+
         `
 
        },{

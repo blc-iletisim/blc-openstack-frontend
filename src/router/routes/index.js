@@ -37,6 +37,10 @@ const Routes = [
     path: "/kubernetes-management",
     component: lazy(() => import("../../views/KubernetesManagement")),
   },
+  {
+    path: "/pem-management",
+    component: lazy(() => import("../../views/OrganizationManagement")),
+  },
   
   {
     path: "/login",

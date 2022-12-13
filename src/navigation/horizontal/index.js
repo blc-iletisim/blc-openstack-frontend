@@ -11,7 +11,8 @@ import {
   Archive,
   Target,
   Cloud,
-  Package
+  Package,
+  Briefcase
 } from "react-feather";
 //import 'semantic-ui-css/semantic.min.css'
 import { GrOrganization } from "react-icons/gr";
@@ -62,5 +63,11 @@ export default [
     title: "Instances",
     icon: <Archive size={18} />,
     navLink: "/instance-management",
+  },
+  {
+    id: "OrganizationManagement",
+    title: "Organization",
+    icon: <Briefcase size={18} />,
+    navLink: "/pem-management",
   },
 ];

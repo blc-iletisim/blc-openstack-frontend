@@ -98,6 +98,7 @@ const DatabaseManagement = () => {
   const [editingProfileData, setEditingProfileData] = useState(null);
   console.log("editingProfileData:",editingProfileData)
   const [editingPemData,setEditingPemData] = useState(null);
+  const [imagesOptions, setImagesOptions] = useState([]);
   const [file, setFile] = useState();
  
 
@@ -116,6 +117,14 @@ const DatabaseManagement = () => {
     console.log("rolesStore: ", rolesStore);
     if (rolesStore.length > 0) {
       setRolesOptions(rolesStore);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(getImages());
+    console.log("imagesStore: ", imagesStore);
+    if (imagesStore.length > 0) {
+      setImagesOptions(imagesStore);
     }
   }, []);
 
@@ -252,7 +261,7 @@ const DatabaseManagement = () => {
    const getCategoriesOptions = () => {
     //splice ile sadece mongodb, postgresql alındı:
     if ( categoriesOptions.length === 0 ) {
-    categoriesStore?.categories.splice(3, 2)?.forEach((category) =>
+    categoriesStore?.categories?.splice(3, 2)?.forEach((category) =>
       setCategoriesOptions((categoriesOptions) => [
         ...categoriesOptions,
         {
@@ -432,7 +441,7 @@ const DatabaseManagement = () => {
         id: editingProfileData?.id,
         deletedAt: editingProfileData?.deletedAt || null,
         pem:editingProfileData?.pem,
-        images:imagesStore.images[1].id,
+        images:imagesStore?.images[1]?.id,
       
       };
 //console.log( "newDatabaseData:"  , newDatabaseData)
