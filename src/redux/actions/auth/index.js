@@ -1,19 +1,29 @@
 import ApplicationService from "../../../services/ApplicationService";
 import checkPermission from "../../../utils/checkPermission";
-import {AUTH_PERMISSIONS} from "../../../configs/auth_permissions.enum";
+import { AUTH_PERMISSIONS } from "../../../configs/auth_permissions.enum";
 
 export const handleLogin = (email, password) => async (dispatch) => {
   try {
-    const res = await ApplicationService.httpWithoutAuthorization().post("/graphql", {
-      query: `
+    const res = await ApplicationService.httpWithoutAuthorization().post(
+      "/graphql",
+      {
+        query:
+          `
      
         
         mutation {
-          login(input: { email: "`+email+`", password: "`+password+`" }) {
+          login(input: { email: "` +
+          email +
+          `", password: "` +
+          password +
+          `" }) {
           
             accessToken
-            refreshToken
-
+            refreshToken  
+              user{
+                id
+                name
+              }
           
 
             deletedDateTime
@@ -25,12 +35,15 @@ export const handleLogin = (email, password) => async (dispatch) => {
       
       
       `,
-    },{
-      headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-      
-    });
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("accessToken"),
+        },
+      }
+    );
     const data = res.data;
-  
+
     dispatch({
       type: "LOGIN",
       payload: res.data.data,
@@ -47,13 +60,13 @@ export const handleLogin = (email, password) => async (dispatch) => {
         console.log("error", error);
       }
     }*/
-    
+
     localStorage.setItem("accessToken", data.data.login.accessToken);
     localStorage.setItem("refreshToken", res.data.data.login.refreshToken);
     localStorage.setItem("currentUser", data.data.login.user.name);
     return data.data.login;
   } catch (error) {
-    console.log("error: ",error)
+    console.log("error: ", error);
     if (error.message !== "Bu hesap için yetkiniz yok.") {
       error.message = "Kullanıcı bilgileri hatalıdır. Lütfen tekrar deneyiniz.";
     }

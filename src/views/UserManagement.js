@@ -496,10 +496,10 @@ const UserManagement = () => {
               options={organizationsOptions}
               className="react-select"
               classNamePrefix="Select"
-           /*    defaultValue={{
-                label:editingProfileData?.role?.name || "",
-                value: editingProfileData?.role?.id || "",
-              }}  */
+              defaultValue={{
+                label:editingProfileData?.companyName|| "",
+                value: editingProfileData?.companyId || "",
+              }} 
               onChange={(value) => {
                 {
                   console.log("value:", value);

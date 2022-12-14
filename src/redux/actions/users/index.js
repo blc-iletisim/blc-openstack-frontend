@@ -125,23 +125,37 @@ export const updateUser = (sender, data) => {
       .post("/graphql",
       {
         query:`
-       
-          mutation {
-            updateUser(id: "`+data.id+`", input: {company:"`+data.company+`",email:"`+data.email+`",name:"`+data.name+`",password:"`+data.password+`",role:"`+data.roles+`"}) {
-              id
-              name
-              email
-              password
-              company
-              role {
+
+                    
+            mutation {
+              updateUser(id: "`+data.id+`", input: {company:"`+data.companyId+`",role:"`+data.roles+`",email:"`+data.email+`",name:"`+data.name+`",password:"`+data.password+`"}) {
                 id
                 name
+                email
+                password
+                company {
+                  id
+                  name
 
+                }
+                role {
+                  id
+                  name
+                
+                }
+                instances {
+                  id
+                  name
+                  pemName
+                
+                }
+                createdDateTime
+                updatedDateTime
+                deletedDateTime
               }
-              createdDateTime
-              updatedDateTime
             }
-          }
+
+    
         `
 
        },{
