@@ -7,21 +7,32 @@ export const getUsersHttp = () => {
     ApplicationService.http()
       .post("/graphql", {
         query:`
-          {
-            users {
-              id
-              name
-              email
-              
-              company
-              role {
+        
+            {
+              users {
                 id
                 name
+                email
+                company {
+                  id
+                  name
+                }
+                role {
+                  id
+                  name
+                }
+                instances {
+                  id
+                  name
+                  pemName
+                }
+                createdDateTime
+                updatedDateTime
+                deletedDateTime
               }
-              createdDateTime
-              updatedDateTime
             }
-          }
+
+          
         `,
       },{
         headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
@@ -53,30 +64,37 @@ export const addUser = (sender, data) => {
       .post(
         "/graphql",{
           query:`
+
+
           mutation {
-            createUser(
-              input: {
-                name: "`+data.name+`"
-                email: "`+data.email+`"
-                password: "`+data.password+`"
-                company: "`+data.company+`"
-                role:"`+data.roles+`"
-              }
-            ) {
+            createUser(input: { name: "`+data.name+`"
+            email: "`+data.email+`"
+            password: "`+data.password+`"
+            company: "`+data.companyId+`"
+            role:"`+data.roles+`"}) {
               id
               name
               email
               password
-              company
+              company {
+                id
+                name
+              }
               role {
                 id
                 name
-             
+              }
+              instances {
+                id
+                name
+                pemName
               }
               createdDateTime
               updatedDateTime
+              deletedDateTime
             }
           }
+          
           `,
         },{
           headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}

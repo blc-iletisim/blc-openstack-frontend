@@ -105,7 +105,7 @@ const OrganizationManagement = () => {
                   onClick={() => handleEditOrganization(row)}
                 >
                   <Edit size={15} />
-                  <span className="align-middle ml-50">Düzenle</span>
+                  <span className="align-middle ml-50">Update</span>
                 </DropdownItem>
                 {row.deleted === true ? (
                   <DropdownItem
@@ -123,7 +123,7 @@ const OrganizationManagement = () => {
                     onClick={() => handleDeleteOrganization(row)}
                   >
                     <Trash size={15} />
-                    <span className="align-middle ml-50">Sil</span>
+                    <span className="align-middle ml-50">Delete</span>
                   </DropdownItem>
                 )}
               </DropdownMenu>
@@ -406,7 +406,7 @@ console.log("newOrganisationData", newOrganisationData)
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onAddOrganisationModalButtonPressed}>
-            {!editingOrganisationData?.id ? "Oluştur" : "Güncelle"}
+            {!editingOrganisationData?.id ? "Oluştur" : "Update"}
           </Button>
         </ModalFooter>
       </Modal>
@@ -542,7 +542,7 @@ console.log("newOrganisationData", newOrganisationData)
               id="search-input"
               value={searchValue}
               onChange={handleFilter}
-              placeholder="İsme Göre"
+              placeholder="Filter"
             />
           </Col>
         </Row>

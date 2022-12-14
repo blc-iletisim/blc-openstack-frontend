@@ -44,7 +44,7 @@ import { selectThemeColors } from "@utils";
 import InputPasswordToggle from "@components/input-password-toggle";
 import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
-
+import { getOrganisations } from "@src/redux/actions/organisations";
 import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
@@ -69,7 +69,7 @@ const UserManagement = () => {
     },
     {
       name: "Company",
-      selector: "company",
+      selector: "company.name",
       sortable: true,
       minWidth: "350px",
     },
@@ -133,8 +133,12 @@ const UserManagement = () => {
   console.log("usersStore: ", usersStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
+  const organizationStore = useSelector((state) => state.organisationReducer);
+  console.log("organizationStore: ", organizationStore);
   const [rolesOptions, setRolesOptions] = useState([]);
   console.log("rolesOptions: ",rolesOptions)
+  const [organizationsOptions, setOrganizationsOptions] = useState([]);
+  console.log("organizationsOptions: ",organizationsOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -152,7 +156,21 @@ const UserManagement = () => {
       setUsers(usersStore);
     }
   }, []);
-
+  useEffect(() => {
+    dispatch(getOrganisations());
+    console.log("organizationsStore dispatch: ", organizationStore);
+    if (organizationStore.length > 0) {
+      setOrganizationsOptions(organizationStore);
+    }
+  }, []);
+ /*  useEffect(() => {
+    dispatch(getOrganisations());
+    console.log("organizationsStore dispatch: ", organizationStore);
+    if ( organizationStore.length > 0 ) {
+      setOrganizationsOptions(organizationStore);
+    }
+  }, []);
+ */
   useEffect(() => {
     dispatch(getRoles());
     console.log("rolesStore dispatch: ", rolesStore);
@@ -215,6 +233,27 @@ const UserManagement = () => {
         {
           value: role.id,
           label: role?.name,
+          color: "#00B8D9",
+          isFixed: true,
+        },
+      ])
+    ) }
+  };
+
+  useEffect(() => {
+   
+    getOrganizationsOptions();
+  }, [organizationStore]);
+
+  const getOrganizationsOptions = () => {
+    console.log("get OrganizationOptsions: ",organizationStore)
+    if ( organizationsOptions.length === 0 ) {
+      organizationStore.dataOrganization?.forEach((data) =>
+      setOrganizationsOptions((organizationsOptions) => [
+        ...organizationsOptions,
+        {
+          value: data?.id,
+          label: data?.name,
           color: "#00B8D9",
           isFixed: true,
         },
@@ -370,6 +409,8 @@ const UserManagement = () => {
         deleted: editingProfileData.deleted || null,
         deletedAt: editingProfileData.deletedAt || null,
         deletedBy: editingProfileData.deletedBy || null,
+        companyId:editingProfileData?.companyId,
+        companyName:editingProfileData?.companyName
       };
 
       dispatch(addUser(newUserData.createdBy, newUserData))
@@ -402,6 +443,9 @@ const UserManagement = () => {
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         roles: editingProfileData?.roles,
+        companyId:editingProfileData?.companyId,
+        companyName:editingProfileData?.companyName
+
       };
       console.log("NUD", newUserData);
       dispatch(updateUser(newUserData.createdBy, newUserData))
@@ -439,7 +483,38 @@ const UserManagement = () => {
             : "Add New User"}
         </ModalHeader>
         <ModalBody>
-          <div className="mb-2">
+        <div className="mb-2">
+            <Label className="form-label" for="permissions-select">
+            Company Name: 
+            </Label>
+            <Select
+              id="permissions-select"
+              isClearable={false}
+              theme={selectThemeColors}
+              closeMenuOnSelect={true}
+              components={animatedComponents}
+              options={organizationsOptions}
+              className="react-select"
+              classNamePrefix="Select"
+           /*    defaultValue={{
+                label:editingProfileData?.role?.name || "",
+                value: editingProfileData?.role?.id || "",
+              }}  */
+              onChange={(value) => {
+                {
+                  console.log("value:", value);
+                }
+
+                setEditingProfileData({
+                  ...editingProfileData,
+                  companyId: value.value,
+                  companyName:value.label
+
+                });
+              }}
+            />
+          </div>
+          {/* <div className="mb-2">
             <Label className="form-label" for="user-name">
               Company Name:
             </Label>
@@ -455,7 +530,7 @@ const UserManagement = () => {
                 })
               }
             />
-          </div>
+          </div> */}
           <div className="mb-2">
             <Label className="form-label" for="user-name">
               User Name:

@@ -12,7 +12,8 @@ import {
   Target,
   Cloud,
   Package,
-  Briefcase
+  Briefcase,
+  Clipboard
 } from "react-feather";
 //import 'semantic-ui-css/semantic.min.css'
 import { GrOrganization } from "react-icons/gr";
@@ -67,7 +68,7 @@ export default [
   {
     id: "OrganizationManagement",
     title: "Organization",
-    icon: <Briefcase size={18} />,
+    icon: <Clipboard size={18} />,
     navLink: "/pem-management",
   },
 ];
