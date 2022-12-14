@@ -409,8 +409,6 @@ const UserManagement = () => {
         deleted: editingProfileData.deleted || null,
         deletedAt: editingProfileData.deletedAt || null,
         deletedBy: editingProfileData.deletedBy || null,
-        companyId:editingProfileData?.companyId,
-        companyName:editingProfileData?.companyName
       };
 
       dispatch(addUser(newUserData.createdBy, newUserData))
@@ -437,14 +435,11 @@ const UserManagement = () => {
         id: editingProfileData.id,
         name: editingProfileData.name,
         password: editingProfileData?.password,
-        company: editingProfileData.company,
+        company: editingProfileData.company?.value || editingProfileData.company,
         email: editingProfileData.email,
-        password: editingProfileData?.password,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
-        roles: editingProfileData?.roles,
-        companyId:editingProfileData?.companyId,
-        companyName:editingProfileData?.companyName
+        roles: editingProfileData?.roles?.value || editingProfileData?.roles
 
       };
       console.log("NUD", newUserData);
@@ -496,10 +491,7 @@ const UserManagement = () => {
               options={organizationsOptions}
               className="react-select"
               classNamePrefix="Select"
-              defaultValue={{
-                label:editingProfileData?.companyName|| "",
-                value: editingProfileData?.companyId || "",
-              }} 
+              defaultValue={editingProfileData?.company} 
               onChange={(value) => {
                 {
                   console.log("value:", value);
@@ -507,8 +499,7 @@ const UserManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  companyId: value.value,
-                  companyName:value.label
+                  company: value.value,
 
                 });
               }}
@@ -603,10 +594,8 @@ const UserManagement = () => {
               options={rolesOptions}
               className="react-select"
               classNamePrefix="Select"
-              defaultValue={{
-                label:editingProfileData?.role?.name || "",
-                value: editingProfileData?.role?.id || "",
-              }} 
+              defaultValue={editingProfileData?.roles
+              } 
               onChange={(value) => {
                 {
                   console.log("value:", value);
@@ -705,18 +694,20 @@ const UserManagement = () => {
   const handleEditCategory = (selectedUser) => {
     console.log("users store selected user: ", selectedUser);
     setShowAddUserModal(true);
-    const selectedUserRoles = (selectedUser.roles || []).map((p) => {
-      /*  const foundPermData = userRoles.find(
-          (perm) => perm.value === p.authority
-        );
-        if (foundPermData) {
-          return foundPermData;
-        } */
-    });
+    const selectedUserRoles = selectedUser.role
+    const selectedUserCompany = selectedUser.company
+   
 
     setEditingProfileData({
       ...selectedUser,
-      roles: selectedUserRoles,
+      roles: {
+        label:selectedUserRoles.name,
+        value:selectedUserRoles.id
+      },
+      company: {
+        label:selectedUserCompany.name,
+        value:selectedUserCompany.id
+      },
     });
   };
 

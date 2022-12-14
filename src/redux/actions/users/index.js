@@ -70,7 +70,7 @@ export const addUser = (sender, data) => {
             createUser(input: { name: "`+data.name+`"
             email: "`+data.email+`"
             password: "`+data.password+`"
-            company: "`+data.companyId+`"
+            company: "`+data.company+`"
             role:"`+data.roles+`"}) {
               id
               name
@@ -128,7 +128,7 @@ export const updateUser = (sender, data) => {
 
                     
             mutation {
-              updateUser(id: "`+data.id+`", input: {company:"`+data.companyId+`",role:"`+data.roles+`",email:"`+data.email+`",name:"`+data.name+`",password:"`+data.password+`"}) {
+              updateUser(id: "`+data.id+`", input: {company:"`+data.company+`",role:"`+data.roles+`",email:"`+data.email+`",name:"`+data.name+`",password:"`+data.password+`"}) {
                 id
                 name
                 email

@@ -24,12 +24,15 @@ const UserDropdown = () => {
   console.log("auth: ",auth)
   const { enqueueSnackbar } = useSnackbar();
   const history = useHistory();
+  const name= localStorage.getItem('currentUser');
+  console.log("name: ",name)
+
 
   return (
     <UncontrolledDropdown tag='li' className='dropdown-user nav-item'>
       <DropdownToggle href='/' tag='a' className='nav-link dropdown-user-link' onClick={e => e.preventDefault()}>
         <div className='user-nav d-sm-flex d-none'>
-          <span className='user-name font-weight-bold'>{auth?.user?.name} <Logout size={14} className='mr-75' /></span>
+          <span className='user-name font-weight-bold'>{name} <Logout size={14} className='mr-75' /></span>
           
         </div>
       </DropdownToggle>
