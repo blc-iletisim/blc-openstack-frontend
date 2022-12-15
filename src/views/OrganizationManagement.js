@@ -406,7 +406,7 @@ console.log("newOrganisationData", newOrganisationData)
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onAddOrganisationModalButtonPressed}>
-            {!editingOrganisationData?.id ? "Oluştur" : "Update"}
+            {!editingOrganisationData?.id ? "Create" : "Update"}
           </Button>
         </ModalFooter>
       </Modal>

@@ -11,7 +11,7 @@ export const getInstances = () => {
                 instances {
                 id
                 name
-               
+                pemName
                 flavor {
                     id
                     name
@@ -112,7 +112,7 @@ export const addInstances = (instance) => {
                 createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance.flavors+`",categories:[${categoriesArray}],image:"`+instance.images+`",pem:"`+instance.pem+`"}){
                 id
                 name
-               
+                pemName
                 flavor {
                     id
                     name
