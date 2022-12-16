@@ -5,6 +5,12 @@ const initialState = {
 
 const DataTablesReducer = (state = initialState, action) => {
   switch (action.type) {
+    case "GET_USER":
+      return {
+        ...state,
+        data: action.payload.users,
+        total: action.payload.users.length,
+      };
     case "GET_USERS":
       return {
         ...state,
