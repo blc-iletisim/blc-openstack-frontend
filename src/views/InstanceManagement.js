@@ -83,7 +83,7 @@ const InstanceManagement = () => {
           >
             {row.deleted === true ? "Pasif" : "Aktif"}
           </Badge>
-        );
+        );Image
       },
     }, */
     {
@@ -93,13 +93,11 @@ const InstanceManagement = () => {
       minWidth: "350px",
     },
     {
-      name: "Services",
-      selector: "categories",
+      name: "Image",
+      selector: "image.name",
       sortable: true,
       minWidth: "350px",
-      cell: (row) => (
-        <span>{row.categories?.map((perm) => perm?.name)+""}</span>
-      ),
+      
       
     },
      {
@@ -209,6 +207,7 @@ const InstanceManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
+  const [newPemData, setNewPemData] = useState(null);
   const [instances, setInstances] = useState([]);
   console.log("instances: ",instances)
   const [instancesOptions, setInstancesOptions] = useState([]);
@@ -760,7 +759,7 @@ const InstanceManagement = () => {
         <ModalBody>
         <div className="mb-2">
             <Label className="form-label" for="user-name">
-              Instance Nameee:
+              Instance Name:
             </Label>
             <Input
               type="text"
@@ -821,16 +820,17 @@ const InstanceManagement = () => {
               Choose Database Configuration:
             </Label>
             <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
+             id="permissions-select"
+             isClearable={false}
+             theme={selectThemeColors}
+             closeMenuOnSelect={true}
+             components={animatedComponents}
+           
+             className="react-select"
+             classNamePrefix="Select"
               options={flavorsOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
+          
+              defaultValue={editingProfileData?.flavors || [""]}
               //defaultValue={editingProfileData?.roles || []}
               //defaultValue={editingProfileData?.role.label || []}
               onChange={(value) => {
@@ -840,7 +840,7 @@ const InstanceManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  flavors: value.map((flavor) => flavor.value),
+                  flavors: value.value,
                   //role: value.label,
                 });
               }}
@@ -927,7 +927,9 @@ const InstanceManagement = () => {
           
         </ModalBody>
         <ModalFooter>
-        <Button color="primary" onClick={onAddUserModalButtonPressed}>
+        <Button
+        disabled={!(editingProfileData?.name&&editingProfileData?.flavors&&editingProfileData?.pem)} 
+        color="primary" onClick={onAddUserModalButtonPressed}>
               {loading
                 ? "Saving.."
                 : !editingProfileData?.id
@@ -1029,8 +1031,9 @@ const InstanceManagement = () => {
           {data.pemName}{" "}
         </p>
         <p className="font-small-3">
-          <span className="font-weight-bold">Image:</span>{" "}
-          {data.image.name}{" "}
+          <span className="font-weight-bold">Services:</span>{" "}
+          
+          {data.categories[0]?.name} {" "}
         </p>
         <p className="font-small-3">
           <span className="font-weight-bold">Root Disk:</span>{" "}

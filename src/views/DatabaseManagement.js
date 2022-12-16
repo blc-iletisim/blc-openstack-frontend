@@ -712,16 +712,17 @@ const DatabaseManagement = () => {
               Choose Database Configuration:
             </Label>
             <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
+               id="permissions-select"
+               isClearable={false}
+               theme={selectThemeColors}
+               closeMenuOnSelect={true}
+               components={animatedComponents}
+             
+               className="react-select"
+               classNamePrefix="Select"
               options={flavorsOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
+            
+              defaultValue={editingProfileData?.flavors || [""]}
               //defaultValue={editingProfileData?.roles || []}
               //defaultValue={editingProfileData?.role.label || []}
               onChange={(value) => {
@@ -731,7 +732,7 @@ const DatabaseManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  flavors: value.map((flavor) => flavor.value),
+                  flavors: value.value,
                   //role: value.label,
                 });
               }}
@@ -768,7 +769,7 @@ const DatabaseManagement = () => {
               }}
             />
           </div>
-          <Button
+          <Button   
           size="sm"
             className="ml-2"
             //color="primary"
@@ -816,7 +817,9 @@ const DatabaseManagement = () => {
           </FormGroup>
  */}
           <ModalFooter>
-            <Button color="primary"  onClick={onAddUserModalButtonPressed}>
+            <Button
+            disabled={!(editingProfileData?.pem&&editingProfileData?.flavors&&editingProfileData?.categories&&editingProfileData?.name)}
+            color="primary"  onClick={onAddUserModalButtonPressed}>
               {loading
                 ? "Saving.."
                 : !editingProfileData?.id

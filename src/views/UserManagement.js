@@ -32,7 +32,6 @@ import {
   SatelliteAlt,
   SettingsEthernet,
   } from "@mui/icons-material";
-import { getUsersHttp } from "@src/redux/actions/users";
 import moment from "moment";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useSnackbar } from "notistack";
@@ -46,7 +45,7 @@ import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 import { getOrganisations } from "@src/redux/actions/organisations";
 import { getRoles } from "../redux/actions/roles";
-import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
+import { addUser, deleteUser, getPermissions,getUser,getUsersHttp } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 
 const Swal = withReactContent(SweetAlert);
@@ -129,13 +128,18 @@ const UserManagement = () => {
 
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
+  console.log("authStore: ",authStore)
   const usersStore = useSelector((state) => state.users);
   console.log("usersStore: ", usersStore);
+  const userStore = useSelector((state) => state.users);
+  console.log("userStore: ", userStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
   const organizationStore = useSelector((state) => state.organisationReducer);
   console.log("organizationStore: ", organizationStore);
   const [rolesOptions, setRolesOptions] = useState([]);
+  console.log("rolesOptions: ",rolesOptions)
+  const [authOptions, setAuthOptions] = useState([]);
   console.log("rolesOptions: ",rolesOptions)
   const [organizationsOptions, setOrganizationsOptions] = useState([]);
   console.log("organizationsOptions: ",organizationsOptions)
@@ -144,16 +148,25 @@ const UserManagement = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState([]);
+  const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   console.log("editingProfileData set: ", editingProfileData);
+  const currentUserRole= localStorage.getItem('currentUserRole');
+  console.log("currentUserRole: ",currentUserRole)
 
   useEffect(() => {
     dispatch(getUsersHttp());
     if (usersStore.length > 0) {
       setUsers(usersStore);
+    }
+  }, []);
+  useEffect(() => {
+    dispatch(getUser());
+    if (userStore.length > 0) {
+      setUser(userStore);
     }
   }, []);
   useEffect(() => {
@@ -178,6 +191,15 @@ const UserManagement = () => {
       setRolesOptions(rolesStore);
     }
   }, []);
+
+  //logine dispatch atınca hata veriyor problemi çözmek için başka yol bul!
+/*   useEffect(() => {
+    dispatch(handleLogin());
+    console.log("authStore dispatch: ", authStore);
+    if (authStore?.length > 0 && authStore?.length === 0 ) {
+      setAuthOptions(authStore);
+    }
+  }, []); */
 
   // useEffect(() => {
   //   setUsers(usersStore);
@@ -610,7 +632,9 @@ const UserManagement = () => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={onAddUserModalButtonPressed}>
+          <Button 
+          disabled={!(editingProfileData?.roles&&editingProfileData?.password&&editingProfileData?.email&&editingProfileData?.name&&editingProfileData?.company)}
+          color="primary" onClick={onAddUserModalButtonPressed}>
             {loading
               ? "Loading.."
               : !editingProfileData?.id

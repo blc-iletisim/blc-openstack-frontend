@@ -77,7 +77,7 @@ const RoleManagement = () => {
       sortable: true,
       minWidth: "350px",
       cell: (row) => (
-        <span>{row.permissions?.map((perm) => perm?.name)+""}</span>
+        <span>{row.permissions?.map((perm) => perm?.name+"  │ ")}</span>
       ),
     },
     {
@@ -372,7 +372,9 @@ const RoleManagement = () => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={onAddRoleModalButtonPressed}>
+          <Button 
+           disabled={!(editingRoleData?.permissions&&editingRoleData?.name)}
+          color="primary" onClick={onAddRoleModalButtonPressed}>
             {loading ? "Loading.." : !editingRoleData?.id ? "Create" : "Update"}
           </Button>
         </ModalFooter>
