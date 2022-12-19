@@ -3,7 +3,8 @@ import { Fragment, useState, useRef } from 'react'
 
 // ** Vertical Menu Items Array
 import navigation from '@src/navigation/vertical'
-
+import navigationUser from '@src/navigation/verticalUser'
+import navigationModerator from '@src/navigation/vertical/verticalModerator'
 // ** Third Party Components
 import classnames from 'classnames'
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -11,6 +12,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 // ** Vertical Menu Components
 import VerticalMenuHeader from './VerticalMenuHeader'
 import VerticalNavMenuItems from './VerticalNavMenuItems'
+import {useDispatch, useSelector} from "react-redux";
+ 
+//const currentUserRole= sessionStorage.getItem("currentUserRole")
 
 const Sidebar = props => {
   // ** Props
@@ -20,6 +24,8 @@ const Sidebar = props => {
   const [groupOpen, setGroupOpen] = useState([])
   const [groupActive, setGroupActive] = useState([])
   const [activeItem, setActiveItem] = useState(null)
+  const currentUserRole= localStorage.getItem('currentUserRole');
+  console.log("currentUserRole2: ",currentUserRole)
 
   // ** Menu Hover State
   const [menuHover, setMenuHover] = useState(false)
@@ -33,6 +39,7 @@ const Sidebar = props => {
       setMenuHover(true)
     }
   }
+  
 
   // ** Scroll Menu
   const scrollMenu = container => {
@@ -46,6 +53,17 @@ const Sidebar = props => {
       }
     }
   }
+  const handlePage = () => {
+    switch(currentUserRole) {
+      case 'ADMIN':
+        return navigation;
+      case 'MODERATOR':
+        return navigationModerator;
+      default:
+        return navigationUser;
+    }
+  }
+  
 
   return (
     <Fragment>
@@ -74,7 +92,8 @@ const Sidebar = props => {
             >
               <ul className='navigation navigation-main'>
                 <VerticalNavMenuItems
-                  items={navigation}
+                 items={ handlePage() }
+                 // items={ (currentUserRole!=="ADMIN")?navigationUser:navigation}
                   groupActive={groupActive}
                   setGroupActive={setGroupActive}
                   activeItem={activeItem}

@@ -24,6 +24,9 @@ import {useHistory} from "react-router-dom";
 import {DefaultRoute} from "../router/routes";
 import {handleLogin} from "../redux/actions/auth";
 
+
+
+
 const Login = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -39,7 +42,18 @@ const Login = (props) => {
   const [submitError, setSubmitError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const authStore = useSelector((state) => state.auth);
+  const [currentRole, setCurrentRole] = useState("");
+  console.log("currentRole: ",currentRole)
+  console.log("authStore: ",authStore)
 
+/*   useEffect(() => {
+    dispatch(handleLogin());
+  }, []); */
+/*   const checkLogin = (event) => {
+    if(authStore.role===event)
+  } 
+ */
   const handleChange = (event) => {
     if (event.target.name === "email") {
       setEmail(event.target.value);
@@ -65,12 +79,13 @@ const Login = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (email === "" || password === "") {
-      setSubmitError("Tüm alanlar zorunludur.");
+      setSubmitError("Username and password are required.");
       return;
     }
 
     setLoading(true);
     dispatch(handleLogin(email, password)).then((data) => {
+      setCurrentRole(authStore.role);
       setLoading(false);
       enqueueSnackbar(
         "Login is successful " + data.user.name + "...",
@@ -79,6 +94,7 @@ const Login = (props) => {
           preventDuplicate: true,
         },
       );
+      setCurrentRole(authStore.role)
     }).catch((error) => {
       setLoading(false);
       enqueueSnackbar(
@@ -91,9 +107,13 @@ const Login = (props) => {
       setSubmitError(error.message);
     });
   };
-
+ 
   useEffect(() => {
+
     if (authState.isLoggedIn === true) {
+      localStorage.setItem("currentUserRole", authStore.role);
+    /*   localStorage.setItem("currentUser", data.data?.login?.user?.name);
+      localStorage.setItem("currentUserRole", data.data?.login?.role); */
       history.push(DefaultRoute);
     }
   }, [authState.isLoggedIn]);

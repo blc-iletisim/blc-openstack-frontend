@@ -4,7 +4,7 @@ import { lazy } from "react";
 const TemplateTitle = "%s";
 
 // ** Default Route
-const DefaultRoute = "/user-management";
+const DefaultRoute = "/database-management";
 
 // ** Merge Routes
 const Routes = [

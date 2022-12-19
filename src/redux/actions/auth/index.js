@@ -19,7 +19,8 @@ export const handleLogin = (email, password) => async (dispatch) => {
           `" }) {
           
             accessToken
-            refreshToken  
+            refreshToken
+            role
               user{
                 id
                 name
@@ -43,10 +44,12 @@ export const handleLogin = (email, password) => async (dispatch) => {
       }
     );
     const data = res.data;
-
+console.log("Login Data: ",res.data.data)
     dispatch({
       type: "LOGIN",
-      payload: res.data.data,
+      payload: res.data.data.login,
+      
+
     });
     /*if (res.status === 401) {
       try {
@@ -61,9 +64,11 @@ export const handleLogin = (email, password) => async (dispatch) => {
       }
     }*/
 
-    localStorage.setItem("accessToken", data.data.login.accessToken);
-    localStorage.setItem("refreshToken", res.data.data.login.refreshToken);
-    localStorage.setItem("currentUser", data.data.login.user.name);
+    localStorage.setItem("accessToken", data.data?.login?.accessToken);
+    localStorage.setItem("refreshToken", res.data?.data?.login?.refreshToken);
+    localStorage.setItem("currentUser", data.data?.login?.user?.name);
+    localStorage.setItem("currentUserRole", data.data?.login?.role);
+    let token = localStorage.getItem('currentUserRole');
     return data.data.login;
   } catch (error) {
     console.log("error: ", error);
@@ -82,5 +87,7 @@ export const handleLogout = () => {
     localStorage.removeItem("currentUser");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem(" currentUserRole");
+    //localStorage.clear();
   };
 };
