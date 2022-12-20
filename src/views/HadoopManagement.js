@@ -163,7 +163,7 @@ const HadoopManagement = () => {
   }, []);
 
 
-
+/* 
   useEffect(() => {
     if (usersStore.data) {
       if (usersStore.total <= currentPage * rowsPerPage) {
@@ -178,9 +178,9 @@ const HadoopManagement = () => {
         );
       }
     }
-  }, [usersStore.total, usersStore]);
+  }, [usersStore.total, usersStore]); */
 
-  useEffect(() => {
+/*   useEffect(() => {
     getUserOptions();
   }, [usersStore]);
 
@@ -198,7 +198,7 @@ const HadoopManagement = () => {
         ])
       )
     );
-  };
+  }; */
   useEffect(() => {
     getPemsOptions();
    }, [pemsStore]);

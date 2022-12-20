@@ -45,7 +45,8 @@ import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 import { getOrganisations } from "@src/redux/actions/organisations";
 import { getRoles } from "../redux/actions/roles";
-import { addUser, deleteUser, getPermissions,getUser,getUsersHttp } from "../redux/actions/users";
+import { addUser, deleteUser, getPermissions,getUsersHttp } from "../redux/actions/users";
+import { getUser } from "../redux/actions/user";
 import useGetUsers from "../utility/hooks/useGetUsers";
 
 const Swal = withReactContent(SweetAlert);

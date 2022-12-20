@@ -64,10 +64,13 @@ console.log("Login Data: ",res.data.data)
       }
     }*/
 
+
+    //localde tutmak güvenlik açığı yaratabilir v2'de değiştirilmesi gerekebilir bunların: 
     localStorage.setItem("accessToken", data.data?.login?.accessToken);
     localStorage.setItem("refreshToken", res.data?.data?.login?.refreshToken);
     localStorage.setItem("currentUser", data.data?.login?.user?.name);
     localStorage.setItem("currentUserRole", data.data?.login?.role);
+    localStorage.setItem("currentUserId", data.data?.login?.user.id);
     let token = localStorage.getItem('currentUserRole');
     return data.data.login;
   } catch (error) {
@@ -88,6 +91,7 @@ export const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem(" currentUserRole");
+    localStorage.removeItem("currentUserId");
     //localStorage.clear();
   };
 };

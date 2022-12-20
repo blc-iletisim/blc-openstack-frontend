@@ -4,12 +4,13 @@ const initialState = {
 };
 
 const DataTablesReducer = (state = initialState, action) => {
+  console.log("userAction: ",action)
   switch (action.type) {
     case "GET_USER":
       return {
         ...state,
-        data: action.payload.users,
-        total: action.payload.users.length,
+        data: action.payload.user,
+        total: action.payload.user.length,
       };
     case "GET_USERS":
       return {
@@ -47,5 +48,6 @@ const DataTablesReducer = (state = initialState, action) => {
       return state;
   }
 };
+
 
 export default DataTablesReducer;

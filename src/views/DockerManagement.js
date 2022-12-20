@@ -151,7 +151,7 @@ const DockerManagement = () => {
   //   setUsers(usersStore);
   // }, [usersStore]);
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (usersStore.data) {
       if (usersStore.total <= currentPage * rowsPerPage) {
         setCurrentPage(1);
@@ -166,8 +166,8 @@ const DockerManagement = () => {
       }
     }
   }, [usersStore.total, usersStore]);
-
-  useEffect(() => {
+ */
+ /*  useEffect(() => {
     getUserOptions();
   }, [usersStore]);
 
@@ -185,7 +185,7 @@ const DockerManagement = () => {
         ])
       )
     );
-  };
+  }; */
 
   useEffect(() => {
     getPemsOptions();

@@ -148,7 +148,7 @@ const KubernetesManagement = () => {
     }
   }, []);
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (usersStore.data) {
       if (usersStore.total <= currentPage * rowsPerPage) {
         setCurrentPage(1);
@@ -162,9 +162,9 @@ const KubernetesManagement = () => {
         );
       }
     }
-  }, [usersStore.total, usersStore]);
+  }, [usersStore.total, usersStore]); */
 
-  useEffect(() => {
+ /*  useEffect(() => {
     getUserOptions();
   }, [usersStore]);
 
@@ -182,7 +182,7 @@ const KubernetesManagement = () => {
         ])
       )
     );
-  };
+  }; */
 
   useEffect(() => {
     getFlavorsOptions();

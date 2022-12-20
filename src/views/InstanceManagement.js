@@ -33,6 +33,7 @@ import {
   SettingsEthernet,
 } from "@mui/icons-material";
 import { getUsersHttp } from "@src/redux/actions/users";
+import { getUser } from "@src/redux/actions/user";
 import moment from "moment";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useSnackbar } from "notistack";
@@ -91,8 +92,9 @@ const InstanceManagement = () => {
       selector: "name",
       sortable: true,
       minWidth: "350px",
+     
     },
-    {
+     {
       name: "Image",
       selector: "image.name",
       sortable: true,
@@ -184,8 +186,11 @@ const InstanceManagement = () => {
   console.log("categoriesStore: ",categoriesStore)
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
+  console.log("usersStoree:",usersStore)
   const instancesStore = useSelector ((state) => state.instancesReducer)
   console.log("instancesStore: ", instancesStore);
+  const userInstancesStore = useSelector ((state) => state.users)
+  console.log("userInstancesStore: ", userInstancesStore);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
@@ -195,6 +200,8 @@ const InstanceManagement = () => {
   console.log("pemsOptions: ",pemsOptions)
   const imagesStore = useSelector((state) => state.imagesReducer);
   console.log("imagesStore: ", imagesStore);
+  const userStore = useSelector((state) => state.userReducer.data.instances);
+  console.log("userStore: ", userStore);
   const [editingPemData,setEditingPemData] = useState(null);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
@@ -211,20 +218,36 @@ const InstanceManagement = () => {
   const [instances, setInstances] = useState([]);
   console.log("instances: ",instances)
   const [instancesOptions, setInstancesOptions] = useState([]);
-  console.log("instances: ",instances)
+  console.log("instancesOptions: ",instancesOptions)
   console.log("editingProfileData set: ", editingProfileData);
   const [showAddPemModal, setShowAddPemModal] = useState(false);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   console.log("categoriesOptions: ",categoriesOptions)
   const [imagesOptions, setImagesOptions] = useState([]);
+  const currentUserRole= localStorage.getItem('currentUserRole');
+  console.log("currentUserRole: ",currentUserRole)
+  const currentUserId= localStorage.getItem('currentUserId');
+  console.log("currentUserId: ",currentUserId)
 
-  useEffect(() => {
-    dispatch(getInstances());
-    console.log("if: ",instancesStore)
-    if (instancesStore?.length > 0) {
-      console.log("if2: ",instancesStore)
-      setInstancesOptions(instancesStore);
+  useEffect(() => {   
+    if(currentUserRole==="ADMIN"){
+      dispatch(getInstances());
+      console.log("if: ",instancesStore)
+      if (instancesStore?.length > 0) {
+        console.log("if2: ",instancesStore)
+        setInstancesOptions(instancesStore);
+      }
+      
     }
+    else{
+      
+      dispatch(getUser(currentUserId));
+      if (userStore?.length > 0) {
+       
+        setInstancesOptions(userStore);
+      }
+    }
+   
   }, []);
 
   useEffect(() => {
@@ -339,14 +362,33 @@ const InstanceManagement = () => {
     }
   }, [instancesStore.total, instancesStore]);
 
+
   useEffect(() => {
+    if (userStore) {
+      if (userStore.total <= currentPage * rowsPerPage) {
+        setCurrentPage(1);
+        setInstances(userStore?.slice(0, rowsPerPage));
+      } else {
+        setInstances(
+        
+          userStore?.slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+        );
+      }
+    }
+  }, [userStore?.total, userStore]);
+
+
+ /*  useEffect(() => {
     getUserOptions();
   }, [usersStore]);
 
   const getUserOptions = () => {
     // usersStore.data.map(user =>
-    usersStore.data.forEach((user) =>
-      users.map((use) =>
+    usersStore?.data?.forEach((user) =>
+      users?.map((use) =>
         setUserOptions((userOptions) => [
           {
             value: use.id,
@@ -357,7 +399,8 @@ const InstanceManagement = () => {
         ])
       )
     );
-  };
+  }; */
+  
 
   useEffect(() => {
     getCategoriesOptions();
@@ -420,28 +463,53 @@ const InstanceManagement = () => {
     }}; */
   
 
+    //filtre çalışmıyor incele!
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
 
-    if (e.target.value !== "") {
-      setUsers(
-        usersStore.data
-          .filter((user) =>
-            user.name.toLowerCase().includes(e.target.value.toLowerCase())
-          )
-          .slice(
+    if(currentUserRole==="ADMIN"){
+      if (e.target.value !== "") {
+        setUsers(
+          usersStore.data
+            .filter((user) =>
+              user.name.toLowerCase().includes(e.target.value.toLowerCase())
+            )
+            .slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+        );
+      } else {
+        setUsers(
+          usersStore.data.slice(
             currentPage * rowsPerPage - rowsPerPage,
             currentPage * rowsPerPage
           )
-      );
-    } else {
-      setUsers(
-        usersStore.data.slice(
-          currentPage * rowsPerPage - rowsPerPage,
-          currentPage * rowsPerPage
-        )
-      );
+        );
+      }
     }
+    else{
+      if (e.target.value !== "") {
+        setUsers(
+          userStore
+            .filter((user) =>
+              user.name.toLowerCase().includes(e.target.value.toLowerCase())
+            )
+            .slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+        );
+      } else {
+        setUsers(
+          userStore.slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+        );
+      }
+    }
+    
   };
 
   // const handleOrganizationFilter = (e) => {
@@ -470,12 +538,22 @@ const InstanceManagement = () => {
 
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
-    setInstances(
-      instancesStore.instances.slice(
-        (page.selected + 1) * rowsPerPage - rowsPerPage,
-        (page.selected + 1) * rowsPerPage
-      )
-    );
+    if(currentUserRole==="ADMIN"){
+      setInstances(
+        instancesStore.instances.slice(
+          (page.selected + 1) * rowsPerPage - rowsPerPage,
+          (page.selected + 1) * rowsPerPage
+        )
+      ); 
+    }
+     else{
+      setInstances(
+        userStore.slice(
+          (page.selected + 1) * rowsPerPage - rowsPerPage,
+          (page.selected + 1) * rowsPerPage
+        )
+      ); 
+    } 
   };
 
   // const handlePagination2 = (page) => {
@@ -490,12 +568,22 @@ const InstanceManagement = () => {
 
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
-    setInstances(
-      instancesStore.instances.slice(
-        currentPage * parseInt(e.target.value) - parseInt(e.target.value),
-        currentPage * parseInt(e.target.value)
-      )
-    );
+    if(currentUserRole==="ADMIN"){
+      setInstances(
+        instancesStore.instances.slice(
+          currentPage * parseInt(e.target.value) - parseInt(e.target.value),
+          currentPage * parseInt(e.target.value)
+        )
+      );
+    }
+  else{
+      setInstances(
+        userStore.slice(
+          currentPage * parseInt(e.target.value) - parseInt(e.target.value),
+          currentPage * parseInt(e.target.value)
+        )
+      );
+    } 
   };
   // const handlePerPage2 = (e) => {
   //   setRowsPerPage(parseInt(e.target.value));
@@ -508,21 +596,41 @@ const InstanceManagement = () => {
   // };
 
   const onSort = (column, direction) => {
-    setInstances(
-      instancesStore.instances
-        .sort((a, b) => {
-          if (a[column.selector] === b[column.selector]) return 0;
-          if (direction === "asc") {
-            return a[column.selector] > b[column.selector] ? 1 : -1;
-          } else {
-            return a[column.selector] < b[column.selector] ? 1 : -1;
-          }
-        })
-        .slice(
-          currentPage * rowsPerPage - rowsPerPage,
-          currentPage * rowsPerPage
-        )
-    );
+    if(currentUserRole==="ADMIN"){
+      setInstances(
+        instancesStore.instances
+          .sort((a, b) => {
+            if (a[column.selector] === b[column.selector]) return 0;
+            if (direction === "asc") {
+              return a[column.selector] > b[column.selector] ? 1 : -1;
+            } else {
+              return a[column.selector] < b[column.selector] ? 1 : -1;
+            }
+          })
+          .slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+      );
+    }
+    else{
+      setInstances(
+        userStore
+          .sort((a, b) => {
+            if (a[column.selector] === b[column.selector]) return 0;
+            if (direction === "asc") {
+              return a[column.selector] > b[column.selector] ? 1 : -1;
+            } else {
+              return a[column.selector] < b[column.selector] ? 1 : -1;
+            }
+          })
+          .slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+      );
+    }
+    
   };
 
   // const onSort2 = (column, direction) => {
@@ -544,7 +652,15 @@ const InstanceManagement = () => {
   // };
 
   const CustomPagination = () => {
-    const count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
+   // const count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
+    let count=0;
+    if(currentUserRole==="ADMIN"){
+       count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
+    }
+    else{
+       count = Number((userStore?.length / rowsPerPage).toFixed(1));
+    }
+    
 
     return (
       <ReactPaginate
@@ -1010,13 +1126,31 @@ const InstanceManagement = () => {
 
   
   const ExpandableTable = ({ data }) => {
-    console.log("ExpandableTable data: ",data)
+    if(currentUserRole==="ADMIN"){
+      console.log("ExpandableTable data: ",data)
     const createdByUser = usersStore?.data?.find(
       (user) => user?.id === data?.createdBy
     );
     const lastUpdatedByUser = usersStore?.data.find(
       (user) => user?.id === data?.lastUpdatedBy
     );
+    }
+    else{
+      console.log("ExpandableTable data: ",data)
+      const createdByUser = userStore?.find(
+        (user) => user?.id === data?.createdBy
+      );
+      const lastUpdatedByUser = userStore?.find(
+        (user) => user?.id === data?.lastUpdatedBy
+      );
+    }
+ /*    console.log("ExpandableTable data: ",data)
+    const createdByUser = usersStore?.data?.find(
+      (user) => user?.id === data?.createdBy
+    );
+    const lastUpdatedByUser = usersStore?.data.find(
+      (user) => user?.id === data?.lastUpdatedBy
+    ); */
 
     return (
       <div className="expandable-content p-2">
@@ -1036,14 +1170,14 @@ const InstanceManagement = () => {
           {data.categories[0]?.name} {" "}
         </p>
         <p className="font-small-3">
-          <span className="font-weight-bold">Root Disk:</span>{" "}
-          {data.flavor.root_disk}{" "}
-        </p>
-        <p className="font-small-3">
           <span className="font-weight-bold">Ram Size:</span>{" "}
           {data?.flavor.ram_size}{" GB "}
          
         </p>
+        <p className="font-small-3">
+          <span className="font-weight-bold">Root Disk:</span>{" "}
+          {data.flavor.root_disk}{" "}
+        </p>  
         <p className="font-small-3 mt-2">
           <span className="font-weight-bold">Cpu Size:</span>{" "}
           {data?.flavor?.cpu_size}{" "}

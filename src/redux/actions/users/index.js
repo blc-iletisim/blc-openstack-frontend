@@ -54,60 +54,7 @@ export const getUsersHttp = () => {
   };
 };
 
-export const getUser = (userId) => {
-  console.log("getUser");
-  return async (dispatch) => {
-    ApplicationService.http()
-      .post("/graphql", {
-        query:`
 
-          {
-            user(id: "`+userId+`") {
-              id
-              name
-              email
-              password
-              company {
-                id
-                name
-              }
-              role {
-                id
-                name
-
-              }
-              instances {
-                id
-                name
-                pemName
-
-              }
-              createdDateTime
-              updatedDateTime
-              deletedDateTime
-            }
-          }
-          
-        `,
-      },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-        
-      })
-      .then((response) => {
-        console.log("response: ",response);
-        const users = response.data.data.users;
-        dispatch({
-          type: "GET_USER",
-          payload: {
-            users,
-          },
-        });
-      })
-      .catch((error) => {
-        console.log("error -- responsee", error);
-      });
-  };
-};
 
 export const addUser = (sender, data) => {
   console.log("addUser sender: ",sender);

@@ -24,9 +24,6 @@ import {useHistory} from "react-router-dom";
 import {DefaultRoute} from "../router/routes";
 import {handleLogin} from "../redux/actions/auth";
 
-
-
-
 const Login = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -112,6 +109,7 @@ const Login = (props) => {
 
     if (authState.isLoggedIn === true) {
       localStorage.setItem("currentUserRole", authStore.role);
+      
     /*   localStorage.setItem("currentUser", data.data?.login?.user?.name);
       localStorage.setItem("currentUserRole", data.data?.login?.role); */
       history.push(DefaultRoute);
