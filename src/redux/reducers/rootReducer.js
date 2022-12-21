@@ -12,6 +12,7 @@ import flavorsReducer from "./flavors"
 import instancesReducer from "./instances"
 import pemReducer from "./pem" 
 import userReducer from "./user"
+import companyReducer from "./company"
 
  
 
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   instancesReducer,
   imagesReducer,
   pemReducer,
-  userReducer
+  userReducer,
+  companyReducer
 
 });
 

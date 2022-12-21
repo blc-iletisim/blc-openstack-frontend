@@ -25,7 +25,7 @@ export const handleLogin = (email, password) => async (dispatch) => {
                 id
                 name
               }
-          
+              user{company{name,id}}
 
             deletedDateTime
           }
@@ -71,6 +71,9 @@ console.log("Login Data: ",res.data.data)
     localStorage.setItem("currentUser", data.data?.login?.user?.name);
     localStorage.setItem("currentUserRole", data.data?.login?.role);
     localStorage.setItem("currentUserId", data.data?.login?.user.id);
+    localStorage.setItem("currentUserCompanyId", data.data?.login?.user?.company?.id);
+    let token2 = localStorage.getItem('currentUserCompanyId');
+    console.log("tokent2: ",token2)
     let token = localStorage.getItem('currentUserRole');
     return data.data.login;
   } catch (error) {
