@@ -1,59 +1,29 @@
-import React, { Fragment, useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactPaginate from "react-paginate";
-import { ChevronDown, MoreVertical, Plus, Trash } from "react-feather";
-import DataTable from "react-data-table-component";
-import ApplicationService from "../services/ApplicationService";
+import {Plus } from "react-feather";
 import {
   Card,
   CardHeader,
-  CardBody,
   CardTitle,
   Input,
   Label,
-  Row,
-  Col,
   Button,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  InputGroup,
-  InputGroupText,
-  Form,
-  FormGroup,
-  Badge,
 } from "reactstrap";
-import {
-  ConstructionOutlined,
-  Edit,
-  HowToReg,
-  SatelliteAlt,
-  SettingsEthernet,
-} from "@mui/icons-material";
-import { getUsersHttp } from "@src/redux/actions/users";
-import moment from "moment";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useSnackbar } from "notistack";
 import { default as SweetAlert } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { selectThemeColors } from "@utils";
-import InputPasswordToggle from "@components/input-password-toggle";
-import { useHistory } from "react-router-dom";
-import { updateUser } from "../redux/actions/users";
 import {getCategories} from "../redux/actions/categories";
-import { getRoles } from "../redux/actions/roles";
 import { getFlavors } from "../redux/actions/flavors";
 import { getImages } from "../redux/actions/images";
-import { getInstances,addInstances } from "../redux/actions/instances";
-import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
-import useGetUsers from "../utility/hooks/useGetUsers";
+import { addInstances } from "../redux/actions/instances";
 import {
   createPem,uploadPem,getPem
 } from "../redux/actions/pem";
@@ -69,58 +39,26 @@ const HadoopManagement = () => {
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
-  console.log("usersStore: ", usersStore);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
-  console.log("flavorsStore useSelector: ",flavorsStore)
   const categoriesStore = useSelector((state) => state.categoriesReducer);
-  console.log("categoriesStore: ",categoriesStore);
-  const rolesStore = useSelector((state) => state.rolesReducer);
-  console.log("rolesStore: ", rolesStore);
   const pemsStore = useSelector((state) => state.pemReducer);
-  console.log("pemsStore: ",pemsStore)
   const imagesStore = useSelector((state) => state.imagesReducer);
-  console.log("imagesStore: ",imagesStore)
-  const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
-  const [hadoop, setHadoop] = useState( []);
-  console.log("hadoop: ",hadoop)
-  console.log("flavorsOptions: ",flavorsOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userOptions, setUserOptions] = useState([]);
   const [imagesOptions, setImagesOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
-  console.log("editingProfileData set: ", editingProfileData);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [editingPemData,setEditingPemData] = useState(null);
   const [pemsOptions, setPemsOptions] = useState([]);
-  console.log("pemsOptions: ",pemsOptions)
 
-
-  useEffect(() => {
-    dispatch(getUsersHttp());
-    if (usersStore.length > 0) {
-      setUsers(usersStore);
-    }
-  }, []);
-
-  useEffect(() => {
-    dispatch(getRoles());
-    console.log("rolesStore: ", rolesStore);
-    if (rolesStore.length > 0) {
-      setRolesOptions(rolesStore);
-    }
-  }, []);
-
-  
   useEffect(() => {
     dispatch(getFlavors());
-    console.log("flavorsStore get: ",flavorsStore);
     if (flavorsStore.length > 0) {
       setFlavorsOptions(flavorsStore);
     }
@@ -128,7 +66,6 @@ const HadoopManagement = () => {
 
   useEffect(() => {
     dispatch(getPem());
-    console.log("pemsStore get: ",pemsStore);
     if (pemsStore.length > 0) {
       setPemsOptions(pemsStore);
     }
@@ -136,7 +73,6 @@ const HadoopManagement = () => {
 
   useEffect(() => {
     dispatch(getImages());
-    console.log("imagesStore: ", imagesStore);
     if (imagesStore.length > 0) {
       setImagesOptions(imagesStore);
     }
@@ -145,81 +81,24 @@ const HadoopManagement = () => {
 
   useEffect(() => {
     dispatch(getCategories());
-    console.log("categoriesStore get: ",categoriesStore);
     if (categoriesStore.length > 0) {
       setCategoriesOptions(categoriesStore);
-     /*  if (hadoop.length === 0) {
-        categoriesStore?.map((h) => {
-          console.log("h: ",h)
-          if(h.name==="HADOOP"){
-            setHadoop(h.id)
-          }
-        })
-        
-      
-      } */
-    
     }
   }, []);
 
-
-/* 
   useEffect(() => {
-    if (usersStore.data) {
-      if (usersStore.total <= currentPage * rowsPerPage) {
-        setCurrentPage(1);
-        setUsers(usersStore.data?.slice(0, rowsPerPage));
-      } else {
-        setUsers(
-          usersStore.data?.slice(
-            currentPage * rowsPerPage - rowsPerPage,
-            currentPage * rowsPerPage
-          )
-        );
-      }
-    }
-  }, [usersStore.total, usersStore]); */
-
-/*   useEffect(() => {
-    getUserOptions();
-  }, [usersStore]);
-
-  const getUserOptions = () => {
-    // usersStore.data.map(user =>
-    usersStore.data.forEach((user) =>
-      users.map((use) =>
-        setUserOptions((userOptions) => [
-          {
-            value: use.id,
-            label: use?.name,
-            color: "#00B8D9",
-            isFixed: true,
-          },
-        ])
-      )
-    );
-  }; */
-  useEffect(() => {
-    getPemsOptions();
-   }, [pemsStore]);
-
-   const getPemsOptions = () => {
-    if ( pemsOptions.length === 0   ) {
-    pemsStore.pems[0]?.forEach((pem) =>{
-      setPemsOptions((pemsOptions) => [
-        ...pemsOptions,
-        {
-          value: pem?.id,
-          label: pem?.name
-          ,
+    setPemsOptions(
+      pemsStore.pems?.map((pem)=>{
+        return {
+          value:pem?.id,
+          label:pem?.name,
           color: "#00B8D9",
           isFixed: true,
-          
-        },
-      ])}
-    ) }
-  };
-
+        }
+      })
+    )
+  }, [pemsStore.total, pemsStore]);
+ 
   useEffect(() => {
     getFlavorsOptions();
    }, [flavorsStore]);
@@ -231,32 +110,13 @@ const HadoopManagement = () => {
         ...flavorsOptions,
         {
           value: flavor.id,
-          label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk
-          ,
+          label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk,
           color: "#00B8D9",
           isFixed: true,
           
         },
       ])
     ) }
-  };
-
-  useEffect(() => {
-    getRolesOptions();
-  }, [rolesStore]);
-
-  const getRolesOptions = () => {
-    rolesStore.roles?.forEach((role) =>
-      setRolesOptions((rolesOptions) => [
-        ...rolesOptions,
-        {
-          value: role.id,
-          label: role?.name,
-          color: "#00B8D9",
-          isFixed: true,
-        },
-      ])
-    );
   };
 
   useEffect(() => {
@@ -397,35 +257,10 @@ const HadoopManagement = () => {
     setShowAddUserModal(true);
   }
 
-  const onAddUserButtonPressed = () => {
-    setEditingPemData({
-      name:"",
-      file:"",
-    })
-    setEditingProfileData({
-      name: "",
-      categories:"",
-      flavors:"", 
-      pem:"",
-      password: "",
-      email: "",
-      company: "",
-      role: "",
-      id: "",
-      file:"",
-    });
-    setShowAddUserModal(true);
-  };
   //*****************************************************************************
   const onAddUserModalButtonPressed = () => {
-  
-
-    console.log("editingProfileData: ", editingProfileData);
-    
-      console.log("editingProfileData: ", editingProfileData);
       const newUserData = {
         name: editingProfileData.name,
-        email: editingProfileData.email,
         categories:editingProfileData?.categories.split(','),
         flavors: editingProfileData?.flavors,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
@@ -454,10 +289,7 @@ const HadoopManagement = () => {
             preventDuplicate: true,
           });
         });
-    
   };
-
-
 
   const onAddPemModalButtonPressed = () => {      
     const newPemData = {
@@ -466,7 +298,6 @@ const HadoopManagement = () => {
       
     };
     console.log("newPemData: ",newPemData)
-
     //Name ve file girilip girilmemesine göre filtreleme yapıldı girilmemesi durumunda hata veriyor diğer kısımlara da ekle!!!!
       if(newPemData.name!==null &&newPemData.file===undefined){
         console.log("iff")
@@ -511,8 +342,7 @@ const HadoopManagement = () => {
                   preventDuplicate: true,
                 });
               }
-
-      
+    
 //pem için dispatch kısımı düzelt
 
      /*  const newPemData = {
@@ -586,30 +416,6 @@ const HadoopManagement = () => {
       </Modal>
     );
   };
-  const hanglePemName = (pemName) =>{
-    dispatch(createPem(pemName))
-  }
-
-  const handleDeleteUser = (selectedUser) => {
-    return Swal.fire({
-      title: `${selectedUser.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
-      text: "Silinen hesaplar tekrar aktif edilebilir, ancak aynı email adresi ile tekrar hesap oluşturulamaz. Tüm yetkileri kaldırılacaktır!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sil",
-      cancelButtonText: "İptal",
-      customClass: {
-        confirmButton: "btn btn-primary",
-        cancelButton: "btn btn-danger ml-1",
-      },
-      buttonsStyling: false,
-    }).then(function (result) {
-      if (result.value !== null && result.value === true) {
-        console.log("selectedUser: ", selectedUser);
-        dispatch(deleteUser(selectedUser.id));
-      }
-    });
-  };
 
   return (
     <div style={{ marginTop: "2%" }}>
@@ -643,8 +449,6 @@ const HadoopManagement = () => {
               id="database-name"
               placeholder="Ubuntu Name"
               value={"UBUNTU 20.04"}
-              
-             
             />
           </div>
           <div className="mb-2">
@@ -656,8 +460,6 @@ const HadoopManagement = () => {
               id="database-name"
               placeholder="Instance Name"
               value={"HADOOP"}
-              
-             
             />
           </div>
          
@@ -671,25 +473,15 @@ const HadoopManagement = () => {
              theme={selectThemeColors}
              closeMenuOnSelect={true}
              components={animatedComponents}
-           
              className="react-select"
              classNamePrefix="Select"
-            options={flavorsOptions}
-          
-            defaultValue={editingProfileData?.flavors || [""]}
-
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
+             options={flavorsOptions}
+             defaultValue={editingProfileData?.flavors || [""]}
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingProfileData({
                   ...editingProfileData,
                   categories:categoriesStore.categories[0].id,
                   flavors: value.value,
-                  //role: value.label,
                 });
               }}
             />
@@ -708,19 +500,15 @@ const HadoopManagement = () => {
               options={pemsOptions}
               className="react-select"
               classNamePrefix="Seç"
-             // defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
               //defaultValue={editingProfileData?.role.label || []}
               onChange={(value) => {
                 {
                   //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
                   console.log("value:", value);
                 }
- 
                 setEditingProfileData({
                   ...editingProfileData,
                   pem: value[0]?.value,
-                  
                 }); 
               }}
             />
