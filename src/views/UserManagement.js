@@ -47,6 +47,7 @@ import { getOrganisations } from "@src/redux/actions/organisations";
 import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getPermissions,getUsersHttp } from "../redux/actions/users";
 import { getUser } from "../redux/actions/user";
+import { getCompany } from "../redux/actions/company";
 import useGetUsers from "../utility/hooks/useGetUsers";
 
 const Swal = withReactContent(SweetAlert);
@@ -138,6 +139,8 @@ const UserManagement = () => {
   console.log("rolesStore: ", rolesStore);
   const organizationStore = useSelector((state) => state.organisationReducer);
   console.log("organizationStore: ", organizationStore);
+  const companyStore = useSelector((state) => state.companyReducer);
+  console.log("companyStore: ", companyStore);
   const [rolesOptions, setRolesOptions] = useState([]);
   console.log("rolesOptions: ",rolesOptions)
   const [authOptions, setAuthOptions] = useState([]);
@@ -149,6 +152,7 @@ const UserManagement = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState([]);
+  console.log("userss: ",users)
   const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userOptions, setUserOptions] = useState([]);
@@ -157,12 +161,23 @@ const UserManagement = () => {
   console.log("editingProfileData set: ", editingProfileData);
   const currentUserRole= localStorage.getItem('currentUserRole');
   console.log("currentUserRole: ",currentUserRole)
+  let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
+  console.log("currentUserCompanyId: ",currentUserCompanyId)
 
   useEffect(() => {
+    if(currentUserRole==="ADMIN"){
     dispatch(getUsersHttp());
     if (usersStore.length > 0) {
       setUsers(usersStore);
     }
+  }
+  else{
+    dispatch(getCompany(currentUserCompanyId));
+    if (companyStore.length > 0) {
+      setUsers(companyStore);
+    }
+
+  }
   }, []);
   useEffect(() => {
     dispatch(getUser());
@@ -208,20 +223,40 @@ const UserManagement = () => {
   console.log("total", usersStore);
   console.log("total", usersStore.total);
   useEffect(() => {
-    if (usersStore.data) {
-      if (usersStore.total <= currentPage * rowsPerPage) {
+    if(currentUserRole==="ADMIN"){
+      if (usersStore.data) {
+        if (usersStore.total <= currentPage * rowsPerPage) {
+          setCurrentPage(1);
+          setUsers(usersStore?.data?.slice(0, rowsPerPage));
+        } else {
+          setUsers(
+            usersStore?.data?.slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+          );
+        }
+      }
+    }
+    
+  }, [usersStore.total, usersStore]);
+
+  useEffect(() => {
+    if (companyStore.company) {
+      if (companyStore.total <= currentPage * rowsPerPage) {
         setCurrentPage(1);
-        setUsers(usersStore.data?.slice(0, rowsPerPage));
+        setUsers(companyStore.company?.slice(0, rowsPerPage));
       } else {
         setUsers(
-          usersStore.data?.slice(
+          companyStore.company?.slice(
             currentPage * rowsPerPage - rowsPerPage,
             currentPage * rowsPerPage
           )
         );
       }
     }
-  }, [usersStore.total, usersStore]);
+  }, [companyStore.total, companyStore]);
+
 
   useEffect(() => {
     getUserOptions();
@@ -284,6 +319,7 @@ const UserManagement = () => {
     ) }
   };
 
+  //moderator girişi için filtreyi güncellemek gerekebilir yapınca test et!
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
 
@@ -310,44 +346,94 @@ const UserManagement = () => {
 
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
-    setUsers(
-      usersStore.data.slice(
-        (page.selected + 1) * rowsPerPage - rowsPerPage,
-        (page.selected + 1) * rowsPerPage
-      )
-    );
+    if(currentUserRole==="ADMIN"){
+      setUsers(
+        usersStore.data.slice(
+          (page.selected + 1) * rowsPerPage - rowsPerPage,
+          (page.selected + 1) * rowsPerPage
+        )
+      );
+    }
+    else{
+      setUsers(
+        companyStore.company.slice(
+          (page.selected + 1) * rowsPerPage - rowsPerPage,
+          (page.selected + 1) * rowsPerPage
+        )
+      );
+    }
+    
   };
 
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
-    setUsers(
-      usersStore.data.slice(
-        currentPage * parseInt(e.target.value) - parseInt(e.target.value),
-        currentPage * parseInt(e.target.value)
-      )
-    );
+    if(currentUserRole==="ADMIN"){
+      setUsers(
+        usersStore.data.slice(
+          currentPage * parseInt(e.target.value) - parseInt(e.target.value),
+          currentPage * parseInt(e.target.value)
+        )
+      );
+    }
+    else{
+      setUsers(
+        companyStore.company.slice(
+          currentPage * parseInt(e.target.value) - parseInt(e.target.value),
+          currentPage * parseInt(e.target.value)
+        )
+      );
+    }
+    
   };
 
   const onSort = (column, direction) => {
-    setUsers(
-      usersStore.data
-        .sort((a, b) => {
-          if (a[column.selector] === b[column.selector]) return 0;
-          if (direction === "asc") {
-            return a[column.selector] > b[column.selector] ? 1 : -1;
-          } else {
-            return a[column.selector] < b[column.selector] ? 1 : -1;
-          }
-        })
-        .slice(
-          currentPage * rowsPerPage - rowsPerPage,
-          currentPage * rowsPerPage
-        )
-    );
+    if(currentUserRole==="ADMIN"){
+      setUsers(
+        usersStore.data
+          .sort((a, b) => {
+            if (a[column.selector] === b[column.selector]) return 0;
+            if (direction === "asc") {
+              return a[column.selector] > b[column.selector] ? 1 : -1;
+            } else {
+              return a[column.selector] < b[column.selector] ? 1 : -1;
+            }
+          })
+          .slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+      );
+
+    }
+    else{
+      setUsers(
+        companyStore.company
+          .sort((a, b) => {
+            if (a[column.selector] === b[column.selector]) return 0;
+            if (direction === "asc") {
+              return a[column.selector] > b[column.selector] ? 1 : -1;
+            } else {
+              return a[column.selector] < b[column.selector] ? 1 : -1;
+            }
+          })
+          .slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+      );
+    }
+   
   };
 
   const CustomPagination = () => {
-    const count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
+    let count=0;
+    if(currentUserRole==="ADMIN"){
+       count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
+    }
+    else{
+       count = Number((companyStore?.company?.length / rowsPerPage).toFixed(1));
+    }
+    
 
     return (
       <ReactPaginate

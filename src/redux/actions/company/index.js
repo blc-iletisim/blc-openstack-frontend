@@ -10,18 +10,44 @@ export const getCompany = (companyId) => {
     
             {
                 company(id: "`+companyId+`") {
-                id
-                name
-                users {
+                  id
+                  name
+                  users {
                     id
-                    company{name}
                     name
                     email
-                role{
-                name
-            }
-                
-                }
+                    company{name}
+                    role{
+                    name
+                    }
+              
+                    instances{
+                      id
+                      name
+                      pemName
+                      flavor{
+                        id
+                        name
+                        cpu_size
+                        ram_size
+                        root_disk
+                      }
+                      image{
+                        id
+                        name
+                      }
+                      user{
+                       id
+                       company{name}
+                       name
+                              
+                      }
+                      categories{
+                        id
+                        name
+                      }
+                    }
+                  }
                 createdDateTime
                 updatedDateTime
                 deletedDateTime
