@@ -350,7 +350,7 @@ const InstanceManagement = () => {
       setFlavorsOptions((flavorsOptions) => [
         ...flavorsOptions,
         {
-          value: flavor.id,
+          value: flavor?.id,
           label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk
           ,
           color: "#00B8D9",
@@ -369,20 +369,23 @@ const InstanceManagement = () => {
   console.log("total", usersStore);
   console.log("total", usersStore.total);
   useEffect(() => {
-    if (instancesStore.instances) {
-      if (instancesStore.total <= currentPage * rowsPerPage) {
-        setCurrentPage(1);
-        setInstances(instancesStore.instances?.slice(0, rowsPerPage));
-      } else {
-        setInstances(
-          //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
-          instancesStore.instances?.slice(
-            currentPage * rowsPerPage - rowsPerPage,
-            currentPage * rowsPerPage
-          )
-        );
+    if(currentUserRole==="ADMIN"){
+      if (instancesStore.instances) {
+        if (instancesStore.total <= currentPage * rowsPerPage) {
+          setCurrentPage(1);
+          setInstances(instancesStore.instances?.slice(0, rowsPerPage));
+        } else {
+          setInstances(
+
+            instancesStore.instances?.slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+          );
+        }
       }
     }
+   
   }, [instancesStore.total, instancesStore]);
 
   useEffect(() => {
@@ -392,13 +395,15 @@ const InstanceManagement = () => {
           setCurrentPage(1);
           setInstances(companyInstances?.slice(0, rowsPerPage));
         } else {
-           setInstances(
+
+          //HATA VERDİĞİ İÇİN KAPALI ÇÖZÜP AÇ!!
+          /*  setInstances(
             //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
             companyInstances?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
             )
-          )
+          ) */
         }
       }
     }
@@ -406,20 +411,23 @@ const InstanceManagement = () => {
   }, [companyInstances.total, companyInstances]);
 
   useEffect(() => {
-    if (userStore) {
-      if (userStore.total <= currentPage * rowsPerPage) {
-        setCurrentPage(1);
-        setInstances(userStore?.slice(0, rowsPerPage));
-      } else {
-        setInstances(
-        
-          userStore?.slice(
-            currentPage * rowsPerPage - rowsPerPage,
-            currentPage * rowsPerPage
-          )
-        );
+    if(currentUserRole!=="MODERATOR"&&currentUserRole!=="ADMIN"){
+      if (userStore) {
+        if (userStore.total <= currentPage * rowsPerPage) {
+          setCurrentPage(1);
+          setInstances(userStore?.slice(0, rowsPerPage));
+        } else {
+          setInstances(
+          
+            userStore?.slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+          );
+        }
       }
     }
+    
   }, [userStore?.total, userStore]);
 
 
@@ -455,7 +463,7 @@ const InstanceManagement = () => {
       setCategoriesOptions((categoriesOptions) => [
         ...categoriesOptions,
         {
-          value: category.id,
+          value: category?.id,
           label: category?.name,
           color: "#00B8D9",
           isFixed: true,
@@ -870,8 +878,8 @@ const InstanceManagement = () => {
         const newDatabaseData = {
           name: editingProfileData?.name,
           email: editingProfileData?.email,
-          categories:editingProfileData?.categories,
-          flavors: editingProfileData?.flavors,
+          categories:editingProfileData?.categories.map((number) => number.value),
+          flavors: editingProfileData?.flavors.value,
           createdTime: editingProfileData?.createdTime || new Date().getTime(),
           lastUpdatedTime: new Date().getTime(),
           id: editingProfileData?.id,
@@ -880,7 +888,7 @@ const InstanceManagement = () => {
           images:imagesStore?.images[1]?.id,
         
         };
-  //console.log( "newDatabaseData:"  , newDatabaseData)
+  console.log( "newDatabaseData2:"  , newDatabaseData)
         dispatch(addInstances( newDatabaseData))
           .then(() => {
             setLoading(false);
@@ -907,8 +915,8 @@ const InstanceManagement = () => {
         const newDatabaseData = {
           name: editingProfileData?.name,
           email: editingProfileData?.email,
-          categories:editingProfileData?.categories,
-          flavors: editingProfileData?.flavors,
+          categories:editingProfileData?.categories.map((number) => number.value),
+          flavors: editingProfileData?.flavors.value,
           createdTime: editingProfileData?.createdTime || new Date().getTime(),
           lastUpdatedTime: new Date().getTime(),
           id: editingProfileData?.id,

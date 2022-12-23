@@ -166,9 +166,9 @@ export const updateInstance = (instance) => {
   instance?.categories?.forEach((category) => {
 
     if (category) {
-      categoriesArray.push('"' + category.value + '"');
+      categoriesArray.push('"' + category + '"');
     } else {
-      categoriesArray.push('"' + category.value + '"');
+      categoriesArray.push('"' + category + '"');
     }
    
   });
@@ -188,50 +188,39 @@ export const updateInstance = (instance) => {
 
 
         mutation {
-          updateInstance(id: "`+instance.id+`", input: {categories:[${categoriesArray}],flavor:"`+instance.flavors.value+`",name:"`+instance.name+`"}) {
+          updateInstance(id: "`+instance.id+`", input: {categories:[${categoriesArray}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
             id
             name
+            pemName
+            flavor {
+              id
+              name
+              cpu_size
+              ram_size
+              root_disk
+        
+            }
+            image {
+              id
+              name
+        
+            }
             user {
               id
               name
-           
-              company{name}
-              role{
+        
+          
+            }
+            categories {
+              id
               name
-              }
-
-              instances{
-                id
-                name
-               
-                flavor{
-                  id
-                  name
-                  cpu_size
-                  ram_size
-                  root_disk
-                }
-                image{
-                  id
-                  name
-                }
-                user{
-                  id
-                  name
-                
-                }
-                categories{
-                  id
-                  name
-                }
-              }
+        
             }
             createdDateTime
             updatedDateTime
             deletedDateTime
           }
         }
-        
 
         `
 
@@ -261,9 +250,11 @@ export const deleteInstance = (instanceId) => {
     ApplicationService.http()
       .post("/graphql", {
         query:`
-              mutation {
-          deleteInstance(id: "`+instanceId+`")
-        }
+                        
+            mutation {
+              deleteInstance(id:"`+instanceId+`")
+            }
+
 
         `,
       },{
