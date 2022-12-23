@@ -162,7 +162,19 @@ export const addInstances = (instance) => {
 
 export const updateInstance = (instance) => {
   console.log("updateInstance: ",instance);
-  
+  const categoriesArray = [];
+  instance?.categories?.forEach((category) => {
+
+    if (category) {
+      categoriesArray.push('"' + category.value + '"');
+    } else {
+      categoriesArray.push('"' + category.value + '"');
+    }
+   
+  });
+  console.log("categoriesArray: ", categoriesArray);
+ 
+  //updateInstance(id: "`+instance.id+`", input: {categories:[${instance?.categories}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
   if (instance.personel === undefined) {
     instance.personel = { id: instance?.user?.id, name: "" };
   }
@@ -176,35 +188,43 @@ export const updateInstance = (instance) => {
 
 
         mutation {
-          updateInstance(id: "`+instance.id+`", input: {categories:[${instance?.categories}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
+          updateInstance(id: "`+instance.id+`", input: {categories:[${categoriesArray}],flavor:"`+instance.flavors.value+`",name:"`+instance.name+`"}) {
             id
             name
-            pemName
-            flavor {
-              id
-              name
-              cpu_size
-              ram_size
-              root_disk
-           
-            }
-            image {
-              id
-              name
-          
-            }
             user {
               id
               name
-              email
-        
-             
-            }
-            categories {
-              id
+           
+              company{name}
+              role{
               name
-        
-         
+              }
+
+              instances{
+                id
+                name
+               
+                flavor{
+                  id
+                  name
+                  cpu_size
+                  ram_size
+                  root_disk
+                }
+                image{
+                  id
+                  name
+                }
+                user{
+                  id
+                  name
+                
+                }
+                categories{
+                  id
+                  name
+                }
+              }
             }
             createdDateTime
             updatedDateTime

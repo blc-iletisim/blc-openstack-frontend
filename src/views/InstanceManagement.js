@@ -48,6 +48,7 @@ import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 import { getInstances,addInstances,deleteInstance,updateInstance } from "../redux/actions/instances";
 import { getRoles } from "../redux/actions/roles";
+import { getCompany } from "../redux/actions/company";
 import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
 import useGetUsers from "../utility/hooks/useGetUsers";
 import { getFlavors } from "../redux/actions/flavors";
@@ -202,6 +203,17 @@ const InstanceManagement = () => {
   console.log("imagesStore: ", imagesStore);
   const userStore = useSelector((state) => state.userReducer.data.instances);
   console.log("userStore: ", userStore);
+  const companyStore = useSelector((state) => state.companyReducer.company);
+  console.log("companyStore: ", companyStore);
+
+
+  //const [company, setCompany] = useState([]);
+  let company =[];
+  if (company?.length === 0) {company = companyStore.map((com) => com.instances);}
+  const companyInstances= []
+  company.forEach((x)=>x.forEach((x)=>companyInstances.push(x)))
+  console.log("acompanyInstances ",companyInstances)
+ console.log("company: ",company)
   const [editingPemData,setEditingPemData] = useState(null);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
@@ -214,6 +226,7 @@ const InstanceManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
+  console.log("editingProfileData: ",editingProfileData)
   const [newPemData, setNewPemData] = useState(null);
   const [instances, setInstances] = useState([]);
   console.log("instances: ",instances)
@@ -228,6 +241,8 @@ const InstanceManagement = () => {
   console.log("currentUserRole: ",currentUserRole)
   const currentUserId= localStorage.getItem('currentUserId');
   console.log("currentUserId: ",currentUserId)
+  let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
+  console.log("currentUserCompanyId: ",currentUserCompanyId)
 
   useEffect(() => {   
     if(currentUserRole==="ADMIN"){
@@ -238,6 +253,14 @@ const InstanceManagement = () => {
         setInstancesOptions(instancesStore);
       }
       
+    }
+    else if(currentUserRole==="MODERATOR"){
+      dispatch(getCompany(currentUserCompanyId));
+      
+      if (companyInstances?.length > 0) {
+        setInstancesOptions(companyInstances);
+       
+      }
     }
     else{
       
@@ -362,6 +385,25 @@ const InstanceManagement = () => {
     }
   }, [instancesStore.total, instancesStore]);
 
+  useEffect(() => {
+    if(currentUserRole==="MODERATOR"){
+      if (companyInstances) {
+        if (companyInstances.total <= currentPage * rowsPerPage) {
+          setCurrentPage(1);
+          setInstances(companyInstances?.slice(0, rowsPerPage));
+        } else {
+           setInstances(
+            //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
+            companyInstances?.slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+          )
+        }
+      }
+    }
+    
+  }, [companyInstances.total, companyInstances]);
 
   useEffect(() => {
     if (userStore) {
@@ -462,7 +504,7 @@ const InstanceManagement = () => {
         file: formData })
     }}; */
   
-
+//filtreyi admin/moderator/user için ayrı ayrı yap
     //filtre çalışmıyor incele!
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
@@ -470,7 +512,7 @@ const InstanceManagement = () => {
     if(currentUserRole==="ADMIN"){
       if (e.target.value !== "") {
         setUsers(
-          usersStore.data
+          instancesStore.data
             .filter((user) =>
               user.name.toLowerCase().includes(e.target.value.toLowerCase())
             )
@@ -546,6 +588,14 @@ const InstanceManagement = () => {
         )
       ); 
     }
+    else if(currentUserRole==="MODERATOR"){
+      setInstances(
+        companyInstances.slice(
+          (page.selected + 1) * rowsPerPage - rowsPerPage,
+          (page.selected + 1) * rowsPerPage
+        )
+      ); 
+    }
      else{
       setInstances(
         userStore.slice(
@@ -576,6 +626,14 @@ const InstanceManagement = () => {
         )
       );
     }
+    else if(currentUserRole==="MODERATOR"){
+      setInstances(
+        companyInstances.slice(
+          currentPage * parseInt(e.target.value) - parseInt(e.target.value),
+          currentPage * parseInt(e.target.value)
+        )
+      );
+    }
   else{
       setInstances(
         userStore.slice(
@@ -599,6 +657,23 @@ const InstanceManagement = () => {
     if(currentUserRole==="ADMIN"){
       setInstances(
         instancesStore.instances
+          .sort((a, b) => {
+            if (a[column.selector] === b[column.selector]) return 0;
+            if (direction === "asc") {
+              return a[column.selector] > b[column.selector] ? 1 : -1;
+            } else {
+              return a[column.selector] < b[column.selector] ? 1 : -1;
+            }
+          })
+          .slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+      );
+    }
+    else if(currentUserRole==="MODERATOR"){
+      setInstances(
+        companyInstances
           .sort((a, b) => {
             if (a[column.selector] === b[column.selector]) return 0;
             if (direction === "asc") {
@@ -656,6 +731,9 @@ const InstanceManagement = () => {
     let count=0;
     if(currentUserRole==="ADMIN"){
        count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
+    }
+    else if(currentUserRole==="MODERATOR"){
+      count = Number((companyInstances?.length / rowsPerPage).toFixed(1));
     }
     else{
        count = Number((userStore?.length / rowsPerPage).toFixed(1));
@@ -734,47 +812,136 @@ const InstanceManagement = () => {
     setShowAddUserModal(true);
   };
   //*****************************************************************************
+  const PemSelections = () => (
+    
+    <div className="mb-2">
+            
+            <Label className="form-label" for="permissions-select">
+              Choose Existing PEM:
+            </Label>
+            <Select
+              id="permissions-select"
+              isClearable={false}
+              theme={selectThemeColors}
+              closeMenuOnSelect={true}
+              components={animatedComponents}
+              isMulti
+              options={pemsOptions}
+              className="react-select"
+              classNamePrefix="Seç"
+             // defaultValue={editingProfileData?.role || [""]}
+              //defaultValue={editingProfileData?.roles || []}
+              defaultValue={editingProfileData?.pem }
+              onChange={(value) => {
+                {
+                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
+                  console.log("value:", value);
+                }
  
+                setEditingProfileData({
+                  ...editingProfileData,
+                  pem: value.map((val) => val.value),
+                 // pem: value[0]?.value,
+                  
+                }); 
+              }}
+            />
+ <div className="mb-2">  </div>
+<Button
+          size="sm"
+            className="ml-2"
+            //color="primary"
+            color="info"
+            onClick={onAddPemButtonPressed}
+          >
+            <Plus size={15} />
+            <span className="align-middle ml-50">Create a PEM File</span>
+          </Button>
+          
+          </div>
+  )
   const onAddUserModalButtonPressed = () => {
   
-
+    
     console.log("editingProfileData: ", editingProfileData);
     
       console.log("editingProfileData: ", editingProfileData);
-
-      
-      const newDatabaseData = {
-        name: editingProfileData?.name,
-        email: editingProfileData?.email,
-        categories:editingProfileData?.categories,
-        flavors: editingProfileData?.flavors,
-        createdTime: editingProfileData?.createdTime || new Date().getTime(),
-        lastUpdatedTime: new Date().getTime(),
-        id: editingProfileData?.id,
-        deletedAt: editingProfileData?.deletedAt || null,
-        pem:editingProfileData?.pem,
-        images:imagesStore?.images[1]?.id,
-      
-      };
-//console.log( "newDatabaseData:"  , newDatabaseData)
-      dispatch(addInstances( newDatabaseData))
-        .then(() => {
-          setLoading(false);
-          setShowAddUserModal(false);
-          enqueueSnackbar("Successfull.", {
-            variant: "success",
-            preventDuplicate: true,
+      if (!editingProfileData.id) {
+        const newDatabaseData = {
+          name: editingProfileData?.name,
+          email: editingProfileData?.email,
+          categories:editingProfileData?.categories,
+          flavors: editingProfileData?.flavors,
+          createdTime: editingProfileData?.createdTime || new Date().getTime(),
+          lastUpdatedTime: new Date().getTime(),
+          id: editingProfileData?.id,
+          deletedAt: editingProfileData?.deletedAt || null,
+          pem:editingProfileData?.pem,
+          images:imagesStore?.images[1]?.id,
+        
+        };
+  //console.log( "newDatabaseData:"  , newDatabaseData)
+        dispatch(addInstances( newDatabaseData))
+          .then(() => {
+            setLoading(false);
+            setShowAddUserModal(false);
+            enqueueSnackbar("Successfull.", {
+              variant: "success",
+              preventDuplicate: true,
+            });
+          })
+          .catch(() => {
+            setLoading(false);
+            setShowAddUserModal(false);
+            enqueueSnackbar("Error.", {
+              variant: "error",
+              preventDuplicate: true,
+            });
           });
-        })
-        .catch(() => {
-          setLoading(false);
-          setShowAddUserModal(false);
-          enqueueSnackbar("Error.", {
-            variant: "error",
-            preventDuplicate: true,
+      }
+      else{
+        console.log("updateEdingProfileData: ",editingProfileData)
+     
+        console.log("update else");
+        
+        const newDatabaseData = {
+          name: editingProfileData?.name,
+          email: editingProfileData?.email,
+          categories:editingProfileData?.categories,
+          flavors: editingProfileData?.flavors,
+          createdTime: editingProfileData?.createdTime || new Date().getTime(),
+          lastUpdatedTime: new Date().getTime(),
+          id: editingProfileData?.id,
+          deletedAt: editingProfileData?.deletedAt || null,
+          pem:editingProfileData?.pem,
+          images:imagesStore?.images[1]?.id,
+  
+        };
+        console.log("NUD", newDatabaseData);
+        dispatch(updateInstance(newDatabaseData))
+          .then(() => {
+            enqueueSnackbar("User Updated", {
+              variant: "success",
+            });
+            setLoading(false);
+            setEditingProfileData(null);
+            setShowAddUserModal(false);
+            if (!editingProfileData.id) setEditingProfileData(null);
+          })
+          .catch(() => {
+            enqueueSnackbar(
+              `Error, please try again.`,
+              {
+                variant: "error",
+              }
+            );
+            setLoading(false);
           });
-        });
+      }
+      
+     
   };
+  
 
 
   const onAddPemModalButtonPressed = () => {      
@@ -881,7 +1048,7 @@ const InstanceManagement = () => {
               type="text"
               id="database-name"
               placeholder="Instance Name"
-              //value={editingProfileData?.company || ""}
+              value={editingProfileData?.name || ""}
               onChange={(e) =>
                 setEditingProfileData({ ...editingProfileData, name: e.target.value  })
                 
@@ -909,15 +1076,13 @@ const InstanceManagement = () => {
               id="permissions-select"
               isClearable={false}
               theme={selectThemeColors}
-              closeMenuOnSelect={false}
+              closeMenuOnSelect={true}
               components={animatedComponents}
               isMulti
               options={categoriesOptions}
               className="react-select"
               classNamePrefix="Seç"
-              defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
+              defaultValue={editingProfileData?.categories}
               onChange={(value) => {
                 {
                   console.log("value:", value);
@@ -925,7 +1090,8 @@ const InstanceManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  categories: value.map((category) => category.value),
+                 // categories: value.map((category) => category.value),
+                 categories: value
                   //role: value.label,
                 });
               }}
@@ -956,53 +1122,17 @@ const InstanceManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                  flavors: value.value,
+                  flavors: value,
                   //role: value.label,
                 });
               }}
             />
           </div>
-          <div className="mb-2">
-            <Label className="form-label" for="permissions-select">
-              Choose Existing PEM:
-            </Label>
-            <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
-              options={pemsOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-             // defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
-              onChange={(value) => {
-                {
-                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
-                  console.log("value:", value);
-                }
- 
-                setEditingProfileData({
-                  ...editingProfileData,
-                  pem: value[0]?.value,
-                  
-                }); 
-              }}
-            />
-          </div>
-          <Button
-          size="sm"
-            className="ml-2"
-            //color="primary"
-            color="info"
-            onClick={onAddPemButtonPressed}
-          >
-            <Plus size={15} />
-            <span className="align-middle ml-50">Create a PEM File</span>
-          </Button>
+          <div>
+      
+      { !editingProfileData?.id ? <PemSelections /> : null }
+    </div>
+         
          {/*  <Button color="info" onClick={console.log()}>
               {loading
                 ? "Saving.."
@@ -1044,8 +1174,9 @@ const InstanceManagement = () => {
         </ModalBody>
         <ModalFooter>
         <Button
-        disabled={!(editingProfileData?.name&&editingProfileData?.flavors&&editingProfileData?.pem)} 
-        color="primary" onClick={onAddUserModalButtonPressed}>
+        disabled={!(editingProfileData?.name&&editingProfileData?.flavors)} 
+
+        color="primary" onClick={onAddUserModalButtonPressed}  >
               {loading
                 ? "Saving.."
                 : !editingProfileData?.id
@@ -1078,7 +1209,8 @@ const InstanceManagement = () => {
               type="text"
               id="pem-name"
               placeholder="PEM Name"
-              //value={editingProfileData?.company || ""}
+              //value={editingPemData?.name || ""}
+              defaultValue={editingProfileData?.pemName || ""}
               onChange={(e) =>
                 //console.log("pem name: ",e)
 
