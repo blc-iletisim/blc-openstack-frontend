@@ -116,6 +116,9 @@ export const addInstances = (instance) => {
                 flavor {
                     id
                     name
+                    cpu_size
+                    ram_size
+                    root_disk
                     
                 }
                 image {

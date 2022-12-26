@@ -22,6 +22,7 @@ export const getCompany = (companyId) => {
                     }
               
                     instances{
+                      createdDateTime
                       id
                       name
                       pemName
@@ -48,9 +49,7 @@ export const getCompany = (companyId) => {
                       }
                     }
                   }
-                createdDateTime
-                updatedDateTime
-                deletedDateTime
+                
                 }
             }
                         

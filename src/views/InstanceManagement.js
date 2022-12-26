@@ -210,10 +210,17 @@ const InstanceManagement = () => {
   //const [company, setCompany] = useState([]);
   let company =[];
   if (company?.length === 0) {company = companyStore.map((com) => com.instances);}
-  const companyInstances= []
+  const companyInstances= [] 
   company.forEach((x)=>x.forEach((x)=>companyInstances.push(x)))
   console.log("acompanyInstances ",companyInstances)
  console.log("company: ",company)
+ 
+ const withoutDuplicates = companyInstances.filter((v,i) => {
+  return companyInstances.map((val)=> val.name).indexOf(v.name) == i
+})
+console.log("withoutDuplicates", withoutDuplicates)
+/*  const withoutDuplicates = [...new Set(companyInstances)];
+ console.log("withoutDuplicates", withoutDuplicates) */
   const [editingPemData,setEditingPemData] = useState(null);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
@@ -257,8 +264,9 @@ const InstanceManagement = () => {
     else if(currentUserRole==="MODERATOR"){
       dispatch(getCompany(currentUserCompanyId));
       
-      if (companyInstances?.length > 0) {
-        setInstancesOptions(companyInstances);
+      if (withoutDuplicates?.length > 0) {
+        console.log("mod if")
+        setInstancesOptions(withoutDuplicates);
        
       }
     }
@@ -314,7 +322,7 @@ const InstanceManagement = () => {
   useEffect(() => {
     dispatch(getCategories());
     
-    if (categoriesStore.length > 0) {
+    if (categoriesStore.length > 0 &&categoriesOptions.leght===0) {
       setCategoriesOptions(categoriesStore);
     }
   }, []);
@@ -325,7 +333,7 @@ const InstanceManagement = () => {
 
    const getPemsOptions = () => {
     if ( pemsOptions.length === 0   ) {
-    pemsStore.pems[0]?.forEach((pem) =>{
+    pemsStore.pems?.forEach((pem) =>{
       setPemsOptions((pemsOptions) => [
         ...pemsOptions,
         {
@@ -390,25 +398,25 @@ const InstanceManagement = () => {
 
   useEffect(() => {
     if(currentUserRole==="MODERATOR"){
-      if (companyInstances) {
-        if (companyInstances.total <= currentPage * rowsPerPage) {
+      if (withoutDuplicates) {
+        if (withoutDuplicates.total <= currentPage * rowsPerPage) {
           setCurrentPage(1);
-          setInstances(companyInstances?.slice(0, rowsPerPage));
+          setInstances(withoutDuplicates?.slice(0, rowsPerPage));
         } else {
 
           //HATA VERDİĞİ İÇİN KAPALI ÇÖZÜP AÇ!!
-          /*  setInstances(
+            setInstances(
             //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
-            companyInstances?.slice(
+            withoutDuplicates?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
             )
-          ) */
+          ) 
         }
       }
     }
     
-  }, [companyInstances.total, companyInstances]);
+  }, [withoutDuplicates?.total, 1]);
 
   useEffect(() => {
     if(currentUserRole!=="MODERATOR"&&currentUserRole!=="ADMIN"){
@@ -453,25 +461,17 @@ const InstanceManagement = () => {
   
 
   useEffect(() => {
-    getCategoriesOptions();
-   }, [categoriesStore]);
-
-   const getCategoriesOptions = () => {
-    //splice ile sadece mongodb, postgresql alındı:
-    if ( categoriesOptions.length === 0 ) {
-    categoriesStore?.categories?.forEach((category) =>
-      setCategoriesOptions((categoriesOptions) => [
-        ...categoriesOptions,
-        {
+    setCategoriesOptions(
+      categoriesStore.categories?.map((category) => {
+        return {
           value: category?.id,
           label: category?.name,
           color: "#00B8D9",
           isFixed: true,
-          
-        },
-      ])
-    ); }
-  };
+        };
+      })
+    );
+  }, [categoriesStore, categoriesStore.length]);
 
 
 
@@ -484,7 +484,7 @@ const InstanceManagement = () => {
       setRolesOptions((rolesOptions) => [
         ...rolesOptions,
         {
-          value: role.id,
+          value: role?.id,
           label: role?.name,
           color: "#00B8D9",
           isFixed: true,
@@ -598,7 +598,7 @@ const InstanceManagement = () => {
     }
     else if(currentUserRole==="MODERATOR"){
       setInstances(
-        companyInstances.slice(
+        withoutDuplicates.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
@@ -636,7 +636,7 @@ const InstanceManagement = () => {
     }
     else if(currentUserRole==="MODERATOR"){
       setInstances(
-        companyInstances.slice(
+        withoutDuplicates.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
@@ -681,7 +681,7 @@ const InstanceManagement = () => {
     }
     else if(currentUserRole==="MODERATOR"){
       setInstances(
-        companyInstances
+        withoutDuplicates
           .sort((a, b) => {
             if (a[column.selector] === b[column.selector]) return 0;
             if (direction === "asc") {
@@ -741,7 +741,7 @@ const InstanceManagement = () => {
        count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
     }
     else if(currentUserRole==="MODERATOR"){
-      count = Number((companyInstances?.length / rowsPerPage).toFixed(1));
+      count = Number((withoutDuplicates?.length / rowsPerPage).toFixed(1));
     }
     else{
        count = Number((userStore?.length / rowsPerPage).toFixed(1));
@@ -1407,8 +1407,8 @@ const InstanceManagement = () => {
     setShowAddUserModal(true);
     const selectedCategories = selectedInstance.categories?.map(
       (x) => ({
-        value: x.id,
-        label:x.name
+        value: x?.id,
+        label:x?.name
       })
     )
     setEditingProfileData({
@@ -1420,7 +1420,7 @@ const InstanceManagement = () => {
          " ram size: "+ selectedInstance.flavor.ram_size +
          "," +
          " root disk: "+ selectedInstance.flavor.root_disk,
-         value:selectedInstance.flavor.id},
+         value:selectedInstance.flavor?.id},
     });
   };
 

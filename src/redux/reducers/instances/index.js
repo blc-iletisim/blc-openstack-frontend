@@ -24,8 +24,9 @@ const initialState = {
         case "DELETE_INSTANCE":
           return {
             ...state,
-            total: action.payload.instances?.length,
-            instances: [...state.instances, action.payload.instances],
+            //total: action.payload.instances?.length,
+            instances: state.instances.filter((ins)=>ins.id != action.payload.id),
+
           };
           case "UPDATE_INSTANCE":
             return {
