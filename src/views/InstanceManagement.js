@@ -1,9 +1,8 @@
-import React, { Fragment, useState, useEffect, memo } from "react";
+import React, {  useState, useEffect, memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactPaginate from "react-paginate";
 import { ChevronDown, MoreVertical, Plus, Trash } from "react-feather";
 import DataTable from "react-data-table-component";
-import ApplicationService from "../services/ApplicationService";
 import {
   Card,
   CardHeader,
@@ -21,21 +20,14 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  InputGroup,
-  InputGroupText,
-  Badge,
 } from "reactstrap";
 import {
-  ConstructionOutlined,
   Edit,
   HowToReg,
-  SatelliteAlt,
-  SettingsEthernet,
 } from "@mui/icons-material";
 import { getUsersHttp } from "@src/redux/actions/users";
 import { getUser } from "@src/redux/actions/user";
 import moment from "moment";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useSnackbar } from "notistack";
 import { default as SweetAlert } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -43,14 +35,8 @@ import Select from "react-select";
 import { getImages } from "../redux/actions/images";
 import makeAnimated from "react-select/animated";
 import { selectThemeColors } from "@utils";
-import InputPasswordToggle from "@components/input-password-toggle";
-import { useHistory } from "react-router-dom";
-import { updateUser } from "../redux/actions/users";
 import { getInstances,addInstances,deleteInstance,updateInstance } from "../redux/actions/instances";
-import { getRoles } from "../redux/actions/roles";
 import { getCompany } from "../redux/actions/company";
-import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
-import useGetUsers from "../utility/hooks/useGetUsers";
 import { getFlavors } from "../redux/actions/flavors";
 import { getCategories} from "../redux/actions/categories";
 import {
@@ -62,32 +48,7 @@ const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 const fileTypes = ["PEM"];
 const InstanceManagement = () => {
-  // let arrPerm = [];
-  let arrRole = [];
-  let x = "";
-  //
-  const [userPermissionsArr, setUserPermissionsArr] = useState([]);
-  const [userRolesArr, setRolesArr] = useState([]);
-  const [hourText, setHourText] = useState();
-
   const serverSideColumns = [
-    /* {
-      name: "Aktiflik",
-      selector: "deleted",
-      sortable: true,
-      width: "100px",
-      cell: (row) => {
-        return (
-          <Badge
-            color={row.deleted === true ? "danger" : "success"}
-            variant="dot"
-            className="text-center align-self-center"
-          >
-            {row.deleted === true ? "Pasif" : "Aktif"}
-          </Badge>
-        );Image
-      },
-    }, */
     {
       name: "Name",
       selector: "name",
@@ -122,19 +83,6 @@ const InstanceManagement = () => {
         </span>
       ),
     },
-   /* {
-      name: "Database Configuration",
-      selector: "company",
-      sortable: true,
-      minWidth: "350px",
-    },
-    {
-      name: "PEM",
-      selector: "role.name",
-      sortable: true,
-      minWidth: "350px",
-      cell: (row) => <span>{row.role.name?.toUpperCase() || ""}</span>,
-    }, */
     {
       name: "Actions",
       allowOverflow: false,
@@ -184,30 +132,22 @@ const InstanceManagement = () => {
 
   const dispatch = useDispatch();
   const categoriesStore = useSelector((state) => state.categoriesReducer);
-  console.log("categoriesStore: ",categoriesStore)
-  const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
-  console.log("usersStoree:",usersStore)
   const instancesStore = useSelector ((state) => state.instancesReducer)
   console.log("instancesStore: ", instancesStore);
   const userInstancesStore = useSelector ((state) => state.users)
   console.log("userInstancesStore: ", userInstancesStore);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
   const rolesStore = useSelector((state) => state.rolesReducer);
-  console.log("rolesStore: ", rolesStore);
   const pemsStore = useSelector((state) => state.pemReducer);
-  console.log("pemsStore: ",pemsStore)
   const [pemsOptions, setPemsOptions] = useState([]);
-  console.log("pemsOptions: ",pemsOptions)
   const imagesStore = useSelector((state) => state.imagesReducer);
-  console.log("imagesStore: ", imagesStore);
   const userStore = useSelector((state) => state.userReducer.data.instances);
   console.log("userStore: ", userStore);
   const companyStore = useSelector((state) => state.companyReducer.company);
   console.log("companyStore: ", companyStore);
 
 
-  //const [company, setCompany] = useState([]);
   let company =[];
   if (company?.length === 0) {company = companyStore.map((com) => com.instances);}
   const companyInstances= [] 
@@ -215,14 +155,7 @@ const InstanceManagement = () => {
   console.log("acompanyInstances ",companyInstances)
  console.log("company: ",company)
  
- const withoutDuplicates = companyInstances.filter((v,i) => {
-  return companyInstances.map((val)=> val.name).indexOf(v.name) == i
-})
-console.log("withoutDuplicates", withoutDuplicates)
-/*  const withoutDuplicates = [...new Set(companyInstances)];
- console.log("withoutDuplicates", withoutDuplicates) */
   const [editingPemData,setEditingPemData] = useState(null);
-  const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
@@ -230,26 +163,16 @@ console.log("withoutDuplicates", withoutDuplicates)
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
-  console.log("editingProfileData: ",editingProfileData)
-  const [newPemData, setNewPemData] = useState(null);
   const [instances, setInstances] = useState([]);
   console.log("instances: ",instances)
-  const [instancesOptions, setInstancesOptions] = useState([]);
-  console.log("instancesOptions: ",instancesOptions)
-  console.log("editingProfileData set: ", editingProfileData);
   const [showAddPemModal, setShowAddPemModal] = useState(false);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
-  console.log("categoriesOptions: ",categoriesOptions)
   const [imagesOptions, setImagesOptions] = useState([]);
   const currentUserRole= localStorage.getItem('currentUserRole');
-  console.log("currentUserRole: ",currentUserRole)
   const currentUserId= localStorage.getItem('currentUserId');
-  console.log("currentUserId: ",currentUserId)
   let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
-  console.log("currentUserCompanyId: ",currentUserCompanyId)
 
   useEffect(() => {   
     if(currentUserRole==="ADMIN"){
@@ -257,16 +180,16 @@ console.log("withoutDuplicates", withoutDuplicates)
       console.log("if: ",instancesStore)
       if (instancesStore?.length > 0) {
         console.log("if2: ",instancesStore)
-        setInstancesOptions(instancesStore);
+        setInstances(instancesStore);
       }
       
     }
     else if(currentUserRole==="MODERATOR"){
       dispatch(getCompany(currentUserCompanyId));
       
-      if (withoutDuplicates?.length > 0) {
+      if (companyInstances?.length > 0 ) {
         console.log("mod if")
-        setInstancesOptions(withoutDuplicates);
+        setInstances(companyInstances);
        
       }
     }
@@ -275,7 +198,7 @@ console.log("withoutDuplicates", withoutDuplicates)
       dispatch(getUser(currentUserId));
       if (userStore?.length > 0) {
        
-        setInstancesOptions(userStore);
+        setInstances(userStore);
       }
     }
    
@@ -289,16 +212,7 @@ console.log("withoutDuplicates", withoutDuplicates)
   }, []);
 
   useEffect(() => {
-    dispatch(getRoles());
-    console.log("rolesStore: ", rolesStore);
-    if (rolesStore.length > 0) {
-      setRolesOptions(rolesStore);
-    }
-  }, []);
-
-  useEffect(() => {
     dispatch(getImages());
-    console.log("imagesStore: ", imagesStore);
     if (imagesStore.length > 0) {
       setImagesOptions(imagesStore);
     }
@@ -306,7 +220,6 @@ console.log("withoutDuplicates", withoutDuplicates)
 
   useEffect(() => {
     dispatch(getFlavors());
-    console.log("flavorsStore get: ",flavorsStore);
     if (flavorsStore.length > 0) {
       setFlavorsOptions(flavorsStore);
     }
@@ -314,7 +227,6 @@ console.log("withoutDuplicates", withoutDuplicates)
 
   useEffect(() => {
     dispatch(getPem());
-    console.log("pemsStore get: ",pemsStore);
     if (pemsStore.length > 0 && pemsOptions.length===0) {
       setPemsOptions(pemsStore);
     }
@@ -322,7 +234,7 @@ console.log("withoutDuplicates", withoutDuplicates)
   useEffect(() => {
     dispatch(getCategories());
     
-    if (categoriesStore.length > 0 &&categoriesOptions.leght===0) {
+    if (categoriesStore.length > 0 &&categoriesOptions.length===0) {
       setCategoriesOptions(categoriesStore);
     }
   }, []);
@@ -369,13 +281,6 @@ console.log("withoutDuplicates", withoutDuplicates)
     ); }
   };
 
-
-
-  // useEffect(() => {
-  //   setUsers(usersStore);
-  // }, [usersStore]);
-  console.log("total", usersStore);
-  console.log("total", usersStore.total);
   useEffect(() => {
     if(currentUserRole==="ADMIN"){
       if (instancesStore.instances) {
@@ -398,16 +303,16 @@ console.log("withoutDuplicates", withoutDuplicates)
 
   useEffect(() => {
     if(currentUserRole==="MODERATOR"){
-      if (withoutDuplicates) {
-        if (withoutDuplicates.total <= currentPage * rowsPerPage) {
+      if (companyInstances) {
+        if (companyInstances.length <= currentPage * rowsPerPage) {
           setCurrentPage(1);
-          setInstances(withoutDuplicates?.slice(0, rowsPerPage));
+          setInstances(companyInstances?.slice(0, rowsPerPage));
         } else {
 
           //HATA VERDİĞİ İÇİN KAPALI ÇÖZÜP AÇ!!
             setInstances(
             //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
-            withoutDuplicates?.slice(
+            companyInstances?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
             )
@@ -416,7 +321,7 @@ console.log("withoutDuplicates", withoutDuplicates)
       }
     }
     
-  }, [withoutDuplicates?.total, 1]);
+  }, [companyInstances?.length, 1]);
 
   useEffect(() => {
     if(currentUserRole!=="MODERATOR"&&currentUserRole!=="ADMIN"){
@@ -472,26 +377,6 @@ console.log("withoutDuplicates", withoutDuplicates)
       })
     );
   }, [categoriesStore, categoriesStore.length]);
-
-
-
-  useEffect(() => {
-    getRolesOptions();
-  }, [rolesStore]);
-
-  const getRolesOptions = () => {
-    rolesStore.roles?.forEach((role) =>
-      setRolesOptions((rolesOptions) => [
-        ...rolesOptions,
-        {
-          value: role?.id,
-          label: role?.name,
-          color: "#00B8D9",
-          isFixed: true,
-        },
-      ])
-    );
-  };
 
   let formData = new FormData();
   const handleChangePem = (e) => {
@@ -562,30 +447,6 @@ console.log("withoutDuplicates", withoutDuplicates)
     
   };
 
-  // const handleOrganizationFilter = (e) => {
-  //   setSearchOrganizationsValue(e.target.value);
-
-  //   if (e.target.value !== "") {
-  //     setUsers(
-  //       usersStore?.data
-  //         .filter((org) =>
-  //           org.organization.name.toLowerCase().includes(e.target.value.toLowerCase())
-  //         )
-  //         .slice(
-  //           currentPage * rowsPerPage - rowsPerPage,
-  //           currentPage * rowsPerPage
-  //         )
-  //     );
-  //   } else {
-  //     setUsers(
-  //       usersStore?.data.slice(
-  //         currentPage * rowsPerPage - rowsPerPage,
-  //         currentPage * rowsPerPage
-  //       )
-  //     );
-  //   }
-  // };
-
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
     if(currentUserRole==="ADMIN"){
@@ -598,7 +459,7 @@ console.log("withoutDuplicates", withoutDuplicates)
     }
     else if(currentUserRole==="MODERATOR"){
       setInstances(
-        withoutDuplicates.slice(
+        companyInstances.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
@@ -614,16 +475,6 @@ console.log("withoutDuplicates", withoutDuplicates)
     } 
   };
 
-  // const handlePagination2 = (page) => {
-  //   setCurrentPage(page.selected + 1);
-  //   setOrganizations(
-  //     OrganisationsStore?.data?.slice(
-  //       (page.selected + 1) * rowsPerPage - rowsPerPage,
-  //       (page.selected + 1) * rowsPerPage
-  //     )
-  //   );
-  // };
-
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
     if(currentUserRole==="ADMIN"){
@@ -636,7 +487,7 @@ console.log("withoutDuplicates", withoutDuplicates)
     }
     else if(currentUserRole==="MODERATOR"){
       setInstances(
-        withoutDuplicates.slice(
+        companyInstances.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
@@ -651,15 +502,6 @@ console.log("withoutDuplicates", withoutDuplicates)
       );
     } 
   };
-  // const handlePerPage2 = (e) => {
-  //   setRowsPerPage(parseInt(e.target.value));
-  //   setOrganizations(
-  //     OrganisationsStore?.data?.slice(
-  //       currentPage * parseInt(e.target.value) - parseInt(e.target.value),
-  //       currentPage * parseInt(e.target.value)
-  //     )
-  //   );
-  // };
 
   const onSort = (column, direction) => {
     if(currentUserRole==="ADMIN"){
@@ -681,7 +523,7 @@ console.log("withoutDuplicates", withoutDuplicates)
     }
     else if(currentUserRole==="MODERATOR"){
       setInstances(
-        withoutDuplicates
+        companyInstances
           .sort((a, b) => {
             if (a[column.selector] === b[column.selector]) return 0;
             if (direction === "asc") {
@@ -716,24 +558,6 @@ console.log("withoutDuplicates", withoutDuplicates)
     
   };
 
-  // const onSort2 = (column, direction) => {
-  //   setOrganizations(
-  //     OrganisationsStore?.data
-  //       .sort((a, b) => {
-  //         if (a[column.selector] === b[column.selector]) return 0;
-  //         if (direction === "asc") {
-  //           return a[column.selector] > b[column.selector] ? 1 : -1;
-  //         } else {
-  //           return a[column.selector] < b[column.selector] ? 1 : -1;
-  //         }
-  //       })
-  //       .slice(
-  //         currentPage * rowsPerPage - rowsPerPage,
-  //         currentPage * rowsPerPage
-  //       )
-  //   );
-  // };
-
   const CustomPagination = () => {
    // const count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
     let count=0;
@@ -741,7 +565,7 @@ console.log("withoutDuplicates", withoutDuplicates)
        count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
     }
     else if(currentUserRole==="MODERATOR"){
-      count = Number((withoutDuplicates?.length / rowsPerPage).toFixed(1));
+      count = Number((companyInstances?.length / rowsPerPage).toFixed(1));
     }
     else{
        count = Number((userStore?.length / rowsPerPage).toFixed(1));
@@ -774,34 +598,6 @@ console.log("withoutDuplicates", withoutDuplicates)
     );
   };
 
-  // const CustomPagination2 = () => {
-  //   const count = Number((OrganisationsStore?.data?.length / rowsPerPage).toFixed(1));
-
-  //   return (
-  //     <ReactPaginate
-  //       previousLabel={""}
-  //       nextLabel={""}
-  //       breakLabel="..."
-  //       pageCount={count || 1}
-  //       marginPagesDisplayed={2}
-  //       pageRangeDisplayed={2}
-  //       activeClassName="active"
-  //       forcePage={currentPage !== 0 ? currentPage - 1 : 0}
-  //       onPageChange={(page) => handlePagination2(page)}
-  //       pageClassName={"page-item"}
-  //       nextLinkClassName={"page-link"}
-  //       nextClassName={"page-item next"}
-  //       previousClassName={"page-item prev"}
-  //       previousLinkClassName={"page-link"}
-  //       pageLinkClassName={"page-link"}
-  //       breakClassName="page-item"
-  //       breakLinkClassName="page-link"
-  //       containerClassName={
-  //         "pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
-  //       }
-  //     />
-  //   );
-  // };
   const onAddPemButtonPressed = () =>{
     setEditingPemData({
       name: "",
@@ -837,7 +633,6 @@ console.log("withoutDuplicates", withoutDuplicates)
               options={pemsOptions}
               className="react-select"
               classNamePrefix="Seç"
-             // defaultValue={editingProfileData?.role || [""]}
               //defaultValue={editingProfileData?.roles || []}
               defaultValue={editingProfileData?.pem }
               onChange={(value) => {
@@ -849,8 +644,6 @@ console.log("withoutDuplicates", withoutDuplicates)
                 setEditingProfileData({
                   ...editingProfileData,
                   pem: value.map((val) => val.value),
-                 // pem: value[0]?.value,
-                  
                 }); 
               }}
             />
