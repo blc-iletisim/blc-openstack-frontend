@@ -4,8 +4,8 @@ const initialState = {
   };
   
   const pemReducer = (state = initialState, action) => {
-    console.log("state:", state);
-    console.log("action: ",action)
+    //console.log("state:", state);
+    //console.log("action: ",action)
     switch (action.type) {
      
       case "ADD_PEM":
@@ -17,14 +17,14 @@ const initialState = {
         case "UPLOAD_PEM":
           return {
             ...state,
-            pems: [...state.pems, action.payload.pem],
-            total: state.total + 1,
+            pems: action.payload.pem,
+            total: action.payload.pem.length,
           };
           case "GET_PEM":
           return {
             ...state,
-            pems: [...state.pems, action.payload.pem],
-            total: state.total + 1,
+            pems:  action.payload.pem,
+            total: action.payload.pem.length,
           };
      
   
