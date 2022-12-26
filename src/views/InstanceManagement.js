@@ -43,33 +43,23 @@ import Select from "react-select";
 import { getImages } from "../redux/actions/images";
 import makeAnimated from "react-select/animated";
 import { selectThemeColors } from "@utils";
-import InputPasswordToggle from "@components/input-password-toggle";
-import { useHistory } from "react-router-dom";
-import { updateUser } from "../redux/actions/users";
-import { getInstances,addInstances,deleteInstance,updateInstance } from "../redux/actions/instances";
+import {
+  getInstances,
+  addInstances,
+  deleteInstance,
+  updateInstance,
+} from "../redux/actions/instances";
 import { getRoles } from "../redux/actions/roles";
 import { getCompany } from "../redux/actions/company";
-import { addUser, deleteUser, getPermissions } from "../redux/actions/users";
-import useGetUsers from "../utility/hooks/useGetUsers";
 import { getFlavors } from "../redux/actions/flavors";
-import { getCategories} from "../redux/actions/categories";
-import {
-  createPem,uploadPem,getPem
-} from "../redux/actions/pem";
+import { getCategories } from "../redux/actions/categories";
+import { createPem, uploadPem, getPem } from "../redux/actions/pem";
 import { FileUploader } from "react-drag-drop-files";
 
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 const fileTypes = ["PEM"];
 const InstanceManagement = () => {
-  // let arrPerm = [];
-  let arrRole = [];
-  let x = "";
-  //
-  const [userPermissionsArr, setUserPermissionsArr] = useState([]);
-  const [userRolesArr, setRolesArr] = useState([]);
-  const [hourText, setHourText] = useState();
-
   const serverSideColumns = [
     /* {
       name: "Aktiflik",
@@ -93,17 +83,14 @@ const InstanceManagement = () => {
       selector: "name",
       sortable: true,
       minWidth: "350px",
-     
     },
-     {
+    {
       name: "Image",
       selector: "image.name",
       sortable: true,
       minWidth: "350px",
-      
-      
     },
-     {
+    {
       name: "Configuration",
       selector: "flavor.name",
       sortable: true,
@@ -122,7 +109,7 @@ const InstanceManagement = () => {
         </span>
       ),
     },
-   /* {
+    /* {
       name: "Database Configuration",
       selector: "company",
       sortable: true,
@@ -159,7 +146,7 @@ const InstanceManagement = () => {
                   <DropdownItem
                     tag="a"
                     className="w-100"
-                    onClick={() => handleUnDeleteCategory(row)}
+                    // onClick={() => handleUnDeleteCategory(row)}
                   >
                     <HowToReg size={15} />
                     <span className="align-middle ml-50">Aktif Et</span>
@@ -184,21 +171,21 @@ const InstanceManagement = () => {
 
   const dispatch = useDispatch();
   const categoriesStore = useSelector((state) => state.categoriesReducer);
-  console.log("categoriesStore: ",categoriesStore)
+  console.log("categoriesStore: ", categoriesStore);
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
-  console.log("usersStoree:",usersStore)
-  const instancesStore = useSelector ((state) => state.instancesReducer)
+  console.log("usersStoree:", usersStore);
+  const instancesStore = useSelector((state) => state.instancesReducer);
   console.log("instancesStore: ", instancesStore);
-  const userInstancesStore = useSelector ((state) => state.users)
+  const userInstancesStore = useSelector((state) => state.users);
   console.log("userInstancesStore: ", userInstancesStore);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
   const rolesStore = useSelector((state) => state.rolesReducer);
   console.log("rolesStore: ", rolesStore);
   const pemsStore = useSelector((state) => state.pemReducer);
-  console.log("pemsStore: ",pemsStore)
+  console.log("pemsStore: ", pemsStore);
   const [pemsOptions, setPemsOptions] = useState([]);
-  console.log("pemsOptions: ",pemsOptions)
+  console.log("pemsOptions: ", pemsOptions);
   const imagesStore = useSelector((state) => state.imagesReducer);
   console.log("imagesStore: ", imagesStore);
   const userStore = useSelector((state) => state.userReducer.data.instances);
@@ -206,15 +193,16 @@ const InstanceManagement = () => {
   const companyStore = useSelector((state) => state.companyReducer.company);
   console.log("companyStore: ", companyStore);
 
-
   //const [company, setCompany] = useState([]);
-  let company =[];
-  if (company?.length === 0) {company = companyStore.map((com) => com.instances);}
-  const companyInstances= []
-  company.forEach((x)=>x.forEach((x)=>companyInstances.push(x)))
-  console.log("acompanyInstances ",companyInstances)
- console.log("company: ",company)
-  const [editingPemData,setEditingPemData] = useState(null);
+  let company = [];
+  if (company?.length === 0) {
+    company = companyStore.map((com) => com.instances);
+  }
+  const companyInstances = [];
+  company.forEach((x) => x.forEach((x) => companyInstances.push(x)));
+  console.log("acompanyInstances ", companyInstances);
+  console.log("company: ", company);
+  const [editingPemData, setEditingPemData] = useState(null);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
@@ -226,51 +214,44 @@ const InstanceManagement = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
-  console.log("editingProfileData: ",editingProfileData)
+  console.log("editingProfileData: ", editingProfileData);
   const [newPemData, setNewPemData] = useState(null);
   const [instances, setInstances] = useState([]);
-  console.log("instances: ",instances)
+  console.log("instances: ", instances);
   const [instancesOptions, setInstancesOptions] = useState([]);
-  console.log("instancesOptions: ",instancesOptions)
+  console.log("instancesOptions: ", instancesOptions);
   console.log("editingProfileData set: ", editingProfileData);
   const [showAddPemModal, setShowAddPemModal] = useState(false);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
-  console.log("categoriesOptions: ",categoriesOptions)
+  console.log("categoriesOptions: ", categoriesOptions);
   const [imagesOptions, setImagesOptions] = useState([]);
-  const currentUserRole= localStorage.getItem('currentUserRole');
-  console.log("currentUserRole: ",currentUserRole)
-  const currentUserId= localStorage.getItem('currentUserId');
-  console.log("currentUserId: ",currentUserId)
-  let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
-  console.log("currentUserCompanyId: ",currentUserCompanyId)
+  const currentUserRole = localStorage.getItem("currentUserRole");
+  console.log("currentUserRole: ", currentUserRole);
+  const currentUserId = localStorage.getItem("currentUserId");
+  console.log("currentUserId: ", currentUserId);
+  let currentUserCompanyId = localStorage.getItem("currentUserCompanyId");
+  console.log("currentUserCompanyId: ", currentUserCompanyId);
 
-  useEffect(() => {   
-    if(currentUserRole==="ADMIN"){
+  useEffect(() => {
+    if (currentUserRole === "ADMIN") {
       dispatch(getInstances());
-      console.log("if: ",instancesStore)
+      console.log("if: ", instancesStore);
       if (instancesStore?.length > 0) {
-        console.log("if2: ",instancesStore)
+        console.log("if2: ", instancesStore);
         setInstancesOptions(instancesStore);
       }
-      
-    }
-    else if(currentUserRole==="MODERATOR"){
+    } else if (currentUserRole === "MODERATOR") {
       dispatch(getCompany(currentUserCompanyId));
-      
+
       if (companyInstances?.length > 0) {
         setInstancesOptions(companyInstances);
-       
       }
-    }
-    else{
-      
+    } else {
       dispatch(getUser(currentUserId));
       if (userStore?.length > 0) {
-       
         setInstancesOptions(userStore);
       }
     }
-   
   }, []);
 
   useEffect(() => {
@@ -298,7 +279,7 @@ const InstanceManagement = () => {
 
   useEffect(() => {
     dispatch(getFlavors());
-    console.log("flavorsStore get: ",flavorsStore);
+    console.log("flavorsStore get: ", flavorsStore);
     if (flavorsStore.length > 0) {
       setFlavorsOptions(flavorsStore);
     }
@@ -306,14 +287,14 @@ const InstanceManagement = () => {
 
   useEffect(() => {
     dispatch(getPem());
-    console.log("pemsStore get: ",pemsStore);
-    if (pemsStore.length > 0 && pemsOptions.length===0) {
+    console.log("pemsStore get: ", pemsStore);
+    if (pemsStore.length > 0 && pemsOptions.length === 0) {
       setPemsOptions(pemsStore);
     }
   }, []);
   useEffect(() => {
     dispatch(getCategories());
-    
+
     if (categoriesStore.length > 0) {
       setCategoriesOptions(categoriesStore);
     }
@@ -321,47 +302,50 @@ const InstanceManagement = () => {
 
   useEffect(() => {
     getPemsOptions();
-   }, [pemsStore]);
+  }, [pemsStore]);
 
-   const getPemsOptions = () => {
-    if ( pemsOptions.length === 0   ) {
-    pemsStore.pems[0]?.forEach((pem) =>{
-      setPemsOptions((pemsOptions) => [
-        ...pemsOptions,
-        {
-          value: pem?.id,
-          label: pem?.name
-          ,
-          color: "#00B8D9",
-          isFixed: true,
-          
-        },
-      ])}
-    ) }
+  const getPemsOptions = () => {
+    if (pemsOptions.length === 0) {
+      pemsStore.pems?.forEach((pem) => {
+        setPemsOptions((pemsOptions) => [
+          ...pemsOptions,
+          {
+            value: pem?.id,
+            label: pem?.name,
+            color: "#00B8D9",
+            isFixed: true,
+          },
+        ]);
+      });
+    }
   };
 
   useEffect(() => {
     getFlavorsOptions();
-   }, [flavorsStore]);
+  }, [flavorsStore]);
 
-   const getFlavorsOptions = () => {
-    if ( flavorsOptions.length === 0 ) {
-    flavorsStore.flavors?.forEach((flavor) =>
-      setFlavorsOptions((flavorsOptions) => [
-        ...flavorsOptions,
-        {
-          value: flavor?.id,
-          label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk
-          ,
-          color: "#00B8D9",
-          isFixed: true,
-          
-        },
-      ])
-    ); }
+  const getFlavorsOptions = () => {
+    if (flavorsOptions.length === 0) {
+      flavorsStore.flavors?.forEach((flavor) =>
+        setFlavorsOptions((flavorsOptions) => [
+          ...flavorsOptions,
+          {
+            value: flavor?.id,
+            label:
+              flavor?.name +
+              ": cpu size: " +
+              flavor?.cpu_size +
+              ", ram size: " +
+              flavor?.ram_size +
+              ", root disk: " +
+              flavor?.root_disk,
+            color: "#00B8D9",
+            isFixed: true,
+          },
+        ])
+      );
+    }
   };
-
-
 
   // useEffect(() => {
   //   setUsers(usersStore);
@@ -369,14 +353,13 @@ const InstanceManagement = () => {
   console.log("total", usersStore);
   console.log("total", usersStore.total);
   useEffect(() => {
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       if (instancesStore.instances) {
         if (instancesStore.total <= currentPage * rowsPerPage) {
           setCurrentPage(1);
           setInstances(instancesStore.instances?.slice(0, rowsPerPage));
         } else {
           setInstances(
-
             instancesStore.instances?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
@@ -385,40 +368,36 @@ const InstanceManagement = () => {
         }
       }
     }
-   
   }, [instancesStore.total, instancesStore]);
 
   useEffect(() => {
-    if(currentUserRole==="MODERATOR"){
+    if (currentUserRole === "MODERATOR") {
       if (companyInstances) {
         if (companyInstances.total <= currentPage * rowsPerPage) {
           setCurrentPage(1);
           setInstances(companyInstances?.slice(0, rowsPerPage));
         } else {
-
           //HATA VERDİĞİ İÇİN KAPALI ÇÖZÜP AÇ!!
-          /*  setInstances(
+          setInstances(
             //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
             companyInstances?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
             )
-          ) */
+          );
         }
       }
     }
-    
   }, [companyInstances.total, companyInstances]);
 
   useEffect(() => {
-    if(currentUserRole!=="MODERATOR"&&currentUserRole!=="ADMIN"){
+    if (currentUserRole !== "MODERATOR" && currentUserRole !== "ADMIN") {
       if (userStore) {
         if (userStore.total <= currentPage * rowsPerPage) {
           setCurrentPage(1);
           setInstances(userStore?.slice(0, rowsPerPage));
         } else {
           setInstances(
-          
             userStore?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
@@ -427,11 +406,9 @@ const InstanceManagement = () => {
         }
       }
     }
-    
   }, [userStore?.total, userStore]);
 
-
- /*  useEffect(() => {
+  /*  useEffect(() => {
     getUserOptions();
   }, [usersStore]);
 
@@ -450,30 +427,27 @@ const InstanceManagement = () => {
       )
     );
   }; */
-  
 
   useEffect(() => {
     getCategoriesOptions();
-   }, [categoriesStore]);
+  }, [categoriesStore]);
 
-   const getCategoriesOptions = () => {
+  const getCategoriesOptions = () => {
     //splice ile sadece mongodb, postgresql alındı:
-    if ( categoriesOptions.length === 0 ) {
-    categoriesStore?.categories?.forEach((category) =>
-      setCategoriesOptions((categoriesOptions) => [
-        ...categoriesOptions,
-        {
-          value: category?.id,
-          label: category?.name,
-          color: "#00B8D9",
-          isFixed: true,
-          
-        },
-      ])
-    ); }
+    if (categoriesOptions.length === 0) {
+      categoriesStore?.categories?.forEach((category) =>
+        setCategoriesOptions((categoriesOptions) => [
+          ...categoriesOptions,
+          {
+            value: category?.id,
+            label: category?.name,
+            color: "#00B8D9",
+            isFixed: true,
+          },
+        ])
+      );
+    }
   };
-
-
 
   useEffect(() => {
     getRolesOptions();
@@ -484,7 +458,7 @@ const InstanceManagement = () => {
       setRolesOptions((rolesOptions) => [
         ...rolesOptions,
         {
-          value: role.id,
+          value: role?.id,
           label: role?.name,
           color: "#00B8D9",
           isFixed: true,
@@ -495,29 +469,31 @@ const InstanceManagement = () => {
 
   let formData = new FormData();
   const handleChangePem = (e) => {
-    console.log("e: ",e)
-    console.log("handleChangePem file:",e?.target?.files[0])
-    
-    if(e){
-      formData.append('file',e)
-      setEditingPemData({ 
-        ...editingPemData, 
-        file: formData })
-    }};
-    
-   /*  if(e.target&&e.target.files[0]){
+    console.log("e: ", e);
+    console.log("handleChangePem file:", e?.target?.files[0]);
+
+    if (e) {
+      formData.append("file", e);
+      setEditingPemData({
+        ...editingPemData,
+        file: formData,
+      });
+    }
+  };
+
+  /*  if(e.target&&e.target.files[0]){
       formData.append('file',e?.target?.files[0])
       setEditingPemData({ 
         ...editingPemData, 
         file: formData })
     }}; */
-  
-//filtreyi admin/moderator/user için ayrı ayrı yap
-    //filtre çalışmıyor incele!
+
+  //filtreyi admin/moderator/user için ayrı ayrı yap
+  //filtre çalışmıyor incele!
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
 
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       if (e.target.value !== "") {
         setUsers(
           instancesStore.data
@@ -537,8 +513,7 @@ const InstanceManagement = () => {
           )
         );
       }
-    }
-    else{
+    } else {
       if (e.target.value !== "") {
         setUsers(
           userStore
@@ -559,7 +534,6 @@ const InstanceManagement = () => {
         );
       }
     }
-    
   };
 
   // const handleOrganizationFilter = (e) => {
@@ -588,30 +562,28 @@ const InstanceManagement = () => {
 
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setInstances(
         instancesStore.instances.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
-      ); 
-    }
-    else if(currentUserRole==="MODERATOR"){
+      );
+    } else if (currentUserRole === "MODERATOR") {
       setInstances(
         companyInstances.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
-      ); 
-    }
-     else{
+      );
+    } else {
       setInstances(
         userStore.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
-      ); 
-    } 
+      );
+    }
   };
 
   // const handlePagination2 = (page) => {
@@ -626,30 +598,28 @@ const InstanceManagement = () => {
 
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setInstances(
         instancesStore.instances.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
       );
-    }
-    else if(currentUserRole==="MODERATOR"){
+    } else if (currentUserRole === "MODERATOR") {
       setInstances(
         companyInstances.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
       );
-    }
-  else{
+    } else {
       setInstances(
         userStore.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
       );
-    } 
+    }
   };
   // const handlePerPage2 = (e) => {
   //   setRowsPerPage(parseInt(e.target.value));
@@ -662,7 +632,7 @@ const InstanceManagement = () => {
   // };
 
   const onSort = (column, direction) => {
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setInstances(
         instancesStore.instances
           .sort((a, b) => {
@@ -678,8 +648,7 @@ const InstanceManagement = () => {
             currentPage * rowsPerPage
           )
       );
-    }
-    else if(currentUserRole==="MODERATOR"){
+    } else if (currentUserRole === "MODERATOR") {
       setInstances(
         companyInstances
           .sort((a, b) => {
@@ -695,8 +664,7 @@ const InstanceManagement = () => {
             currentPage * rowsPerPage
           )
       );
-    }
-    else{
+    } else {
       setInstances(
         userStore
           .sort((a, b) => {
@@ -713,7 +681,6 @@ const InstanceManagement = () => {
           )
       );
     }
-    
   };
 
   // const onSort2 = (column, direction) => {
@@ -735,18 +702,17 @@ const InstanceManagement = () => {
   // };
 
   const CustomPagination = () => {
-   // const count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
-    let count=0;
-    if(currentUserRole==="ADMIN"){
-       count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
-    }
-    else if(currentUserRole==="MODERATOR"){
+    // const count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
+    let count = 0;
+    if (currentUserRole === "ADMIN") {
+      count = Number(
+        (instancesStore?.instances?.length / rowsPerPage).toFixed(1)
+      );
+    } else if (currentUserRole === "MODERATOR") {
       count = Number((companyInstances?.length / rowsPerPage).toFixed(1));
+    } else {
+      count = Number((userStore?.length / rowsPerPage).toFixed(1));
     }
-    else{
-       count = Number((userStore?.length / rowsPerPage).toFixed(1));
-    }
-    
 
     return (
       <ReactPaginate
@@ -802,168 +768,154 @@ const InstanceManagement = () => {
   //     />
   //   );
   // };
-  const onAddPemButtonPressed = () =>{
+  const onAddPemButtonPressed = () => {
     setEditingPemData({
       name: "",
     });
     setShowAddPemModal(true);
-  
-  }
+  };
 
   const onAddUserButtonPressed = () => {
     setEditingProfileData({
       name: "",
       id: "",
-      flavors:"",
-      categories:"",
+      flavors: "",
+      categories: "",
     });
     setShowAddUserModal(true);
   };
   //*****************************************************************************
   const PemSelections = () => (
-    
     <div className="mb-2">
-            
-            <Label className="form-label" for="permissions-select">
-              Choose Existing PEM:
-            </Label>
-            <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={true}
-              components={animatedComponents}
-              isMulti
-              options={pemsOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-             // defaultValue={editingProfileData?.role || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              defaultValue={editingProfileData?.pem }
-              onChange={(value) => {
-                {
-                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
-                  console.log("value:", value);
-                }
- 
-                setEditingProfileData({
-                  ...editingProfileData,
-                  pem: value.map((val) => val.value),
-                 // pem: value[0]?.value,
-                  
-                }); 
-              }}
-            />
- <div className="mb-2">  </div>
-<Button
-          size="sm"
-            className="ml-2"
-            //color="primary"
-            color="info"
-            onClick={onAddPemButtonPressed}
-          >
-            <Plus size={15} />
-            <span className="align-middle ml-50">Create a PEM File</span>
-          </Button>
-          
-          </div>
-  )
+      <Label className="form-label" for="permissions-select">
+        Choose Existing PEM:
+      </Label>
+      <Select
+        id="permissions-select"
+        isClearable={false}
+        theme={selectThemeColors}
+        closeMenuOnSelect={true}
+        components={animatedComponents}
+        isMulti
+        options={pemsOptions}
+        className="react-select"
+        classNamePrefix="Seç"
+        // defaultValue={editingProfileData?.role || [""]}
+        //defaultValue={editingProfileData?.roles || []}
+        defaultValue={editingProfileData?.pem}
+        onChange={(value) => {
+          {
+            //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
+            console.log("value:", value);
+          }
+
+          setEditingProfileData({
+            ...editingProfileData,
+            pem: value.map((val) => val.value),
+            // pem: value[0]?.value,
+          });
+        }}
+      />
+      <div className="mb-2"> </div>
+      <Button
+        size="sm"
+        className="ml-2"
+        //color="primary"
+        color="info"
+        onClick={onAddPemButtonPressed}
+      >
+        <Plus size={15} />
+        <span className="align-middle ml-50">Create a PEM File</span>
+      </Button>
+    </div>
+  );
   const onAddUserModalButtonPressed = () => {
-  
-    
     console.log("editingProfileData: ", editingProfileData);
-    
-      console.log("editingProfileData: ", editingProfileData);
-      if (!editingProfileData.id) {
-        const newDatabaseData = {
-          name: editingProfileData?.name,
-          email: editingProfileData?.email,
-          categories:editingProfileData?.categories.map((number) => number.value),
-          flavors: editingProfileData?.flavors.value,
-          createdTime: editingProfileData?.createdTime || new Date().getTime(),
-          lastUpdatedTime: new Date().getTime(),
-          id: editingProfileData?.id,
-          deletedAt: editingProfileData?.deletedAt || null,
-          pem:editingProfileData?.pem,
-          images:imagesStore?.images[1]?.id,
-        
-        };
-  console.log( "newDatabaseData2:"  , newDatabaseData)
-        dispatch(addInstances( newDatabaseData))
-          .then(() => {
-            setLoading(false);
-            setShowAddUserModal(false);
-            enqueueSnackbar("Successfull.", {
-              variant: "success",
-              preventDuplicate: true,
-            });
-          })
-          .catch(() => {
-            setLoading(false);
-            setShowAddUserModal(false);
-            enqueueSnackbar("Error.", {
-              variant: "error",
-              preventDuplicate: true,
-            });
+
+    console.log("editingProfileData: ", editingProfileData);
+    if (!editingProfileData.id) {
+      const newDatabaseData = {
+        name: editingProfileData?.name,
+        email: editingProfileData?.email,
+        categories: editingProfileData?.categories.map(
+          (number) => number.value
+        ),
+        flavors: editingProfileData?.flavors.value,
+        createdTime: editingProfileData?.createdTime || new Date().getTime(),
+        lastUpdatedTime: new Date().getTime(),
+        id: editingProfileData?.id,
+        deletedAt: editingProfileData?.deletedAt || null,
+        pem: editingProfileData?.pem,
+        images: imagesStore?.images[1]?.id,
+      };
+      console.log("newDatabaseData2:", newDatabaseData);
+      dispatch(addInstances(newDatabaseData))
+        .then(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Successfull.", {
+            variant: "success",
+            preventDuplicate: true,
           });
-      }
-      else{
-        console.log("updateEdingProfileData: ",editingProfileData)
-     
-        console.log("update else");
-        
-        const newDatabaseData = {
-          name: editingProfileData?.name,
-          email: editingProfileData?.email,
-          categories:editingProfileData?.categories.map((number) => number.value),
-          flavors: editingProfileData?.flavors.value,
-          createdTime: editingProfileData?.createdTime || new Date().getTime(),
-          lastUpdatedTime: new Date().getTime(),
-          id: editingProfileData?.id,
-          deletedAt: editingProfileData?.deletedAt || null,
-          pem:editingProfileData?.pem,
-          images:imagesStore?.images[1]?.id,
-  
-        };
-        console.log("NUD", newDatabaseData);
-        dispatch(updateInstance(newDatabaseData))
-          .then(() => {
-            enqueueSnackbar("User Updated", {
-              variant: "success",
-            });
-            setLoading(false);
-            setEditingProfileData(null);
-            setShowAddUserModal(false);
-            if (!editingProfileData.id) setEditingProfileData(null);
-          })
-          .catch(() => {
-            enqueueSnackbar(
-              `Error, please try again.`,
-              {
-                variant: "error",
-              }
-            );
-            setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+          setShowAddUserModal(false);
+          enqueueSnackbar("Error.", {
+            variant: "error",
+            preventDuplicate: true,
           });
-      }
-      
-     
+        });
+    } else {
+      console.log("updateEdingProfileData: ", editingProfileData);
+
+      console.log("update else");
+
+      const newDatabaseData = {
+        name: editingProfileData?.name,
+        email: editingProfileData?.email,
+        categories: editingProfileData?.categories.map(
+          (number) => number.value
+        ),
+        flavors: editingProfileData?.flavors.value,
+        createdTime: editingProfileData?.createdTime || new Date().getTime(),
+        lastUpdatedTime: new Date().getTime(),
+        id: editingProfileData?.id,
+        deletedAt: editingProfileData?.deletedAt || null,
+        pem: editingProfileData?.pem,
+        images: imagesStore?.images[1]?.id,
+      };
+      console.log("NUD", newDatabaseData);
+      dispatch(updateInstance(newDatabaseData))
+        .then(() => {
+          enqueueSnackbar("User Updated", {
+            variant: "success",
+          });
+          setLoading(false);
+          setEditingProfileData(null);
+          setShowAddUserModal(false);
+          if (!editingProfileData.id) setEditingProfileData(null);
+        })
+        .catch(() => {
+          enqueueSnackbar(`Error, please try again.`, {
+            variant: "error",
+          });
+          setLoading(false);
+        });
+    }
   };
-  
 
-
-  const onAddPemModalButtonPressed = () => {      
+  const onAddPemModalButtonPressed = () => {
     const newPemData = {
       name: editingPemData?.name,
-      file:editingPemData?.file,
-      
+      file: editingPemData?.file,
     };
-    console.log("newPemData: ",newPemData)
+    console.log("newPemData: ", newPemData);
 
     //Name ve file girilip girilmemesine göre filtreleme yapıldı girilmemesi durumunda hata veriyor diğer kısımlara da ekle!!!!
-      if(newPemData.name!==null &&newPemData.file===undefined ){
-        console.log("iff")
-        dispatch(createPem(newPemData.name))
+    if (newPemData.name !== null && newPemData.file === undefined) {
+      console.log("iff");
+      dispatch(createPem(newPemData.name))
         .then(() => {
           setLoading(false);
           //setShowAddUserModal(false);
@@ -975,44 +927,46 @@ const InstanceManagement = () => {
         })
         .catch(() => {
           setLoading(false);
-         // setShowAddUserModal(false);
+          // setShowAddUserModal(false);
           setShowAddPemModal(false);
           enqueueSnackbar("Error.", {
             variant: "error",
             preventDuplicate: true,
           });
-        });}
-            else if(newPemData.file!==null&&newPemData.name==="")
-            {dispatch(uploadPem(newPemData.file))
-              .then(() => {
-                setLoading(false);
-               // setShowAddUserModal(false);
-                setShowAddPemModal(false);
-                enqueueSnackbar("Created.", {
-                  variant: "success",
-                  preventDuplicate: true,
-                });
-              })
-              .catch(() => {
-                setLoading(false);
-                //setShowAddUserModal(false);
-                setShowAddPemModal(false);
-                enqueueSnackbar("Error.", {
-                  variant: "error",
-                  preventDuplicate: true,
-                });
-              });}
-              else{
-                enqueueSnackbar("ERROR...Upload an existing PEM file or create a new one with name.", {
-                  variant: "error",
-                  preventDuplicate: true,
-                });
-              }
+        });
+    } else if (newPemData.file !== null && newPemData.name === "") {
+      dispatch(uploadPem(newPemData.file))
+        .then(() => {
+          setLoading(false);
+          // setShowAddUserModal(false);
+          setShowAddPemModal(false);
+          enqueueSnackbar("Created.", {
+            variant: "success",
+            preventDuplicate: true,
+          });
+        })
+        .catch(() => {
+          setLoading(false);
+          //setShowAddUserModal(false);
+          setShowAddPemModal(false);
+          enqueueSnackbar("Error.", {
+            variant: "error",
+            preventDuplicate: true,
+          });
+        });
+    } else {
+      enqueueSnackbar(
+        "ERROR...Upload an existing PEM file or create a new one with name.",
+        {
+          variant: "error",
+          preventDuplicate: true,
+        }
+      );
+    }
 
-      
-//pem için dispatch kısımı düzelt
+    //pem için dispatch kısımı düzelt
 
-     /*  const newPemData = {
+    /*  const newPemData = {
         name: editingPemData?.name
       }
       dispatch(createPem(newPemData))
@@ -1032,8 +986,7 @@ const InstanceManagement = () => {
           preventDuplicate: true,
         });
       }); */
-  
-};
+  };
   //*******************************************************
   const renderUserModal = () => {
     return (
@@ -1048,7 +1001,7 @@ const InstanceManagement = () => {
             : "Add a New Instance"}
         </ModalHeader>
         <ModalBody>
-        <div className="mb-2">
+          <div className="mb-2">
             <Label className="form-label" for="user-name">
               Instance Name:
             </Label>
@@ -1058,8 +1011,10 @@ const InstanceManagement = () => {
               placeholder="Instance Name"
               value={editingProfileData?.name || ""}
               onChange={(e) =>
-                setEditingProfileData({ ...editingProfileData, name: e.target.value  })
-                
+                setEditingProfileData({
+                  ...editingProfileData,
+                  name: e.target.value,
+                })
               }
             />
           </div>
@@ -1072,8 +1027,6 @@ const InstanceManagement = () => {
               id="database-name"
               placeholder="Ubuntu Name"
               value={"UBUNTU 20.04"}
-              
-             
             />
           </div>
           <div className="mb-2">
@@ -1098,8 +1051,8 @@ const InstanceManagement = () => {
 
                 setEditingProfileData({
                   ...editingProfileData,
-                 // categories: value.map((category) => category.value),
-                 categories: value
+                  // categories: value.map((category) => category.value),
+                  categories: value,
                   //role: value.label,
                 });
               }}
@@ -1110,16 +1063,14 @@ const InstanceManagement = () => {
               Choose Database Configuration:
             </Label>
             <Select
-             id="permissions-select"
-             isClearable={false}
-             theme={selectThemeColors}
-             closeMenuOnSelect={true}
-             components={animatedComponents}
-           
-             className="react-select"
-             classNamePrefix="Select"
+              id="permissions-select"
+              isClearable={false}
+              theme={selectThemeColors}
+              closeMenuOnSelect={true}
+              components={animatedComponents}
+              className="react-select"
+              classNamePrefix="Select"
               options={flavorsOptions}
-          
               defaultValue={editingProfileData?.flavors || [""]}
               //defaultValue={editingProfileData?.roles || []}
               //defaultValue={editingProfileData?.role.label || []}
@@ -1136,19 +1087,16 @@ const InstanceManagement = () => {
               }}
             />
           </div>
-          <div>
-      
-      { !editingProfileData?.id ? <PemSelections /> : null }
-    </div>
-         
-         {/*  <Button color="info" onClick={console.log()}>
+          <div>{!editingProfileData?.id ? <PemSelections /> : null}</div>
+
+          {/*  <Button color="info" onClick={console.log()}>
               {loading
                 ? "Saving.."
                 : !editingProfileData?.id
                 ? "Click Here to Click Here to Create a PEM File"
                 : "Update"}
             </Button> */}
-         {/*  <Card
+          {/*  <Card
             tag="a"
             border="secondary"
             color="primary"
@@ -1178,19 +1126,21 @@ const InstanceManagement = () => {
             <Label check>Create a PAM File</Label>
           </FormGroup>
  */}
-          
         </ModalBody>
         <ModalFooter>
-        <Button
-        disabled={!(editingProfileData?.name&&editingProfileData?.flavors)} 
-
-        color="primary" onClick={onAddUserModalButtonPressed}  >
-              {loading
-                ? "Saving.."
-                : !editingProfileData?.id
-                ? "Create"
-                : "Update"}
-            </Button>
+          <Button
+            disabled={
+              !(editingProfileData?.name && editingProfileData?.flavors)
+            }
+            color="primary"
+            onClick={onAddUserModalButtonPressed}
+          >
+            {loading
+              ? "Saving.."
+              : !editingProfileData?.id
+              ? "Create"
+              : "Update"}
+          </Button>
         </ModalFooter>
       </Modal>
     );
@@ -1219,19 +1169,21 @@ const InstanceManagement = () => {
               placeholder="PEM Name"
               //value={editingPemData?.name || ""}
               defaultValue={editingProfileData?.pemName || ""}
-              onChange={(e) =>
-                //console.log("pem name: ",e)
+              onChange={
+                (e) =>
+                  //console.log("pem name: ",e)
 
-                // !!!!!her harf girişi için dispatch atmaması için doğrudan gönderme değeri alttaki gibi gönder düzeltip: 
-                 setEditingPemData({ 
-                  ...editingPemData, 
-                  name: e.target.value  })
-              // handlePemName(e.target.value)
+                  // !!!!!her harf girişi için dispatch atmaması için doğrudan gönderme değeri alttaki gibi gönder düzeltip:
+                  setEditingPemData({
+                    ...editingPemData,
+                    name: e.target.value,
+                  })
+                // handlePemName(e.target.value)
               }
             />
           </div>
           {/* Aşağıdaki kod pem upload için çalışıyor veritabanında kontrolüde gerçekleşti diğeri çalışmazsa bunu aktif et*/}
-      {/*     <div className="App">
+          {/*     <div className="App">
             <h6>To use an existing PEM file please choose to file: </h6>
             <form encType='multipart/form-data'>
               <input type="file" onChange={((e) =>handleChangePem(e))}      
@@ -1242,16 +1194,20 @@ const InstanceManagement = () => {
         {     <img src={file} /> }
   
         </div> */}
-        <Label className="form-label" for="user-name">
-          To Use an Existing PEM File:
-            </Label>
-         <FileUploader handleChange={handleChangePem} name="file" types={fileTypes} />
- 
+          <Label className="form-label" for="user-name">
+            To Use an Existing PEM File:
+          </Label>
+          <FileUploader
+            handleChange={handleChangePem}
+            name="file"
+            types={fileTypes}
+          />
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" 
-          //onClick={onAddUserModalButtonPressed}
-          onClick={onAddPemModalButtonPressed}
+          <Button
+            color="primary"
+            //onClick={onAddUserModalButtonPressed}
+            onClick={onAddPemModalButtonPressed}
           >
             {loading
               ? "Creating.."
@@ -1264,19 +1220,17 @@ const InstanceManagement = () => {
     );
   };
 
-  
   const ExpandableTable = ({ data }) => {
-    if(currentUserRole==="ADMIN"){
-      console.log("ExpandableTable data: ",data)
-    const createdByUser = usersStore?.data?.find(
-      (user) => user?.id === data?.createdBy
-    );
-    const lastUpdatedByUser = usersStore?.data.find(
-      (user) => user?.id === data?.lastUpdatedBy
-    );
-    }
-    else{
-      console.log("ExpandableTable data: ",data)
+    if (currentUserRole === "ADMIN") {
+      console.log("ExpandableTable data: ", data);
+      const createdByUser = usersStore?.data?.find(
+        (user) => user?.id === data?.createdBy
+      );
+      const lastUpdatedByUser = usersStore?.data.find(
+        (user) => user?.id === data?.lastUpdatedBy
+      );
+    } else {
+      console.log("ExpandableTable data: ", data);
       const createdByUser = userStore?.find(
         (user) => user?.id === data?.createdBy
       );
@@ -1284,7 +1238,7 @@ const InstanceManagement = () => {
         (user) => user?.id === data?.lastUpdatedBy
       );
     }
- /*    console.log("ExpandableTable data: ",data)
+    /*    console.log("ExpandableTable data: ",data)
     const createdByUser = usersStore?.data?.find(
       (user) => user?.id === data?.createdBy
     );
@@ -1301,39 +1255,32 @@ const InstanceManagement = () => {
           <span>{data?.content}</span>
         </p>
         <p className="font-small-3">
-          <span className="font-weight-bold">Pem Name:</span>{" "}
-          {data.pemName}{" "}
+          <span className="font-weight-bold">Pem Name:</span> {data.pemName}{" "}
         </p>
         <p className="font-small-3">
           <span className="font-weight-bold">Services:</span>{" "}
-          
-          {data.categories[0]?.name} {" "}
+          {data.categories[0]?.name}{" "}
         </p>
         <p className="font-small-3">
           <span className="font-weight-bold">Ram Size:</span>{" "}
-          {data?.flavor.ram_size}{" GB "}
-         
+          {data?.flavor.ram_size}
+          {" GB "}
         </p>
         <p className="font-small-3">
           <span className="font-weight-bold">Root Disk:</span>{" "}
           {data.flavor.root_disk}{" "}
-        </p>  
+        </p>
         <p className="font-small-3 mt-2">
           <span className="font-weight-bold">Cpu Size:</span>{" "}
           {data?.flavor?.cpu_size}{" "}
-         
         </p>
-        
-       
-        
       </div>
     );
   };
 
-
   const handleDeleteInstance = (selectedInstance) => {
-    console.log("delete")
-    console.log("selectedInstance",selectedInstance)
+    console.log("delete");
+    console.log("selectedInstance", selectedInstance);
     return Swal.fire({
       title: `${selectedInstance.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
       text: "Silinen hesaplar tekrar aktif edilebilir, ancak aynı email adresi ile tekrar hesap oluşturulamaz. Tüm yetkileri kaldırılacaktır!",
@@ -1349,78 +1296,35 @@ const InstanceManagement = () => {
     }).then(function (result) {
       if (result.value !== null && result.value === true) {
         console.log("selectedInstance: ", selectedInstance);
-        dispatch(deleteInstance(selectedInstance.id));
+        dispatch(deleteInstance(selectedInstance?.id));
       }
     });
-  };
-
-  const handleUnDeleteCategory = (selectedInstance) => {
-    // return Swal.fire({
-    //   title: `${selectedInstance.name} Kullanıcısını Aktif Etmek İstediğinize Emin misiniz?`,
-    //   text: "",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonText: "Aktif Et",
-    //   cancelButtonText: "İptal",
-    //   customClass: {
-    //     confirmButton: "btn btn-primary",
-    //     cancelButton: "btn btn-danger ml-1",
-    //   },
-    //   buttonsStyling: false,
-    // }).then(function (result) {
-    //   if (result.value) {
-    //     let permissions = {};
-    //     selectedInstance.permissions.forEach((p) => {
-    //       permissions[p.value] = true;
-    //     });
-    //     set(ref(database, `users/${selectedInstance.uid}`), {
-    //       ...selectedInstance,
-    //       permissions,
-    //       lastUpdatedTime: new Date().getTime(),
-    //       lastUpdatedBy: authStore.uid,
-    //       deleted: false,
-    //       deletedAt: null,
-    //       deletedBy: null,
-    //     })
-    //       .then(() => {
-    //         enqueueSnackbar(
-    //           `${selectedInstance.name} kullanıcısı başarıyla aktif edildi.`,
-    //           {
-    //             variant: "success",
-    //           }
-    //         );
-    //       })
-    //       .catch(() =>
-    //         enqueueSnackbar(
-    //           `${selectedInstance.name} Kullanıcısı aktif edilirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
-    //           {
-    //             variant: "error",
-    //           }
-    //         )
-    //       );
-    //   }
-    // });
   };
 
   const handleEditCategory = (selectedInstance) => {
     console.log("selected instance: ", selectedInstance);
     setShowAddUserModal(true);
-    const selectedCategories = selectedInstance.categories?.map(
-      (x) => ({
-        value: x.id,
-        label:x.name
-      })
-    )
+    const selectedCategories = selectedInstance.categories?.map((x) => ({
+      value: x.id,
+      label: x.name,
+    }));
     setEditingProfileData({
       ...selectedInstance,
       categories: selectedCategories,
-      flavors:{label:selectedInstance.flavor.name +":"+
-        " cpu size: " + selectedInstance.flavor.cpu_size +
-         "," + 
-         " ram size: "+ selectedInstance.flavor.ram_size +
-         "," +
-         " root disk: "+ selectedInstance.flavor.root_disk,
-         value:selectedInstance.flavor.id},
+      flavors: {
+        label:
+          selectedInstance.flavor.name +
+          ":" +
+          " cpu size: " +
+          selectedInstance.flavor.cpu_size +
+          "," +
+          " ram size: " +
+          selectedInstance.flavor.ram_size +
+          "," +
+          " root disk: " +
+          selectedInstance.flavor.root_disk,
+        value: selectedInstance?.flavor?.id,
+      },
     });
   };
 
@@ -1429,7 +1333,7 @@ const InstanceManagement = () => {
       <Card>
         <CardHeader className="border-bottom">
           <CardTitle tag="h4">Instance Management</CardTitle>
-         <Button
+          <Button
             className="ml-2"
             color="primary"
             onClick={onAddUserButtonPressed}

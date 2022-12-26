@@ -4,8 +4,9 @@ export const getInstances = () => {
   return async (dispatch) => {
     ApplicationService.http()
       .post(
-        "/graphql",{
-          query:`
+        "/graphql",
+        {
+          query: `
     
             {
                 instances {
@@ -39,13 +40,15 @@ export const getInstances = () => {
               
               
           `,
-        },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-          
-        }    
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        }
       )
       .then((response) => {
-        console.log("getInstances response: ",response)
+        console.log("getInstances response: ", response);
         const instances = response.data.data?.instances;
         dispatch({
           type: "GET_INSTANCES",
@@ -58,10 +61,9 @@ export const getInstances = () => {
 };
 
 export const addInstances = (instance) => {
-  console.log("addInstances instance: ",instance)
-  
-  
-/*   const flavorsArray = [];
+  console.log("addInstances instance: ", instance);
+
+  /*   const flavorsArray = [];
   instance?.flavors?.forEach((flavor) => {
     if (flavor) {
       flavorsArray.push('"' + flavor + '"');
@@ -89,27 +91,35 @@ export const addInstances = (instance) => {
     console.log("pemArray: ", pemArray);
   }); */
 
-  console.log("Arrays: ","categoriesArray: ", categoriesArray);
+  console.log("Arrays: ", "categoriesArray: ", categoriesArray);
   //Multi selection olması gerekiyorsa aşağıdaki kısımın yorumunu açıp flavors ve categories kısımlarında bu arrayleri gönder (ek olarak [${role.roles}] bu formatta yazmayı unutma)
 
-/*   const arrFlavors=[];
+  /*   const arrFlavors=[];
   const r=instance?.flavors.forEach((s) => {
     arrFlavors.push('"'+s+'"'); });
     const arrCategories=[];
     const r2=instance?.categories.forEach((s) => {
       arrCategories.push('"'+s+'"'); });
    */
-  
-  return async (dispatch) => { 
-    
+
+  return async (dispatch) => {
     ApplicationService.http()
       .post(
         "/graphql",
-       {
-        query:`
+        {
+          query:
+            `
         
             mutation {
-                createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance.flavors+`",categories:[${categoriesArray}],image:"`+instance.images+`",pem:"`+instance.pem+`"}){
+                createInstance(input: {name:"` +
+            instance?.name +
+            `",flavor:"` +
+            instance.flavors +
+            `",categories:[${categoriesArray}],image:"` +
+            instance.images +
+            `",pem:"` +
+            instance.pem +
+            `"}){
                 id
                 name
                 pemName
@@ -136,16 +146,17 @@ export const addInstances = (instance) => {
             }
                         
             
-        `
-
-       },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-        
-      }   
+        `,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        }
       )
       .then((response) => {
         console.log("addInstance response: ", response);
-       
+
         dispatch({
           type: "ADD_INSTANCE",
           payload: {
@@ -159,36 +170,39 @@ export const addInstances = (instance) => {
   };
 };
 
-
 export const updateInstance = (instance) => {
-  console.log("updateInstance: ",instance);
+  console.log("updateInstance: ", instance);
   const categoriesArray = [];
   instance?.categories?.forEach((category) => {
-
     if (category) {
       categoriesArray.push('"' + category + '"');
     } else {
       categoriesArray.push('"' + category + '"');
     }
-   
   });
   console.log("categoriesArray: ", categoriesArray);
- 
+
   //updateInstance(id: "`+instance.id+`", input: {categories:[${instance?.categories}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
   if (instance.personel === undefined) {
     instance.personel = { id: instance?.user?.id, name: "" };
   }
   return async (dispatch) => {
-    
     ApplicationService.http()
       .post(
         "/graphql",
-       {
-        query:`
+        {
+          query:
+            `
 
 
         mutation {
-          updateInstance(id: "`+instance.id+`", input: {categories:[${categoriesArray}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
+          updateInstance(id: "` +
+            instance.id +
+            `", input: {categories:[${categoriesArray}],flavor:"` +
+            instance.flavors +
+            `",name:"` +
+            instance.name +
+            `"}) {
             id
             name
             pemName
@@ -222,12 +236,13 @@ export const updateInstance = (instance) => {
           }
         }
 
-        `
-
-       },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-        
-      }
+        `,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        }
       )
       .then((response) => {
         console.log("update response", response);
@@ -248,22 +263,30 @@ export const deleteInstance = (instanceId) => {
   console.log("delete instance id: ", instanceId);
   return async (dispatch) => {
     ApplicationService.http()
-      .post("/graphql", {
-        query:`
+      .post(
+        "/graphql",
+        {
+          query:
+            `
                         
             mutation {
-              deleteInstance(id:"`+instanceId+`")
+              deleteInstance(id:"` +
+            instanceId +
+            `")
             }
 
 
         `,
-      },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
-        
-      })
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        }
+      )
       .then((response) => {
-        console.log("DeleteResponse: ", response);
-        console.log("instanceId:",instanceId);
+        //console.log("DeleteResponse: ", response);
+        //console.log("instanceId:",instanceId);
         dispatch({
           type: "DELETE_INSTANCE",
           payload: {
@@ -275,8 +298,4 @@ export const deleteInstance = (instanceId) => {
         console.log("error -- responsee", error);
       });
   };
-
-
-  
 };
-
