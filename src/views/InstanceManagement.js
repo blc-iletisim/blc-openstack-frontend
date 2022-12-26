@@ -295,7 +295,7 @@ const InstanceManagement = () => {
   useEffect(() => {
     dispatch(getCategories());
 
-    if (categoriesStore.length > 0) {
+    if (categoriesStore.length > 0 && categoriesOptions.length === 0) {
       setCategoriesOptions(categoriesStore);
     }
   }, []);
@@ -429,25 +429,17 @@ const InstanceManagement = () => {
   }; */
 
   useEffect(() => {
-    getCategoriesOptions();
-  }, [categoriesStore]);
-
-  const getCategoriesOptions = () => {
-    //splice ile sadece mongodb, postgresql alındı:
-    if (categoriesOptions.length === 0) {
-      categoriesStore?.categories?.forEach((category) =>
-        setCategoriesOptions((categoriesOptions) => [
-          ...categoriesOptions,
-          {
-            value: category?.id,
-            label: category?.name,
-            color: "#00B8D9",
-            isFixed: true,
-          },
-        ])
-      );
-    }
-  };
+    setCategoriesOptions(
+      categoriesStore.categories?.map((category) => {
+        return {
+          value: category?.id,
+          label: category?.name,
+          color: "#00B8D9",
+          isFixed: true,
+        };
+      })
+    );
+  }, [categoriesStore, categoriesStore.length]);
 
   useEffect(() => {
     getRolesOptions();
