@@ -25,8 +25,6 @@ import {
   Edit,
   HowToReg,
 } from "@mui/icons-material";
-import { getUsersHttp } from "@src/redux/actions/users";
-import { getUser } from "@src/redux/actions/user";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 import { default as SweetAlert } from "sweetalert2";
@@ -36,7 +34,6 @@ import { getImages } from "../redux/actions/images";
 import makeAnimated from "react-select/animated";
 import { selectThemeColors } from "@utils";
 import { getInstances,addInstances,deleteInstance,updateInstance } from "../redux/actions/instances";
-import { getCompany } from "../redux/actions/company";
 import { getFlavors } from "../redux/actions/flavors";
 import { getCategories} from "../redux/actions/categories";
 import {
@@ -53,16 +50,13 @@ const InstanceManagement = () => {
       name: "Name",
       selector: "name",
       sortable: true,
-      minWidth: "350px",
-     
+      minWidth: "350px",     
     },
      {
       name: "Image",
       selector: "image.name",
       sortable: true,
-      minWidth: "350px",
-      
-      
+      minWidth: "350px",  
     },
      {
       name: "Configuration",
@@ -132,27 +126,17 @@ const InstanceManagement = () => {
 
   const dispatch = useDispatch();
   const categoriesStore = useSelector((state) => state.categoriesReducer);
-  const usersStore = useSelector((state) => state.users);
   const instancesStore = useSelector ((state) => state.instancesReducer)
-  console.log("instancesStore: ", instancesStore);
-  const userInstancesStore = useSelector ((state) => state.users)
-  console.log("userInstancesStore: ", userInstancesStore);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
   const pemsStore = useSelector((state) => state.pemReducer);
   const [pemsOptions, setPemsOptions] = useState([]);
   const imagesStore = useSelector((state) => state.imagesReducer);
-  const userStore = useSelector((state) => state.userReducer.data.instances);
-  console.log("userStore: ", userStore);
-  const companyStore = useSelector((state) => state.companyReducer.company);
-  console.log("companyStore: ", companyStore);
-
   const [editingPemData,setEditingPemData] = useState(null);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
@@ -165,19 +149,21 @@ const InstanceManagement = () => {
   const currentUserId= localStorage.getItem('currentUserId');
   let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
   const[ insCompanyFilterStore,setInsCompanyFilterStore]=useState([]);
-  console.log('aaaaaaa',insCompanyFilterStore)
+  const[ insUserFilterStore,setInsUserFilterStore]=useState([]);
 
   useEffect(()=>{
     setInsCompanyFilterStore ( instancesStore?.instances?.filter(a=>currentUserCompanyId.includes(a?.user?.company?.id)))
     
+  },[instancesStore.total,instancesStore]);
+
+  useEffect(()=>{
+    setInsUserFilterStore( instancesStore?.instances?.filter(a=>currentUserId.includes(a?.user?.id)))
   },[instancesStore.total,instancesStore])
 
   useEffect(() => {   
     if(currentUserRole==="ADMIN"){
       dispatch(getInstances());
-      console.log("if: ",instancesStore)
       if (instancesStore?.length > 0) {
-        console.log("if2: ",instancesStore)
         setInstances(instancesStore);
       }
       
@@ -193,19 +179,10 @@ const InstanceManagement = () => {
     }
     else{
       
-      dispatch(getUser(currentUserId));
-      if (userStore?.length > 0) {
-       
-        setInstances(userStore);
+      dispatch(getInstances());
+      if (instancesStore?.length > 0) {
+        setInstances(insUserFilterStore);
       }
-    }
-   
-  }, []);
-
-  useEffect(() => {
-    dispatch(getUsersHttp());
-    if (usersStore.length > 0) {
-      setUsers(usersStore);
     }
   }, []);
 
@@ -315,14 +292,14 @@ const InstanceManagement = () => {
 
   useEffect(() => {
     if(currentUserRole!=="MODERATOR"&&currentUserRole!=="ADMIN"){
-      if (userStore) {
-        if (userStore.total <= currentPage * rowsPerPage) {
+      if (insUserFilterStore) {
+        if (insUserFilterStore.total <= currentPage * rowsPerPage) {
           setCurrentPage(1);
-          setInstances(userStore?.slice(0, rowsPerPage));
+          setInstances(insUserFilterStore?.slice(0, rowsPerPage));
         } else {
           setInstances(
           
-            userStore?.slice(
+            insUserFilterStore?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
             )
@@ -331,7 +308,7 @@ const InstanceManagement = () => {
       }
     }
     
-  }, [userStore?.total, userStore]);
+  }, [insUserFilterStore]);
 
   useEffect(() => {
     setCategoriesOptions(
@@ -365,8 +342,6 @@ const InstanceManagement = () => {
         file: formData })
     }}; */
   
-//filtreyi admin/moderator/user için ayrı ayrı yap
-    //filtre çalışmıyor incele!
     const handleFilter = (e) => {
       setSearchValue(e.target.value);
   
@@ -382,7 +357,14 @@ const InstanceManagement = () => {
                 currentPage * rowsPerPage
               )
           );
-        } 
+        }  else {
+          setInstances(
+            instancesStore.instances.slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+          )
+        }
       }
       else if ( currentUserRole==="MODERATOR"){
         if (e.target.value !== "") {
@@ -396,19 +378,34 @@ const InstanceManagement = () => {
                 currentPage * rowsPerPage
               )
           );
-        } else {
-          if (e.target.value !== "") { 
-       
+        }else {
           setInstances(
-            usersStore?.data.map((ins) => ins.instances)
-              .filter((instance) =>
-                instance.name.toLowerCase().includes(e.target.value.toLowerCase())
-              )
-              .slice(
-                currentPage * rowsPerPage - rowsPerPage,
-                currentPage * rowsPerPage
-              )
-          );}
+            insCompanyFilterStore.slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+          )
+        }
+      }else {
+        if (e.target.value !== "") { 
+         
+        setInstances(
+          insUserFilterStore
+            .filter((instance) =>
+              instance.name.toLowerCase().includes(e.target.value.toLowerCase())
+            )
+            .slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+        );
+        }else {
+          setInstances(
+            insUserFilterStore.slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+          )
         }
       }
       
@@ -433,7 +430,7 @@ const InstanceManagement = () => {
     }
      else{
       setInstances(
-        userStore.slice(
+        insUserFilterStore.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
@@ -461,7 +458,7 @@ const InstanceManagement = () => {
     }
   else{
       setInstances(
-        userStore.slice(
+        insUserFilterStore.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
@@ -506,7 +503,7 @@ const InstanceManagement = () => {
     }
     else{
       setInstances(
-        userStore
+        insUserFilterStore
           .sort((a, b) => {
             if (a[column.selector] === b[column.selector]) return 0;
             if (direction === "asc") {
@@ -534,7 +531,7 @@ const InstanceManagement = () => {
       count = Number((insCompanyFilterStore?.length / rowsPerPage).toFixed(1));
     }
     else{
-       count = Number((userStore?.length / rowsPerPage).toFixed(1));
+       count = Number((insUserFilterStore?.length / rowsPerPage).toFixed(1));
     }
     
 
@@ -1018,29 +1015,10 @@ const InstanceManagement = () => {
   const ExpandableTable = ({ data }) => {
     if(currentUserRole==="ADMIN"){
       console.log("ExpandableTable data: ",data)
-    const createdByUser = usersStore?.data?.find(
-      (user) => user?.id === data?.createdBy
-    );
-    const lastUpdatedByUser = usersStore?.data.find(
-      (user) => user?.id === data?.lastUpdatedBy
-    );
     }
     else{
       console.log("ExpandableTable data: ",data)
-      const createdByUser = userStore?.find(
-        (user) => user?.id === data?.createdBy
-      );
-      const lastUpdatedByUser = userStore?.find(
-        (user) => user?.id === data?.lastUpdatedBy
-      );
     }
- /*    console.log("ExpandableTable data: ",data)
-    const createdByUser = usersStore?.data?.find(
-      (user) => user?.id === data?.createdBy
-    );
-    const lastUpdatedByUser = usersStore?.data.find(
-      (user) => user?.id === data?.lastUpdatedBy
-    ); */
 
     return (
       <div className="expandable-content p-2">

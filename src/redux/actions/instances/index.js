@@ -6,10 +6,11 @@ export const getInstances = () => {
       .post(
         "/graphql",{
           query:`
-    
             {
-                instances {
+              instances {
                 user{
+                  name
+                  id
                   company{
                     id
                     name
@@ -18,20 +19,17 @@ export const getInstances = () => {
                 id
                 name
                 pemName
-                user{name}
                 flavor {
-                    id
-                    name
-                    cpu_size
-                    ram_size
-                    root_disk
+                  id
+                  name
+                  cpu_size
+                  ram_size
+                  root_disk
                 }
                 image {
                   id
-                  name
-                 
+                  name                 
                 }
-            
                 categories {
                     id
                     name
@@ -39,12 +37,8 @@ export const getInstances = () => {
                 createdDateTime
                 updatedDateTime
                 deletedDateTime
-                }
-            }
-  
-
-              
-              
+              }
+            }   
           `,
         },{
           headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
@@ -114,12 +108,13 @@ export const addInstances = (instance) => {
         "/graphql",
        {
         query:`
-        
             mutation {
                 createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance.flavors+`",categories:[${categoriesArray}],image:"`+instance.images+`",pem:"`+instance.pem+`"}){
                 id
                 name
                 user{
+                  id
+                  name
                   company{
                     id
                     name
@@ -127,33 +122,26 @@ export const addInstances = (instance) => {
                 }
                 pemName
                 flavor {
-                    id
-                    name
-                    cpu_size
-                    ram_size
-                    root_disk
-                    
+                  id
+                  name
+                  cpu_size
+                  ram_size
+                  root_disk                    
                 }
                 image {
                     id
-                    name
-                
-                }
-            
+                    name                
+                }            
                 categories {
                     id
-                    name
-            
+                    name            
                 }
                 createdDateTime
                 updatedDateTime
                 deletedDateTime
                 }
             }
-                        
-            
         `
-
        },{
         headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
         
@@ -195,19 +183,18 @@ export const updateInstance = (instance) => {
     instance.personel = { id: instance?.user?.id, name: "" };
   }
   return async (dispatch) => {
-    
     ApplicationService.http()
       .post(
         "/graphql",
        {
         query:`
-
-
         mutation {
           updateInstance(id: "`+instance.id+`", input: {categories:[${categoriesArray}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
             id
             name
             user{
+              id
+              name
               company{
                 id
                 name
@@ -220,32 +207,21 @@ export const updateInstance = (instance) => {
               cpu_size
               ram_size
               root_disk
-        
             }
             image {
               id
               name
-        
-            }
-            user {
-              id
-              name
-        
-          
             }
             categories {
               id
               name
-        
             }
             createdDateTime
             updatedDateTime
             deletedDateTime
           }
         }
-
         `
-
        },{
         headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
         
@@ -271,13 +247,10 @@ export const deleteInstance = (instanceId) => {
   return async (dispatch) => {
     ApplicationService.http()
       .post("/graphql", {
-        query:`
-                        
+        query:`         
             mutation {
               deleteInstance(id:"`+instanceId+`")
             }
-
-
         `,
       },{
         headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
