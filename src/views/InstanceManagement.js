@@ -238,25 +238,17 @@ const InstanceManagement = () => {
   }, []);
 
   useEffect(() => {
-    getPemsOptions();
-   }, [pemsStore]);
-
-   const getPemsOptions = () => {
-    if ( pemsOptions.length === 0   ) {
-    pemsStore.pems?.forEach((pem) =>{
-      setPemsOptions((pemsOptions) => [
-        ...pemsOptions,
-        {
-          value: pem?.id,
-          label: pem?.name
-          ,
+    setPemsOptions(
+      pemsStore.pems?.map((pem)=>{
+        return {
+          value:pem?.id,
+          label:pem?.name,
           color: "#00B8D9",
           isFixed: true,
-          
-        },
-      ])}
-    ) }
-  };
+        }
+      })
+    )
+  }, [pemsStore.total, pemsStore]);
 
   useEffect(() => {
     getFlavorsOptions();
@@ -603,21 +595,16 @@ const InstanceManagement = () => {
               theme={selectThemeColors}
               closeMenuOnSelect={true}
               components={animatedComponents}
-              isMulti
+              //isMulti
               options={pemsOptions}
               className="react-select"
-              classNamePrefix="Seç"
+              classNamePrefix="Select"
               //defaultValue={editingProfileData?.roles || []}
-              defaultValue={editingProfileData?.pem }
+              defaultValue={editingProfileData?.pem ? editingProfileData?.pem : ""}
               onChange={(value) => {
-                {
-                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
-                  console.log("value:", value);
-                }
- 
                 setEditingProfileData({
                   ...editingProfileData,
-                  pem: value.map((val) => val.value),
+                  pem: value,
                 }); 
               }}
             />
@@ -644,16 +631,14 @@ const InstanceManagement = () => {
       if (!editingProfileData.id) {
         const newDatabaseData = {
           name: editingProfileData?.name,
-          email: editingProfileData?.email,
           categories:editingProfileData?.categories.map((number) => number.value),
           flavors: editingProfileData?.flavors.value,
           createdTime: editingProfileData?.createdTime || new Date().getTime(),
           lastUpdatedTime: new Date().getTime(),
           id: editingProfileData?.id,
           deletedAt: editingProfileData?.deletedAt || null,
-          pem:editingProfileData?.pem,
+          pem:editingProfileData?.pem?.value,
           images:imagesStore?.images[1]?.id,
-        
         };
   console.log( "newDatabaseData2:"  , newDatabaseData)
         dispatch(addInstances( newDatabaseData))
@@ -681,16 +666,14 @@ const InstanceManagement = () => {
         
         const newDatabaseData = {
           name: editingProfileData?.name,
-          email: editingProfileData?.email,
           categories:editingProfileData?.categories.map((number) => number.value),
           flavors: editingProfileData?.flavors.value,
           createdTime: editingProfileData?.createdTime || new Date().getTime(),
           lastUpdatedTime: new Date().getTime(),
           id: editingProfileData?.id,
           deletedAt: editingProfileData?.deletedAt || null,
-          pem:editingProfileData?.pem,
+          pem:editingProfileData?.pem?.map(a=>a?.value),
           images:imagesStore?.images[1]?.id,
-  
         };
         console.log("NUD", newDatabaseData);
         dispatch(updateInstance(newDatabaseData))
