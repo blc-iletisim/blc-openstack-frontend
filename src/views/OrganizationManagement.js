@@ -452,11 +452,11 @@ console.log("newOrganisationData", newOrganisationData)
 */
   const handleDeleteOrganization = (selectedOrganisation) => {
     return Swal.fire({
-      title: `${selectedOrganisation.name} organizasyonunu Silmek İstediğinize Emin misiniz?`,
+      title: ` Are you sure you want to delete the ${selectedOrganisation.name} organization?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Sil",
-      cancelButtonText: "İptal",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
       customClass: {
         confirmButton: "btn btn-primary",
         cancelButton: "btn btn-danger ml-1",
@@ -466,7 +466,7 @@ console.log("newOrganisationData", newOrganisationData)
       dispatch(deleteOrganization(selectedOrganisation.id.trim()))
         .then(() => {
           enqueueSnackbar(
-            `${selectedOrganisation.name} organizasyonu başarıyla silindi.`,
+            `${selectedOrganisation.name} deleted.`,
             {
               variant: "success",
             }
@@ -474,7 +474,7 @@ console.log("newOrganisationData", newOrganisationData)
         })
         .catch((e) => {
           enqueueSnackbar(
-            `${selectedOrganisation.name} organizasyonu silinirken bir sunucu bağlantı hatası meydana geldi, lütfen tekrar deneyiniz.`,
+            `Error.`,
             {
               variant: "error",
             }

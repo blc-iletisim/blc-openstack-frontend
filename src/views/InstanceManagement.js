@@ -134,26 +134,26 @@ const InstanceManagement = () => {
   const categoriesStore = useSelector((state) => state.categoriesReducer);
   const usersStore = useSelector((state) => state.users);
   const instancesStore = useSelector ((state) => state.instancesReducer)
-  console.log("instancesStore: ", instancesStore);
+ // console.log("instancesStore: ", instancesStore);
   const userInstancesStore = useSelector ((state) => state.users)
-  console.log("userInstancesStore: ", userInstancesStore);
+  //console.log("userInstancesStore: ", userInstancesStore);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
   const rolesStore = useSelector((state) => state.rolesReducer);
   const pemsStore = useSelector((state) => state.pemReducer);
   const [pemsOptions, setPemsOptions] = useState([]);
   const imagesStore = useSelector((state) => state.imagesReducer);
   const userStore = useSelector((state) => state.userReducer.data.instances);
-  console.log("userStore: ", userStore);
+ // console.log("userStore: ", userStore);
   const companyStore = useSelector((state) => state.companyReducer.company);
-  console.log("companyStore: ", companyStore);
+ // console.log("companyStore: ", companyStore);
 
 
   let company =[];
   if (company?.length === 0) {company = companyStore.map((com) => com.instances);}
   const companyInstances= [] 
   company.forEach((x)=>x.forEach((x)=>companyInstances.push(x)))
-  console.log("acompanyInstances ",companyInstances)
- console.log("company: ",company)
+/*   console.log("acompanyInstances ",companyInstances)
+ console.log("company: ",company) */
  
   const [editingPemData,setEditingPemData] = useState(null);
   const [flavorsOptions, setFlavorsOptions] = useState([]);
@@ -166,7 +166,7 @@ const InstanceManagement = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   const [instances, setInstances] = useState([]);
-  console.log("instances: ",instances)
+ // console.log("instances: ",instances)
   const [showAddPemModal, setShowAddPemModal] = useState(false);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [imagesOptions, setImagesOptions] = useState([]);
@@ -177,9 +177,9 @@ const InstanceManagement = () => {
   useEffect(() => {   
     if(currentUserRole==="ADMIN"){
       dispatch(getInstances());
-      console.log("if: ",instancesStore)
+      //console.log("if: ",instancesStore)
       if (instancesStore?.length > 0) {
-        console.log("if2: ",instancesStore)
+       // console.log("if2: ",instancesStore)
         setInstances(instancesStore);
       }
       
@@ -188,7 +188,7 @@ const InstanceManagement = () => {
       dispatch(getCompany(currentUserCompanyId));
       
       if (companyInstances?.length > 0 ) {
-        console.log("mod if")
+        //console.log("mod if")
         setInstances(companyInstances);
        
       }
@@ -380,8 +380,8 @@ const InstanceManagement = () => {
 
   let formData = new FormData();
   const handleChangePem = (e) => {
-    console.log("e: ",e)
-    console.log("handleChangePem file:",e?.target?.files[0])
+   /*  console.log("e: ",e)
+    console.log("handleChangePem file:",e?.target?.files[0]) */
     
     if(e){
       formData.append('file',e)
@@ -638,7 +638,7 @@ const InstanceManagement = () => {
               onChange={(value) => {
                 {
                   //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
-                  console.log("value:", value);
+                //  console.log("value:", value);
                 }
  
                 setEditingProfileData({
@@ -664,9 +664,9 @@ const InstanceManagement = () => {
   const onAddUserModalButtonPressed = () => {
   
     
-    console.log("editingProfileData: ", editingProfileData);
+   /*  console.log("editingProfileData: ", editingProfileData);
     
-      console.log("editingProfileData: ", editingProfileData);
+      console.log("editingProfileData: ", editingProfileData); */
       if (!editingProfileData.id) {
         const newDatabaseData = {
           name: editingProfileData?.name,
@@ -681,7 +681,7 @@ const InstanceManagement = () => {
           images:imagesStore?.images[1]?.id,
         
         };
-  console.log( "newDatabaseData2:"  , newDatabaseData)
+ // console.log( "newDatabaseData2:"  , newDatabaseData)
         dispatch(addInstances( newDatabaseData))
           .then(() => {
             setLoading(false);
@@ -701,9 +701,9 @@ const InstanceManagement = () => {
           });
       }
       else{
-        console.log("updateEdingProfileData: ",editingProfileData)
+      /*   console.log("updateEdingProfileData: ",editingProfileData)
      
-        console.log("update else");
+        console.log("update else"); */
         
         const newDatabaseData = {
           name: editingProfileData?.name,
@@ -718,7 +718,7 @@ const InstanceManagement = () => {
           images:imagesStore?.images[1]?.id,
   
         };
-        console.log("NUD", newDatabaseData);
+       // console.log("NUD", newDatabaseData);
         dispatch(updateInstance(newDatabaseData))
           .then(() => {
             enqueueSnackbar("User Updated", {
@@ -751,11 +751,11 @@ const InstanceManagement = () => {
       file:editingPemData?.file,
       
     };
-    console.log("newPemData: ",newPemData)
+    //console.log("newPemData: ",newPemData)
 
     //Name ve file girilip girilmemesine göre filtreleme yapıldı girilmemesi durumunda hata veriyor diğer kısımlara da ekle!!!!
       if(newPemData.name!==null &&newPemData.file===undefined ){
-        console.log("iff")
+        //console.log("iff")
         dispatch(createPem(newPemData.name))
         .then(() => {
           setLoading(false);
@@ -886,7 +886,7 @@ const InstanceManagement = () => {
               defaultValue={editingProfileData?.categories}
               onChange={(value) => {
                 {
-                  console.log("value:", value);
+                 // console.log("value:", value);
                 }
 
                 setEditingProfileData({
@@ -918,7 +918,7 @@ const InstanceManagement = () => {
               //defaultValue={editingProfileData?.role.label || []}
               onChange={(value) => {
                 {
-                  console.log("value:", value);
+                  //console.log("value:", value);
                 }
 
                 setEditingProfileData({
@@ -1060,7 +1060,7 @@ const InstanceManagement = () => {
   
   const ExpandableTable = ({ data }) => {
     if(currentUserRole==="ADMIN"){
-      console.log("ExpandableTable data: ",data)
+     // console.log("ExpandableTable data: ",data)
     const createdByUser = usersStore?.data?.find(
       (user) => user?.id === data?.createdBy
     );
@@ -1094,6 +1094,10 @@ const InstanceManagement = () => {
           <span>{data?.content}</span>
         </p>
         <p className="font-small-3">
+          <span className="font-weight-bold">User Name:</span>{" "}
+          {data.name ||data.user.name}{" "}
+        </p>
+        <p className="font-small-3">
           <span className="font-weight-bold">Pem Name:</span>{" "}
           {data.pemName}{" "}
         </p>
@@ -1125,15 +1129,15 @@ const InstanceManagement = () => {
 
 
   const handleDeleteInstance = (selectedInstance) => {
-    console.log("delete")
-    console.log("selectedInstance",selectedInstance)
+   /*  console.log("delete")
+    console.log("selectedInstance",selectedInstance) */
     return Swal.fire({
-      title: `${selectedInstance.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
-      text: "Silinen hesaplar tekrar aktif edilebilir, ancak aynı email adresi ile tekrar hesap oluşturulamaz. Tüm yetkileri kaldırılacaktır!",
+      title: ` Are you sure you want to delete the ${selectedInstance.name} instance?`,
+      text: "",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Sil",
-      cancelButtonText: "İptal",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
       customClass: {
         confirmButton: "btn btn-primary",
         cancelButton: "btn btn-danger ml-1",
@@ -1141,7 +1145,7 @@ const InstanceManagement = () => {
       buttonsStyling: false,
     }).then(function (result) {
       if (result.value !== null && result.value === true) {
-        console.log("selectedInstance: ", selectedInstance);
+       // console.log("selectedInstance: ", selectedInstance);
         dispatch(deleteInstance(selectedInstance.id));
       }
     });
@@ -1196,7 +1200,7 @@ const InstanceManagement = () => {
   };
 
   const handleEditCategory = (selectedInstance) => {
-    console.log("selected instance: ", selectedInstance);
+   // console.log("selected instance: ", selectedInstance);
     setShowAddUserModal(true);
     const selectedCategories = selectedInstance.categories?.map(
       (x) => ({
