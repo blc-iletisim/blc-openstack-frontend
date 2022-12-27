@@ -375,54 +375,52 @@ const InstanceManagement = () => {
   
 //filtreyi admin/moderator/user için ayrı ayrı yap
     //filtre çalışmıyor incele!
-  const handleFilter = (e) => {
-    setSearchValue(e.target.value);
-
-    if(currentUserRole==="ADMIN"){
-      if (e.target.value !== "") {
-        setUsers(
-          instancesStore.data
-            .filter((user) =>
-              user.name.toLowerCase().includes(e.target.value.toLowerCase())
-            )
-            .slice(
-              currentPage * rowsPerPage - rowsPerPage,
-              currentPage * rowsPerPage
-            )
-        );
-      } else {
-        setUsers(
-          usersStore.data.slice(
-            currentPage * rowsPerPage - rowsPerPage,
-            currentPage * rowsPerPage
-          )
-        );
+    const handleFilter = (e) => {
+      setSearchValue(e.target.value);
+  
+      if(currentUserRole==="ADMIN"){
+        if (e.target.value !== "") {
+          setInstances(
+            instancesStore.instances
+              .filter((instance) =>
+                instance.name.toLowerCase().includes(e.target.value.toLowerCase())
+              )
+              .slice(
+                currentPage * rowsPerPage - rowsPerPage,
+                currentPage * rowsPerPage
+              )
+          );
+        } 
       }
-    }
-    else{
-      if (e.target.value !== "") {
-        setUsers(
-          userStore
-            .filter((user) =>
-              user.name.toLowerCase().includes(e.target.value.toLowerCase())
-            )
-            .slice(
-              currentPage * rowsPerPage - rowsPerPage,
-              currentPage * rowsPerPage
-            )
-        );
-      } else {
-        setUsers(
-          userStore.slice(
-            currentPage * rowsPerPage - rowsPerPage,
-            currentPage * rowsPerPage
-          )
-        );
+      else if ( currentUserRole==="MODERATOR"){
+        if (e.target.value !== "") {
+          setInstances(
+            insCompanyFilterStore
+              .filter((instance) =>
+                instance.name.toLowerCase().includes(e.target.value.toLowerCase())
+              )
+              .slice(
+                currentPage * rowsPerPage - rowsPerPage,
+                currentPage * rowsPerPage
+              )
+          );
+        } else {
+          if (e.target.value !== "") { 
+       
+          setInstances(
+            usersStore?.data.map((ins) => ins.instances)
+              .filter((instance) =>
+                instance.name.toLowerCase().includes(e.target.value.toLowerCase())
+              )
+              .slice(
+                currentPage * rowsPerPage - rowsPerPage,
+                currentPage * rowsPerPage
+              )
+          );}
+        }
       }
-    }
-    
-  };
-
+      
+    };
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
     if(currentUserRole==="ADMIN"){
@@ -1104,12 +1102,12 @@ const InstanceManagement = () => {
     console.log("delete")
     console.log("selectedInstance",selectedInstance)
     return Swal.fire({
-      title: `${selectedInstance.name} Kullanıcısını Silmek İstediğinize Emin misiniz?`,
-      text: "Silinen hesaplar tekrar aktif edilebilir, ancak aynı email adresi ile tekrar hesap oluşturulamaz. Tüm yetkileri kaldırılacaktır!",
+      title: ` Are you sure you want to delete the ${selectedInstance.name} instance?`,
+      text: "",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Sil",
-      cancelButtonText: "İptal",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
       customClass: {
         confirmButton: "btn btn-primary",
         cancelButton: "btn btn-danger ml-1",

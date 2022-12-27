@@ -386,7 +386,7 @@ const RoleManagement = () => {
     console.log("handleDeleteRole selectedRole: ", selectedRole);
     return Swal.fire({
       title: `Are you sure you want to delete the ${selectedRole.name} role?`,
-      text: "Deleted roles can be reactivated. But all permissions will be removed!",
+      text: "",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Delete",

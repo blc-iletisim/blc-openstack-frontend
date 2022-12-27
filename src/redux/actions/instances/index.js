@@ -18,6 +18,7 @@ export const getInstances = () => {
                 id
                 name
                 pemName
+                user{name}
                 flavor {
                     id
                     name
