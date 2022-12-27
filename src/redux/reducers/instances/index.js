@@ -18,7 +18,7 @@ const initialState = {
       case "ADD_INSTANCE":
         return {
           ...state,
-          total: action.payload.instances?.length,
+          total: state.total+1,
           instances: [...state.instances, action.payload.instances],
         };
         case "DELETE_INSTANCE":
@@ -31,8 +31,12 @@ const initialState = {
           case "UPDATE_INSTANCE":
             return {
               ...state,
-              total: action.payload.instances?.length,
-              instances: [...state.instances, action.payload.instances],
+              instances: state.instances.map((instance) => {
+                if (instance.id === action.payload.instances?.id) {
+                  return action.payload.instances;
+                }
+                return instance;
+              }),
             };
       
     }

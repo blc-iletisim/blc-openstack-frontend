@@ -9,6 +9,12 @@ export const getInstances = () => {
     
             {
                 instances {
+                user{
+                  company{
+                    id
+                    name
+                  }
+                }
                 id
                 name
                 pemName
@@ -112,6 +118,12 @@ export const addInstances = (instance) => {
                 createInstance(input: {name:"`+instance?.name+`",flavor:"`+instance.flavors+`",categories:[${categoriesArray}],image:"`+instance.images+`",pem:"`+instance.pem+`"}){
                 id
                 name
+                user{
+                  company{
+                    id
+                    name
+                  }
+                }
                 pemName
                 flavor {
                     id
@@ -194,6 +206,12 @@ export const updateInstance = (instance) => {
           updateInstance(id: "`+instance.id+`", input: {categories:[${categoriesArray}],flavor:"`+instance.flavors+`",name:"`+instance.name+`"}) {
             id
             name
+            user{
+              company{
+                id
+                name
+              }
+            }
             pemName
             flavor {
               id
