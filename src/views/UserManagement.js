@@ -182,7 +182,12 @@ const UserManagement = () => {
           );
         }
       }
-    } else {
+    }
+
+  }, [usersStore.total, usersStore]);
+
+  useEffect(() => {
+    if (userCompanyFilterStore) {
       if (userCompanyFilterStore.length <= currentPage * rowsPerPage) {
         setCurrentPage(1);
         setUsers(userCompanyFilterStore?.slice(0, rowsPerPage));
@@ -195,8 +200,7 @@ const UserManagement = () => {
         );
       }
     }
-    
-  }, [usersStore.total, usersStore]);
+  }, [ userCompanyFilterStore]);
 
   useEffect(() => {
     if(currentUserRole==="ADMIN"){
