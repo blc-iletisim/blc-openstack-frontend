@@ -21,19 +21,11 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  InputGroup,
-  InputGroupText,
-  Badge,
 } from "reactstrap";
 import {
-  ConstructionOutlined,
   Edit,
   HowToReg,
-  SatelliteAlt,
-  SettingsEthernet,
   } from "@mui/icons-material";
-import moment from "moment";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useSnackbar } from "notistack";
 import { default as SweetAlert } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -41,14 +33,10 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { selectThemeColors } from "@utils";
 import InputPasswordToggle from "@components/input-password-toggle";
-import { useHistory } from "react-router-dom";
 import { updateUser } from "../redux/actions/users";
 import { getOrganisations } from "@src/redux/actions/organisations";
 import { getRoles } from "../redux/actions/roles";
-import { addUser, deleteUser, getPermissions,getUsersHttp } from "../redux/actions/users";
-import { getUser } from "../redux/actions/user";
-import { getCompany } from "../redux/actions/company";
-import useGetUsers from "../utility/hooks/useGetUsers";
+import { addUser, deleteUser, getUsersHttp } from "../redux/actions/users";
 
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
@@ -130,39 +118,32 @@ const UserManagement = () => {
 
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
-  console.log("authStore: ",authStore)
   const usersStore = useSelector((state) => state.users);
   console.log("usersStore: ", usersStore);
-  const userStore = useSelector((state) => state.users);
-  console.log("userStore: ", userStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
-  console.log("rolesStore: ", rolesStore);
   const organizationStore = useSelector((state) => state.organisationReducer);
-  console.log("organizationStore: ", organizationStore);
-  const companyStore = useSelector((state) => state.companyReducer);
-  console.log("companyStore: ", companyStore);
   const [rolesOptions, setRolesOptions] = useState([]);
-  console.log("rolesOptions: ",rolesOptions)
-  const [authOptions, setAuthOptions] = useState([]);
-  console.log("rolesOptions: ",rolesOptions)
   const [organizationsOptions, setOrganizationsOptions] = useState([]);
-  console.log("organizationsOptions: ",organizationsOptions)
+  console.log("organizationsOptions",organizationsOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState([]);
   console.log("userss: ",users)
-  const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userOptions, setUserOptions] = useState([]);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
-  console.log("editingProfileData set: ", editingProfileData);
   const currentUserRole= localStorage.getItem('currentUserRole');
-  console.log("currentUserRole: ",currentUserRole)
   let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
-  console.log("currentUserCompanyId: ",currentUserCompanyId)
+  console.log('currentUserCompanyId',currentUserCompanyId)
+  const[ userCompanyFilterStore,setUserCompanyFilterStore]=useState([]);
+  console.log('userCompanyFilterStore',userCompanyFilterStore)
+
+  useEffect(()=>{
+    setUserCompanyFilterStore ( usersStore?.data?.filter(a=>currentUserCompanyId.includes(a?.company?.id)))
+    
+  },[usersStore.total,usersStore]);
 
   useEffect(() => {
     if(currentUserRole==="ADMIN"){
@@ -172,56 +153,27 @@ const UserManagement = () => {
     }
   }
   else{
-    dispatch(getCompany(currentUserCompanyId));
-    if (companyStore.length > 0) {
-      setUsers(companyStore);
+    dispatch(getUsersHttp());
+    if (usersStore.length > 0) {
+      setUsers(userCompanyFilterStore);
     }
-
   }
   }, []);
-  useEffect(() => {
-    dispatch(getUser());
-    if (userStore.length > 0) {
-      setUser(userStore);
-    }
-  }, []);
+
   useEffect(() => {
     dispatch(getOrganisations());
-    console.log("organizationsStore dispatch: ", organizationStore);
     if (organizationStore.length > 0) {
       setOrganizationsOptions(organizationStore);
     }
   }, []);
- /*  useEffect(() => {
-    dispatch(getOrganisations());
-    console.log("organizationsStore dispatch: ", organizationStore);
-    if ( organizationStore.length > 0 ) {
-      setOrganizationsOptions(organizationStore);
-    }
-  }, []);
- */
+
   useEffect(() => {
     dispatch(getRoles());
-    console.log("rolesStore dispatch: ", rolesStore);
     if (rolesStore.length > 0 && rolesOptions.length === 0 ) {
       setRolesOptions(rolesStore);
     }
   }, []);
 
-  //logine dispatch atınca hata veriyor problemi çözmek için başka yol bul!
-/*   useEffect(() => {
-    dispatch(handleLogin());
-    console.log("authStore dispatch: ", authStore);
-    if (authStore?.length > 0 && authStore?.length === 0 ) {
-      setAuthOptions(authStore);
-    }
-  }, []); */
-
-  // useEffect(() => {
-  //   setUsers(usersStore);
-  // }, [usersStore]);
-  console.log("total", usersStore);
-  console.log("total", usersStore.total);
   useEffect(() => {
     if(currentUserRole==="ADMIN"){
       if (usersStore.data) {
@@ -242,41 +194,20 @@ const UserManagement = () => {
   }, [usersStore.total, usersStore]);
 
   useEffect(() => {
-    if (companyStore.company) {
-      if (companyStore.total <= currentPage * rowsPerPage) {
+    if (userCompanyFilterStore) {
+      if (userCompanyFilterStore.length <= currentPage * rowsPerPage) {
         setCurrentPage(1);
-        setUsers(companyStore.company?.slice(0, rowsPerPage));
+        setUsers(userCompanyFilterStore?.slice(0, rowsPerPage));
       } else {
         setUsers(
-          companyStore.company?.slice(
+          userCompanyFilterStore?.slice(
             currentPage * rowsPerPage - rowsPerPage,
             currentPage * rowsPerPage
           )
         );
       }
     }
-  }, [companyStore.total, companyStore]);
-
-
-  useEffect(() => {
-    getUserOptions();
-  }, [usersStore]);
-
-  const getUserOptions = () => {
-    // usersStore.data.map(user =>
-    usersStore.data.forEach((user) =>
-      users.map((use) =>
-        setUserOptions((userOptions) => [
-          {
-            value: use.id,
-            label: use?.name,
-            color: "#00B8D9",
-            isFixed: true,
-          },
-        ])
-      )
-    );
-  };
+  }, [ userCompanyFilterStore]);
 
   useEffect(() => {
    
@@ -319,13 +250,32 @@ const UserManagement = () => {
     ) }
   };
 
-  //moderator girişi için filtreyi güncellemek gerekebilir yapınca test et!
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
-
+    if(currentUserRole==="ADMIN"){
+      if (e.target.value !== "") {
+        setUsers(
+          usersStore.data
+            .filter((user) =>
+              user.name.toLowerCase().includes(e.target.value.toLowerCase())
+            )
+            .slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+        );
+      } else {
+        setUsers(
+          usersStore.data.slice(
+            currentPage * rowsPerPage - rowsPerPage,
+            currentPage * rowsPerPage
+          )
+        );
+      }
+   }else {
     if (e.target.value !== "") {
       setUsers(
-        usersStore.data
+        userCompanyFilterStore
           .filter((user) =>
             user.name.toLowerCase().includes(e.target.value.toLowerCase())
           )
@@ -336,12 +286,13 @@ const UserManagement = () => {
       );
     } else {
       setUsers(
-        usersStore.data.slice(
+        userCompanyFilterStore.slice(
           currentPage * rowsPerPage - rowsPerPage,
           currentPage * rowsPerPage
         )
       );
     }
+   }
   };
 
   const handlePagination = (page) => {
@@ -356,7 +307,7 @@ const UserManagement = () => {
     }
     else{
       setUsers(
-        companyStore.company.slice(
+        userCompanyFilterStore?.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
@@ -377,7 +328,7 @@ const UserManagement = () => {
     }
     else{
       setUsers(
-        companyStore.company.slice(
+        userCompanyFilterStore.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
@@ -407,7 +358,7 @@ const UserManagement = () => {
     }
     else{
       setUsers(
-        companyStore.company
+        userCompanyFilterStore
           .sort((a, b) => {
             if (a[column.selector] === b[column.selector]) return 0;
             if (direction === "asc") {
@@ -431,7 +382,7 @@ const UserManagement = () => {
        count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
     }
     else{
-       count = Number((companyStore?.company?.length / rowsPerPage).toFixed(1));
+       count = Number((userCompanyFilterStore?.length / rowsPerPage).toFixed(1));
     }
     
 
