@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import ReactPaginate from "react-paginate";
 import { ChevronDown, MoreVertical, Plus, Trash } from "react-feather";
 import DataTable from "react-data-table-component";
-import ApplicationService from "../services/ApplicationService";
 import {
   Card,
   CardHeader,
@@ -119,8 +118,8 @@ const UserManagement = () => {
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
-  console.log("usersStore: ", usersStore);
   const rolesStore = useSelector((state) => state.rolesReducer);
+  console.log("rolesStore",rolesStore)
   const organizationStore = useSelector((state) => state.organisationReducer);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [organizationsOptions, setOrganizationsOptions] = useState([]);
@@ -130,15 +129,13 @@ const UserManagement = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState([]);
-  console.log("userss: ",users)
   const [loading, setLoading] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   const currentUserRole= localStorage.getItem('currentUserRole');
   let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
-  console.log('currentUserCompanyId',currentUserCompanyId)
+  console.log('currentUserCompanyId',currentUserCompanyId);
   const[ userCompanyFilterStore,setUserCompanyFilterStore]=useState([]);
-  console.log('userCompanyFilterStore',userCompanyFilterStore)
 
   useEffect(()=>{
     setUserCompanyFilterStore ( usersStore?.data?.filter(a=>currentUserCompanyId.includes(a?.company?.id)))
@@ -210,45 +207,57 @@ const UserManagement = () => {
   }, [ userCompanyFilterStore]);
 
   useEffect(() => {
-   
-    getRolesOptions();
+    if(currentUserRole==="ADMIN"){
+      setRolesOptions(
+        rolesStore.roles.map((role)=>{
+          return{
+            value: role.id,
+            label: role?.name,
+            color: "#00B8D9",
+            isFixed: true,
+          }
+        })
+      )
+    } else {
+      let roleFilter = rolesStore.roles.filter(a=>a.name != "ADMIN")
+      setRolesOptions(
+        roleFilter.map((role)=>{
+          return{
+            value: role.id,
+            label: role?.name,
+            color: "#00B8D9",
+            isFixed: true,
+          }
+        })
+      )
+    }
   }, [rolesStore]);
 
-  const getRolesOptions = () => {
-    if ( rolesOptions.length === 0 ) {
-    rolesStore.roles?.forEach((role) =>
-      setRolesOptions((rolesOptions) => [
-        ...rolesOptions,
-        {
-          value: role.id,
-          label: role?.name,
-          color: "#00B8D9",
-          isFixed: true,
-        },
-      ])
-    ) }
-  };
-
   useEffect(() => {
-   
-    getOrganizationsOptions();
+    if(currentUserRole==="ADMIN"){
+      setOrganizationsOptions(
+        organizationStore.dataOrganization?.map((data)=>{
+          return{
+            value: data?.id,
+            label: data?.name,
+            color: "#00B8D9",
+            isFixed: true,
+          }
+        }))
+    } else {
+      let organizationFilter = organizationStore.dataOrganization.filter(a=>currentUserCompanyId.includes(a?.id))
+      console.log("organizationFilter",organizationFilter)
+      setOrganizationsOptions(
+        organizationFilter.map((data)=>{
+          return{
+            value: data?.id,
+            label: data?.name,
+            color: "#00B8D9",
+            isFixed: true,
+          }
+        }))
+    }
   }, [organizationStore]);
-
-  const getOrganizationsOptions = () => {
-    console.log("get OrganizationOptsions: ",organizationStore)
-    if ( organizationsOptions.length === 0 ) {
-      organizationStore.dataOrganization?.forEach((data) =>
-      setOrganizationsOptions((organizationsOptions) => [
-        ...organizationsOptions,
-        {
-          value: data?.id,
-          label: data?.name,
-          color: "#00B8D9",
-          isFixed: true,
-        },
-      ])
-    ) }
-  };
 
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
