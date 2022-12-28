@@ -56,10 +56,10 @@ const OrganizationManagement = () => {
       minWidth: "350px",
       cell: (row) => (
         <span>
-          {row.createdDateTime
-            ? moment(row.createdDateTime).format("DD.MM.YYYY HH:mm:ss")
-            : "-"
-          
+          {
+            row.createdDateTime
+              ? moment(row.createdDateTime).format("DD.MM.YYYY HH:mm:ss")
+              : "-"
 
             //row.createdDateTime
             //moment(row.createdDateTime).format("DD.MM.YYYY HH:mm:ss")
@@ -75,12 +75,12 @@ const OrganizationManagement = () => {
       minWidth: "350px",
       cell: (row) => (
         <span>
-          {row.createdDateTime
-            ? moment(row.createdDateTime).format("DD.MM.YYYY HH:mm:ss")
-            : "-"
-          
-         
-           // row.updatedDateTime
+          {
+            row.createdDateTime
+              ? moment(row.createdDateTime).format("DD.MM.YYYY HH:mm:ss")
+              : "-"
+
+            // row.updatedDateTime
             //row.users.name?.toUpperCase() || "Yok"
           }
         </span>
@@ -90,7 +90,7 @@ const OrganizationManagement = () => {
     {
       name: "Actions",
       allowOverflow: false,
-      maxWidth: "150px",
+      maxWidth: "100px",
       cell: (row) => {
         return (
           <div className="d-flex">
@@ -140,7 +140,7 @@ const OrganizationManagement = () => {
   const usersStore = useSelector((state) => state.users);
   const { enqueueSnackbar } = useSnackbar();
   const OrganisationsStore = useSelector((state) => state.organisationReducer);
-  console.log("OrganisationsStore",OrganisationsStore);
+  console.log("OrganisationsStore", OrganisationsStore);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
@@ -220,7 +220,7 @@ const OrganizationManagement = () => {
     }
   };
   const ExpandableTable = ({ data }) => {
-/*     const createdByUser = usersStore?.data?.find(
+    /*     const createdByUser = usersStore?.data?.find(
       (user) => user?.id === data?.createdBy
     );
     const lastUpdatedByUser = usersStore?.data.find(
@@ -236,9 +236,7 @@ const OrganizationManagement = () => {
           <span>{data?.content}</span>
         </p>
         <p className="font-small-3 mt-2">
-          <span className="font-weight-bold">Organization id:</span>{" "}
-          
-          {data.id} .
+          <span className="font-weight-bold">Organization id:</span> {data.id} .
         </p>
         {/* <p className="font-small-3">
           <span className="font-weight-bold">Personel Listesi:</span>{" "}
@@ -335,22 +333,19 @@ const OrganizationManagement = () => {
       createdTime: new Date().getTime(),
       email: personel.email,
       responsibleUser: personel.id,
-   
+
       //responsibleUserName: personel.name
     };
-console.log("newOrganisationData", newOrganisationData)
+    console.log("newOrganisationData", newOrganisationData);
     dispatch(
       newOrganisationData.id
         ? updateOrganization(newOrganisationData)
         : addOrganization(newOrganisationData)
     )
       .then(() => {
-        enqueueSnackbar(
-          `${newOrganisationData.name} Successful.`,
-          {
-            variant: "success",
-          }
-        );
+        enqueueSnackbar(`${newOrganisationData.name} Successful.`, {
+          variant: "success",
+        });
         setEditingOrganisationData(null);
         setShowAddOrganisationModal(false);
       })
@@ -396,13 +391,10 @@ console.log("newOrganisationData", newOrganisationData)
                 setEditingOrganisationData((data) => ({
                   ...data,
                   name: e.target.value,
-              
-                  
                 }))
               }
             />
           </div>
-         
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onAddOrganisationModalButtonPressed}>
@@ -412,7 +404,7 @@ console.log("newOrganisationData", newOrganisationData)
       </Modal>
     );
   };
-/*
+  /*
  <div className="mb-2">
             <Label className="form-label" for="user-name">
               Sorumlu Personel:
@@ -465,20 +457,14 @@ console.log("newOrganisationData", newOrganisationData)
     }).then(function () {
       dispatch(deleteOrganization(selectedOrganisation.id.trim()))
         .then(() => {
-          enqueueSnackbar(
-            `${selectedOrganisation.name} deleted.`,
-            {
-              variant: "success",
-            }
-          );
+          enqueueSnackbar(`${selectedOrganisation.name} deleted.`, {
+            variant: "success",
+          });
         })
         .catch((e) => {
-          enqueueSnackbar(
-            `Error.`,
-            {
-              variant: "error",
-            }
-          );
+          enqueueSnackbar(`Error.`, {
+            variant: "error",
+          });
         });
     });
   };
@@ -546,7 +532,7 @@ console.log("newOrganisationData", newOrganisationData)
             />
           </Col>
         </Row>
-        
+
         <DataTable
           noHeader
           pagination

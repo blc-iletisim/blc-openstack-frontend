@@ -21,10 +21,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
-import {
-  Edit,
-  HowToReg,
-  } from "@mui/icons-material";
+import { Edit, HowToReg } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import { default as SweetAlert } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -41,37 +38,36 @@ const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 
 const UserManagement = () => {
- 
   const serverSideColumns = [
     {
       name: "Name",
       selector: "name",
       sortable: true,
-      minWidth: "350px",
+      minWidth: "300px",
     },
     {
       name: "Email",
       selector: "email",
       sortable: true,
-      minWidth: "350px",
+      minWidth: "300px",
     },
     {
       name: "Company",
       selector: "company.name",
       sortable: true,
-      minWidth: "350px",
+      minWidth: "300px",
     },
     {
       name: "Role",
       selector: "role.name",
       sortable: true,
-      minWidth: "350px",
+      minWidth: "300px",
       cell: (row) => <span>{row.role.name?.toUpperCase() || ""}</span>,
     },
     {
       name: "Actions",
       allowOverflow: false,
-      maxWidth: "150px",
+      maxWidth: "100px",
       cell: (row) => {
         return (
           <div className="d-flex">
@@ -130,27 +126,32 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
-  const currentUserRole= localStorage.getItem('currentUserRole');
-  let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
-  const[ userCompanyFilterStore,setUserCompanyFilterStore]=useState([]);
-
-  useEffect(()=>{
-    setUserCompanyFilterStore ( usersStore?.data?.filter(a=>currentUserCompanyId.includes(a?.company?.id) && (a?.role?.name)!="ADMIN"))
-  },[usersStore.total,usersStore]);
+  const currentUserRole = localStorage.getItem("currentUserRole");
+  let currentUserCompanyId = localStorage.getItem("currentUserCompanyId");
+  const [userCompanyFilterStore, setUserCompanyFilterStore] = useState([]);
 
   useEffect(() => {
-    if(currentUserRole==="ADMIN"){
-    dispatch(getUsersHttp());
-    if (usersStore.length > 0) {
-      setUsers(usersStore);
+    setUserCompanyFilterStore(
+      usersStore?.data?.filter(
+        (a) =>
+          currentUserCompanyId.includes(a?.company?.id) &&
+          a?.role?.name != "ADMIN"
+      )
+    );
+  }, [usersStore.total, usersStore]);
+
+  useEffect(() => {
+    if (currentUserRole === "ADMIN") {
+      dispatch(getUsersHttp());
+      if (usersStore.length > 0) {
+        setUsers(usersStore);
+      }
+    } else {
+      dispatch(getUsersHttp());
+      if (usersStore.length > 0) {
+        setUsers(userCompanyFilterStore);
+      }
     }
-  }
-  else{
-    dispatch(getUsersHttp());
-    if (usersStore.length > 0) {
-      setUsers(userCompanyFilterStore);
-    }
-  }
   }, []);
 
   useEffect(() => {
@@ -162,13 +163,13 @@ const UserManagement = () => {
 
   useEffect(() => {
     dispatch(getRoles());
-    if (rolesStore.length > 0 && rolesOptions.length === 0 ) {
+    if (rolesStore.length > 0 && rolesOptions.length === 0) {
       setRolesOptions(rolesStore);
     }
   }, []);
 
   useEffect(() => {
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       if (usersStore.data) {
         if (usersStore.total <= currentPage * rowsPerPage) {
           setCurrentPage(1);
@@ -183,11 +184,10 @@ const UserManagement = () => {
         }
       }
     }
-
   }, [usersStore.total, usersStore]);
 
   useEffect(() => {
-    if (userCompanyFilterStore) {
+    if (userCompanyFilterStore && currentUserRole !== "ADMIN") {
       if (userCompanyFilterStore.length <= currentPage * rowsPerPage) {
         setCurrentPage(1);
         setUsers(userCompanyFilterStore?.slice(0, rowsPerPage));
@@ -200,63 +200,67 @@ const UserManagement = () => {
         );
       }
     }
-  }, [ userCompanyFilterStore]);
+  }, [userCompanyFilterStore]);
 
   useEffect(() => {
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setRolesOptions(
-        rolesStore.roles.map((role)=>{
-          return{
+        rolesStore.roles.map((role) => {
+          return {
             value: role.id,
             label: role?.name,
             color: "#00B8D9",
             isFixed: true,
-          }
+          };
         })
-      )
+      );
     } else {
-      let roleFilter = rolesStore.roles.filter(a=>a.name != "ADMIN")
+      let roleFilter = rolesStore.roles.filter((a) => a.name != "ADMIN");
       setRolesOptions(
-        roleFilter.map((role)=>{
-          return{
+        roleFilter.map((role) => {
+          return {
             value: role.id,
             label: role?.name,
             color: "#00B8D9",
             isFixed: true,
-          }
+          };
         })
-      )
+      );
     }
   }, [rolesStore]);
 
   useEffect(() => {
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setOrganizationsOptions(
-        organizationStore.dataOrganization?.map((data)=>{
-          return{
+        organizationStore.dataOrganization?.map((data) => {
+          return {
             value: data?.id,
             label: data?.name,
             color: "#00B8D9",
             isFixed: true,
-          }
-        }))
+          };
+        })
+      );
     } else {
-      let organizationFilter = organizationStore.dataOrganization.filter(a=>currentUserCompanyId.includes(a?.id))
+      let organizationFilter = organizationStore.dataOrganization.filter((a) =>
+        currentUserCompanyId.includes(a?.id)
+      );
       setOrganizationsOptions(
-        organizationFilter.map((data)=>{
-          return{
+        organizationFilter.map((data) => {
+          return {
             value: data?.id,
             label: data?.name,
             color: "#00B8D9",
             isFixed: true,
-          }
-        }))
+          };
+        })
+      );
     }
   }, [organizationStore]);
 
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       if (e.target.value !== "") {
         setUsers(
           usersStore.data
@@ -276,40 +280,39 @@ const UserManagement = () => {
           )
         );
       }
-   }else {
-    if (e.target.value !== "") {
-      setUsers(
-        userCompanyFilterStore
-          .filter((user) =>
-            user.name.toLowerCase().includes(e.target.value.toLowerCase())
-          )
-          .slice(
+    } else {
+      if (e.target.value !== "") {
+        setUsers(
+          userCompanyFilterStore
+            .filter((user) =>
+              user.name.toLowerCase().includes(e.target.value.toLowerCase())
+            )
+            .slice(
+              currentPage * rowsPerPage - rowsPerPage,
+              currentPage * rowsPerPage
+            )
+        );
+      } else {
+        setUsers(
+          userCompanyFilterStore.slice(
             currentPage * rowsPerPage - rowsPerPage,
             currentPage * rowsPerPage
           )
-      );
-    } else {
-      setUsers(
-        userCompanyFilterStore.slice(
-          currentPage * rowsPerPage - rowsPerPage,
-          currentPage * rowsPerPage
-        )
-      );
+        );
+      }
     }
-   }
   };
 
   const handlePagination = (page) => {
     setCurrentPage(page.selected + 1);
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setUsers(
         usersStore.data.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
           (page.selected + 1) * rowsPerPage
         )
       );
-    }
-    else{
+    } else {
       setUsers(
         userCompanyFilterStore?.slice(
           (page.selected + 1) * rowsPerPage - rowsPerPage,
@@ -317,20 +320,18 @@ const UserManagement = () => {
         )
       );
     }
-    
   };
 
   const handlePerPage = (e) => {
     setRowsPerPage(parseInt(e.target.value));
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setUsers(
         usersStore.data.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
           currentPage * parseInt(e.target.value)
         )
       );
-    }
-    else{
+    } else {
       setUsers(
         userCompanyFilterStore.slice(
           currentPage * parseInt(e.target.value) - parseInt(e.target.value),
@@ -338,11 +339,10 @@ const UserManagement = () => {
         )
       );
     }
-    
   };
 
   const onSort = (column, direction) => {
-    if(currentUserRole==="ADMIN"){
+    if (currentUserRole === "ADMIN") {
       setUsers(
         usersStore.data
           .sort((a, b) => {
@@ -358,8 +358,7 @@ const UserManagement = () => {
             currentPage * rowsPerPage
           )
       );
-    }
-    else{
+    } else {
       setUsers(
         userCompanyFilterStore
           .sort((a, b) => {
@@ -379,12 +378,11 @@ const UserManagement = () => {
   };
 
   const CustomPagination = () => {
-    let count=0;
-    if(currentUserRole==="ADMIN"){
-       count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
-    }
-    else{
-       count = Number((userCompanyFilterStore?.length / rowsPerPage).toFixed(1));
+    let count = 0;
+    if (currentUserRole === "ADMIN") {
+      count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
+    } else {
+      count = Number((userCompanyFilterStore?.length / rowsPerPage).toFixed(1));
     }
     return (
       <ReactPaginate
@@ -432,13 +430,10 @@ const UserManagement = () => {
           c.email === editingProfileData.email && c.id !== editingProfileData.id
       )
     ) {
-      enqueueSnackbar(
-        "There is a user with this email.",
-        {
-          variant: "error",
-          preventDuplicate: true,
-        }
-      );
+      enqueueSnackbar("There is a user with this email.", {
+        variant: "error",
+        preventDuplicate: true,
+      });
       setLoading(false);
       return;
     }
@@ -456,7 +451,10 @@ const UserManagement = () => {
         name: editingProfileData.name,
         email: editingProfileData.email,
         password: editingProfileData?.password,
-        company: currentUserRole==="ADMIN" ? editingProfileData?.company : currentUserCompanyId,
+        company:
+          currentUserRole === "ADMIN"
+            ? editingProfileData?.company
+            : currentUserCompanyId,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
@@ -485,17 +483,16 @@ const UserManagement = () => {
           });
         });
     } else {
-
       const newUserData = {
         id: editingProfileData.id,
         name: editingProfileData.name,
         password: editingProfileData?.password,
-        company: editingProfileData.company?.value || editingProfileData.company,
+        company:
+          editingProfileData.company?.value || editingProfileData.company,
         email: editingProfileData.email,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
-        roles: editingProfileData?.roles?.value || editingProfileData?.roles
-
+        roles: editingProfileData?.roles?.value || editingProfileData?.roles,
       };
       dispatch(updateUser(newUserData.createdBy, newUserData))
         .then(() => {
@@ -527,14 +524,12 @@ const UserManagement = () => {
         className="modal-dialog-centered"
       >
         <ModalHeader toggle={() => setShowAddUserModal(!showAddUserModal)}>
-          {editingProfileData?.id
-            ? editingProfileData.name
-            : "Add New User"}
+          {editingProfileData?.id ? editingProfileData.name : "Add New User"}
         </ModalHeader>
         <ModalBody>
-        <div className="mb-2">
+          <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-            Company Name: 
+              Company Name:
             </Label>
             <Select
               id="permissions-select"
@@ -545,7 +540,11 @@ const UserManagement = () => {
               options={organizationsOptions}
               className="react-select"
               classNamePrefix="Select"
-              defaultValue={currentUserRole==="ADMIN" ? editingProfileData?.company : organizationsOptions} 
+              defaultValue={
+                currentUserRole === "ADMIN"
+                  ? editingProfileData?.company
+                  : organizationsOptions
+              }
               onChange={(value) => {
                 setEditingProfileData({
                   ...editingProfileData,
@@ -607,14 +606,14 @@ const UserManagement = () => {
                   }
                 />
                 <Label className="pt-1">
-                   Password must be more than 6 characters.
+                  Password must be more than 6 characters.
                 </Label>
               </div>
             </Fragment>
           )}
           <div className="mb-2">
             <Label className="form-label" for="permissions-select">
-              User Role: 
+              User Role:
             </Label>
             <Select
               id="permissions-select"
@@ -625,8 +624,7 @@ const UserManagement = () => {
               options={rolesOptions}
               className="react-select"
               classNamePrefix="Select"
-              defaultValue={editingProfileData?.roles
-              } 
+              defaultValue={editingProfileData?.roles}
               onChange={(value) => {
                 setEditingProfileData({
                   ...editingProfileData,
@@ -637,12 +635,26 @@ const UserManagement = () => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button 
-          disabled={currentUserRole==="ADMIN" ?
-            !(editingProfileData?.roles&&editingProfileData?.password&&editingProfileData?.email&&editingProfileData?.name&&editingProfileData?.company)
-            :
-            !(editingProfileData?.roles&&editingProfileData?.password&&editingProfileData?.email&&editingProfileData?.name)}
-          color="primary" onClick={onAddUserModalButtonPressed}>
+          <Button
+            disabled={
+              currentUserRole === "ADMIN"
+                ? !(
+                    editingProfileData?.roles &&
+                    editingProfileData?.password &&
+                    editingProfileData?.email &&
+                    editingProfileData?.name &&
+                    editingProfileData?.company
+                  )
+                : !(
+                    editingProfileData?.roles &&
+                    editingProfileData?.password &&
+                    editingProfileData?.email &&
+                    editingProfileData?.name
+                  )
+            }
+            color="primary"
+            onClick={onAddUserModalButtonPressed}
+          >
             {loading
               ? "Loading.."
               : !editingProfileData?.id
@@ -726,18 +738,18 @@ const UserManagement = () => {
   const handleEditCategory = (selectedUser) => {
     console.log("users store selected user: ", selectedUser);
     setShowAddUserModal(true);
-    const selectedUserRoles = selectedUser.role
-    const selectedUserCompany = selectedUser.company
-   
+    const selectedUserRoles = selectedUser.role;
+    const selectedUserCompany = selectedUser.company;
+
     setEditingProfileData({
       ...selectedUser,
       roles: {
-        label:selectedUserRoles.name,
-        value:selectedUserRoles.id
+        label: selectedUserRoles.name,
+        value: selectedUserRoles.id,
       },
       company: {
-        label:selectedUserCompany.name,
-        value:selectedUserCompany.id
+        label: selectedUserCompany.name,
+        value: selectedUserCompany.id,
       },
     });
   };

@@ -69,7 +69,7 @@ const RoleManagement = () => {
       name: "Role",
       selector: "name",
       sortable: true,
-      minWidth: "350px",
+      maxWidth: "350px",
     },
     {
       name: "Permissions",
@@ -77,13 +77,13 @@ const RoleManagement = () => {
       sortable: true,
       minWidth: "350px",
       cell: (row) => (
-        <span>{row.permissions?.map((perm) => perm?.name+"  │ ")}</span>
+        <span>{row.permissions?.map((perm) => perm?.name + "  │ ")}</span>
       ),
     },
     {
       name: "Actions",
       allowOverflow: false,
-      maxWidth: "150px",
+      maxWidth: "100px",
       cell: (row) => {
         return (
           <div className="d-flex">
@@ -91,7 +91,7 @@ const RoleManagement = () => {
               <DropdownToggle className="pl-1" tag="span">
                 <MoreVertical size={15} />
               </DropdownToggle>
-              <DropdownMenu right>
+              <DropdownMenu left>
                 <DropdownItem
                   tag="a"
                   className="w-100"
@@ -175,13 +175,13 @@ const RoleManagement = () => {
   useEffect(() => {
     setPermissionsOptions(
       PermissionsStore?.permissions?.map((permission) => {
-     return {
-        value: permission?.id,
-        label: permission?.name,
-        color: "#00B8D9",
-        isFixed: true,
-      };
-    })
+        return {
+          value: permission?.id,
+          label: permission?.name,
+          color: "#00B8D9",
+          isFixed: true,
+        };
+      })
     );
   }, [PermissionsStore]);
 
@@ -234,15 +234,15 @@ const RoleManagement = () => {
   };
 
   const onAddRoleButtonPressed = () => {
-    setEditingRoleData({id: null});
+    setEditingRoleData({ id: null });
     setShowAddRoleModal(true);
   };
   const onAddRoleModalButtonPressed = () => {
     const arr = [];
     const r = editingRoleData?.permissions.forEach((s) => {
-      if(s?.value){
+      if (s?.value) {
         arr.push('"' + s?.value + '"');
-      }else{
+      } else {
         arr.push('"' + s + '"');
       }
     });
@@ -372,9 +372,11 @@ const RoleManagement = () => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button 
-           disabled={!(editingRoleData?.permissions&&editingRoleData?.name)}
-          color="primary" onClick={onAddRoleModalButtonPressed}>
+          <Button
+            disabled={!(editingRoleData?.permissions && editingRoleData?.name)}
+            color="primary"
+            onClick={onAddRoleModalButtonPressed}
+          >
             {loading ? "Loading.." : !editingRoleData?.id ? "Create" : "Update"}
           </Button>
         </ModalFooter>
@@ -454,12 +456,10 @@ const RoleManagement = () => {
 
   const handleEditRole = (selectedRole) => {
     setShowAddRoleModal(true);
-    const selectedRolePermissions = selectedRole.permissions?.map(
-      (x) => ({
-        value: x.id,
-        label:x.name
-      })
-    )
+    const selectedRolePermissions = selectedRole.permissions?.map((x) => ({
+      value: x.id,
+      label: x.name,
+    }));
     setEditingRoleData({
       ...selectedRole,
       permissions: selectedRolePermissions,
