@@ -119,11 +119,9 @@ const UserManagement = () => {
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
   const rolesStore = useSelector((state) => state.rolesReducer);
-  console.log("rolesStore",rolesStore)
   const organizationStore = useSelector((state) => state.organisationReducer);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [organizationsOptions, setOrganizationsOptions] = useState([]);
-  console.log("organizationsOptions",organizationsOptions)
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -134,12 +132,10 @@ const UserManagement = () => {
   const [editingProfileData, setEditingProfileData] = useState(null);
   const currentUserRole= localStorage.getItem('currentUserRole');
   let currentUserCompanyId = localStorage.getItem('currentUserCompanyId');
-  console.log('currentUserCompanyId',currentUserCompanyId);
   const[ userCompanyFilterStore,setUserCompanyFilterStore]=useState([]);
 
   useEffect(()=>{
-    setUserCompanyFilterStore ( usersStore?.data?.filter(a=>currentUserCompanyId.includes(a?.company?.id)))
-    
+    setUserCompanyFilterStore ( usersStore?.data?.filter(a=>currentUserCompanyId.includes(a?.company?.id) && (a?.role?.name)!="ADMIN"))
   },[usersStore.total,usersStore]);
 
   useEffect(() => {
@@ -186,12 +182,7 @@ const UserManagement = () => {
           );
         }
       }
-    }
-    
-  }, [usersStore.total, usersStore]);
-
-  useEffect(() => {
-    if (userCompanyFilterStore) {
+    } else {
       if (userCompanyFilterStore.length <= currentPage * rowsPerPage) {
         setCurrentPage(1);
         setUsers(userCompanyFilterStore?.slice(0, rowsPerPage));
@@ -204,7 +195,8 @@ const UserManagement = () => {
         );
       }
     }
-  }, [ userCompanyFilterStore]);
+    
+  }, [usersStore.total, usersStore]);
 
   useEffect(() => {
     if(currentUserRole==="ADMIN"){
@@ -246,7 +238,6 @@ const UserManagement = () => {
         }))
     } else {
       let organizationFilter = organizationStore.dataOrganization.filter(a=>currentUserCompanyId.includes(a?.id))
-      console.log("organizationFilter",organizationFilter)
       setOrganizationsOptions(
         organizationFilter.map((data)=>{
           return{
@@ -363,7 +354,6 @@ const UserManagement = () => {
             currentPage * rowsPerPage
           )
       );
-
     }
     else{
       setUsers(
@@ -382,7 +372,6 @@ const UserManagement = () => {
           )
       );
     }
-   
   };
 
   const CustomPagination = () => {
@@ -393,8 +382,6 @@ const UserManagement = () => {
     else{
        count = Number((userCompanyFilterStore?.length / rowsPerPage).toFixed(1));
     }
-    
-
     return (
       <ReactPaginate
         previousLabel={""}
@@ -460,15 +447,12 @@ const UserManagement = () => {
       setLoading(false);
       return;
     }
-
-    console.log("editingProfileData: ", editingProfileData);
     if (!editingProfileData.id) {
-      console.log("editingProfileData: ", editingProfileData);
       const newUserData = {
         name: editingProfileData.name,
         email: editingProfileData.email,
         password: editingProfileData?.password,
-        company: editingProfileData.company,
+        company: currentUserRole==="ADMIN" ? editingProfileData?.company : currentUserCompanyId,
         createdTime: editingProfileData?.createdTime || new Date().getTime(),
         createdBy: editingProfileData?.createdBy || authStore.id,
         lastUpdatedTime: new Date().getTime(),
@@ -479,7 +463,6 @@ const UserManagement = () => {
         deletedAt: editingProfileData.deletedAt || null,
         deletedBy: editingProfileData.deletedBy || null,
       };
-
       dispatch(addUser(newUserData.createdBy, newUserData))
         .then(() => {
           setLoading(false);
@@ -498,7 +481,6 @@ const UserManagement = () => {
           });
         });
     } else {
-      console.log("update else");
 
       const newUserData = {
         id: editingProfileData.id,
@@ -511,7 +493,6 @@ const UserManagement = () => {
         roles: editingProfileData?.roles?.value || editingProfileData?.roles
 
       };
-      console.log("NUD", newUserData);
       dispatch(updateUser(newUserData.createdBy, newUserData))
         .then(() => {
           enqueueSnackbar("User Updated", {
@@ -560,37 +541,15 @@ const UserManagement = () => {
               options={organizationsOptions}
               className="react-select"
               classNamePrefix="Select"
-              defaultValue={editingProfileData?.company} 
+              defaultValue={currentUserRole==="ADMIN" ? editingProfileData?.company : organizationsOptions} 
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingProfileData({
                   ...editingProfileData,
                   company: value.value,
-
                 });
               }}
             />
           </div>
-          {/* <div className="mb-2">
-            <Label className="form-label" for="user-name">
-              Company Name:
-            </Label>
-            <Input
-              type="text"
-              id="company-name"
-              placeholder="Company Name"
-              value={editingProfileData?.company || ""}
-              onChange={(e) =>
-                setEditingProfileData({
-                  ...editingProfileData,
-                  company: e.target.value,
-                })
-              }
-            />
-          </div> */}
           <div className="mb-2">
             <Label className="form-label" for="user-name">
               User Name:
@@ -636,7 +595,6 @@ const UserManagement = () => {
                   className="input-group-merge mb-2"
                   htmlFor="password"
                   placeholder="Password"
-                  //defaultValue={editingProfileData?.password || ""}
                   onChange={(e) =>
                     setEditingProfileData({
                       ...editingProfileData,
@@ -666,10 +624,6 @@ const UserManagement = () => {
               defaultValue={editingProfileData?.roles
               } 
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingProfileData({
                   ...editingProfileData,
                   roles: value.value,
@@ -680,7 +634,10 @@ const UserManagement = () => {
         </ModalBody>
         <ModalFooter>
           <Button 
-          disabled={!(editingProfileData?.roles&&editingProfileData?.password&&editingProfileData?.email&&editingProfileData?.name&&editingProfileData?.company)}
+          disabled={currentUserRole==="ADMIN" ?
+            !(editingProfileData?.roles&&editingProfileData?.password&&editingProfileData?.email&&editingProfileData?.name&&editingProfileData?.company)
+            :
+            !(editingProfileData?.roles&&editingProfileData?.password&&editingProfileData?.email&&editingProfileData?.name)}
           color="primary" onClick={onAddUserModalButtonPressed}>
             {loading
               ? "Loading.."
@@ -768,7 +725,6 @@ const UserManagement = () => {
     const selectedUserRoles = selectedUser.role
     const selectedUserCompany = selectedUser.company
    
-
     setEditingProfileData({
       ...selectedUser,
       roles: {

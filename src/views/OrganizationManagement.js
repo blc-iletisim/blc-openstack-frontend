@@ -193,7 +193,7 @@ const OrganizationManagement = () => {
         );
       }
     }
-  }, [OrganisationsStore.total, OrganisationsStore]);
+  }, [OrganisationsStore.length, OrganisationsStore]);
 
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
