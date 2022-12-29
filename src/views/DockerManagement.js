@@ -378,7 +378,23 @@ const DockerManagement = () => {
         });
   };
 
-  const onAddPemModalButtonPressed = () => {      
+  const onAddPemModalButtonPressed = () => {     
+    //setLoading(true);
+    console.log("editingPemDataButton: ",editingPemData+".pem")
+    console.log("pemsStoreButton: ",pemsStore)
+    if (
+      pemsStore.pems?.some(
+        (c) =>
+         ( c?.name === editingPemData?.name+".pem" )
+      )
+    ) {
+      enqueueSnackbar("There is already a pem file with this name!", {
+        variant: "error",
+        preventDuplicate: true,
+      });
+      setLoading(false);
+      return;
+    } 
     const newPemData = {
       name: editingPemData?.name,
       file:editingPemData?.file,

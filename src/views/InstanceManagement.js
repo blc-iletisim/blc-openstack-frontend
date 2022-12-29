@@ -129,9 +129,11 @@ const InstanceManagement = () => {
   const instancesStore = useSelector((state) => state.instancesReducer);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
   const pemsStore = useSelector((state) => state.pemReducer);
+  console.log("pemsStore: ",pemsStore)
   const [pemsOptions, setPemsOptions] = useState([]);
   const imagesStore = useSelector((state) => state.imagesReducer);
   const [editingPemData, setEditingPemData] = useState(null);
+  console.log("editingPemData: ",editingPemData)
   const [flavorsOptions, setFlavorsOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
@@ -555,6 +557,7 @@ const InstanceManagement = () => {
   };
 
   const onAddPemButtonPressed = () => {
+ 
     setEditingPemData({
       name: "",
     });
@@ -683,6 +686,24 @@ const InstanceManagement = () => {
   };
 
   const onAddPemModalButtonPressed = () => {
+       //setLoading(true);
+       console.log("editingPemDataButton: ",(editingPemData))
+       console.log("pemsStoreButton: ",pemsStore)
+       if (
+         pemsStore.pems?.some(
+           (c) =>
+            ( c?.name === editingPemData?.name+".pem" )
+         )
+       ) {
+         enqueueSnackbar("There is already a pem file with this name!", {
+           variant: "error",
+           preventDuplicate: true,
+         });
+         setLoading(false);
+         return;
+       }
+   
+       
     const newPemData = {
       name: editingPemData?.name,
       file: editingPemData?.file,

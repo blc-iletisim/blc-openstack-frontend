@@ -17,8 +17,8 @@ const initialState = {
         case "UPLOAD_PEM":
           return {
             ...state,
-            pems: action.payload.pem,
-            total: action.payload.pem.length,
+            pems: [...state.pems, action.payload.pem],
+            total: state.total + 1,
           };
           case "GET_PEM":
           return {

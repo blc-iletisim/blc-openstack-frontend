@@ -58,10 +58,13 @@ const DatabaseManagement = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   const [editingPemData,setEditingPemData] = useState(null);
+  console.log("editingPemData:",editingPemData)
   const [imagesOptions, setImagesOptions] = useState([]);
   const [file, setFile] = useState();
   const [categoriesOptions, setCategoriesOptions] = useState([]);
-
+ /*  const addPemResponse= JSON.parse(localStorage.getItem("addPemResponse"));
+  console.log("addPemResponse: ",addPemResponse)
+ */
   useEffect(() => {
     dispatch(getImages());
     if (imagesStore.length > 0) {
@@ -113,8 +116,9 @@ const DatabaseManagement = () => {
   };
 
   useEffect(() => {
+    console.log("dddddd",pemsStore)
     setPemsOptions(
-      pemsStore.pems?.map((pem)=>{
+      pemsStore?.pems?.map((pem)=>{
         return {
           value:pem?.id,
           label:pem?.name,
@@ -154,6 +158,7 @@ const DatabaseManagement = () => {
     
     if(e){
       formData.append('file',e)
+     
       setEditingPemData({ 
         ...editingPemData, 
         file: formData })
@@ -307,7 +312,23 @@ const DatabaseManagement = () => {
         });
   };
 
-  const onAddPemModalButtonPressed = () => {      
+  const onAddPemModalButtonPressed = () => {    
+    //setLoading(true);
+    console.log("editingPemDataButton: ",editingPemData+".pem")
+    console.log("pemsStoreButton: ",pemsStore)
+    if (
+      pemsStore.pems?.some(
+        (c) =>
+         ( c?.name === editingPemData?.name+".pem" )
+      )
+    ) {
+      enqueueSnackbar("There is already a pem file with this name!", {
+        variant: "error",
+        preventDuplicate: true,
+      });
+      setLoading(false);
+      return;
+    }  
       const newPemData = {
         name: editingPemData?.name,
         file:editingPemData?.file,
@@ -407,13 +428,13 @@ const DatabaseManagement = () => {
               id="pem-name"
               placeholder="PEM Name"
               //value={editingProfileData?.company || ""}
-              onChange={(e) =>
+              onChange={(e) =>{
                 //console.log("pem name: ",e)
 
                 // !!!!!her harf girişi için dispatch atmaması için doğrudan gönderme değeri alttaki gibi gönder düzeltip: 
                  setEditingPemData({ 
                   ...editingPemData, 
-                  name: e.target.value  })
+                  name: e.target.value  }) }
               // handlePemName(e.target.value)
               }
             />
@@ -577,7 +598,8 @@ const DatabaseManagement = () => {
               options={pemsOptions}
               className="react-select"
               classNamePrefix="Seç"
-              //defaultValue={editingProfileData?.role.label || []}
+         
+              defaultValue={editingPemData?.name||editingPemData?.file?.value|| [""]}
               onChange={(value) => {
                 {
                   //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
