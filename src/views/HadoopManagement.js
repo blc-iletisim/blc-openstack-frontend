@@ -31,11 +31,9 @@ import { FileUploader } from "react-drag-drop-files";
 
 
 const fileTypes = ["PEM"];
-const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
 
 const HadoopManagement = () => {
-
   const dispatch = useDispatch();
   const authStore = useSelector((state) => state.auth);
   const usersStore = useSelector((state) => state.users);
@@ -56,6 +54,7 @@ const HadoopManagement = () => {
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [editingPemData,setEditingPemData] = useState(null);
   const [pemsOptions, setPemsOptions] = useState([]);
+  const [pemName, setPemName] = useState ();
 
   useEffect(() => {
     dispatch(getFlavors());
@@ -113,7 +112,6 @@ const HadoopManagement = () => {
           label: flavor?.name+": cpu size: "+flavor?.cpu_size+", ram size: "+flavor?.ram_size+", root disk: "+flavor?.root_disk,
           color: "#00B8D9",
           isFixed: true,
-          
         },
       ])
     ) }
@@ -132,7 +130,6 @@ const HadoopManagement = () => {
           label: category?.name,
           color: "#00B8D9",
           isFixed: true,
-          
         },
       ])
     ); 
@@ -140,115 +137,12 @@ const HadoopManagement = () => {
 
   let formData = new FormData();
   const handleChangePem = (e) => {
-    console.log("e: ",e)
-    console.log("handleChangePem file:",e?.target?.files[0])
-    
     if(e){
       formData.append('file',e)
       setEditingPemData({ 
         ...editingPemData, 
         file: formData })
     }};
-    
-   /*  if(e.target&&e.target.files[0]){
-      formData.append('file',e?.target?.files[0])
-      setEditingPemData({ 
-        ...editingPemData, 
-        file: formData })
-    }}; */
-
-
-  const handleFilter = (e) => {
-    setSearchValue(e.target.value);
-
-    if (e.target.value !== "") {
-      setUsers(
-        usersStore.data
-          .filter((user) =>
-            user.name.toLowerCase().includes(e.target.value.toLowerCase())
-          )
-          .slice(
-            currentPage * rowsPerPage - rowsPerPage,
-            currentPage * rowsPerPage
-          )
-      );
-    } else {
-      setUsers(
-        usersStore.data.slice(
-          currentPage * rowsPerPage - rowsPerPage,
-          currentPage * rowsPerPage
-        )
-      );
-    }
-  };
-
-  const handlePagination = (page) => {
-    setCurrentPage(page.selected + 1);
-    setUsers(
-      usersStore.data.slice(
-        (page.selected + 1) * rowsPerPage - rowsPerPage,
-        (page.selected + 1) * rowsPerPage
-      )
-    );
-  };
-
-  const handlePerPage = (e) => {
-    setRowsPerPage(parseInt(e.target.value));
-    setUsers(
-      usersStore.data.slice(
-        currentPage * parseInt(e.target.value) - parseInt(e.target.value),
-        currentPage * parseInt(e.target.value)
-      )
-    );
-  };
-
-  const onSort = (column, direction) => {
-    setUsers(
-      usersStore.data
-        .sort((a, b) => {
-          if (a[column.selector] === b[column.selector]) return 0;
-          if (direction === "asc") {
-            return a[column.selector] > b[column.selector] ? 1 : -1;
-          } else {
-            return a[column.selector] < b[column.selector] ? 1 : -1;
-          }
-        })
-        .slice(
-          currentPage * rowsPerPage - rowsPerPage,
-          currentPage * rowsPerPage
-        )
-    );
-  };
-
-  const CustomPagination = () => {
-    const count = Number((usersStore?.data?.length / rowsPerPage).toFixed(1));
-
-    return (
-      <ReactPaginate
-        previousLabel={""}
-        nextLabel={""}
-        breakLabel="..."
-        pageCount={count || 1}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={2}
-        activeClassName="active"
-        forcePage={currentPage !== 0 ? currentPage - 1 : 0}
-        onPageChange={(page) => handlePagination(page)}
-        pageClassName={"page-item"}
-        nextLinkClassName={"page-link"}
-        nextClassName={"page-item next"}
-        previousClassName={"page-item prev"}
-        previousLinkClassName={"page-link"}
-        pageLinkClassName={"page-link"}
-        breakClassName="page-item"
-        breakLinkClassName="page-link"
-        containerClassName={
-          "pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
-        }
-      />
-    );
-  };
-
 
   const onAddPemButtonPressed = () =>{
     setEditingPemData({
@@ -268,7 +162,7 @@ const HadoopManagement = () => {
         lastUpdatedTime: new Date().getTime(),
         id: editingProfileData.id,
         deletedAt: editingProfileData.deletedAt || null,
-        pem:editingProfileData?.pem,
+        pem:editingProfileData?.pem[0].value,
         images:imagesStore.images[1].id,
       };
 
@@ -292,9 +186,6 @@ const HadoopManagement = () => {
   };
 
   const onAddPemModalButtonPressed = () => {  
-    //setLoading(true);
-    console.log("editingPemDataButton: ",editingPemData+".pem")
-    console.log("pemsStoreButton: ",pemsStore)
     if (
       pemsStore.pems?.some(
         (c) =>
@@ -313,13 +204,11 @@ const HadoopManagement = () => {
       file:editingPemData?.file,
       
     };
-    console.log("newPemData: ",newPemData)
-    //Name ve file girilip girilmemesine göre filtreleme yapıldı girilmemesi durumunda hata veriyor diğer kısımlara da ekle!!!!
       if(newPemData.name!==null &&newPemData.file===undefined){
-        console.log("iff")
         dispatch(createPem(newPemData.name))
         .then(() => {
           setLoading(false);
+          setPemName(newPemData.name + ".pem")
           setShowAddUserModal(false);
           enqueueSnackbar("Successfull.", {
             variant: "success",
@@ -358,32 +247,45 @@ const HadoopManagement = () => {
                   preventDuplicate: true,
                 });
               }
-    
-//pem için dispatch kısımı düzelt
-
-     /*  const newPemData = {
-        name: editingPemData?.name
-      }
-      dispatch(createPem(newPemData))
-      .then(() => {
-        setLoading(false);
-        setShowAddUserModal(false);
-        enqueueSnackbar("Successfull.", {
-          variant: "success",
-          preventDuplicate: true,
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-        setShowAddUserModal(false);
-        enqueueSnackbar("Error.", {
-          variant: "error",
-          preventDuplicate: true,
-        });
-      }); */
-  
 };
   //*******************************************************
+  useEffect(() => {
+    Pem();
+    setEditingProfileData({
+      ...editingProfileData,
+      pem: pemsOptions?.filter(a=>pemName?.includes(a?.label)),
+      
+    }); 
+   }, [pemsOptions]);
+
+  const Pem = () => {
+    return(
+      <div className="mb-2">
+      <Label className="form-label" for="permissions-select">
+        Choose Existing PEM:
+      </Label>
+      <Select
+        id="permissions-select"
+        isClearable={false}
+        theme={selectThemeColors}
+        closeMenuOnSelect={false}
+        components={animatedComponents}
+        isMulti
+        options={pemsOptions}
+        className="react-select"
+        classNamePrefix="Seç"
+        defaultValue={ pemName!=undefined ? pemsOptions.filter(a=>pemName.includes(a?.label)):""}
+        onChange={(value) => {
+          setPemName(value[value.length-1]?.label)
+          setEditingProfileData({
+            ...editingProfileData,
+            pem: value,
+          }); 
+        }}
+      />
+    </div>
+    )
+  }
   const renderUserModal = () => {
     return (
       <Modal
@@ -449,10 +351,8 @@ const HadoopManagement = () => {
               type="text"
               id="database-name"
               placeholder="Instance Name"
-              //value={editingProfileData?.company || ""}
               onChange={(e) =>
                 setEditingProfileData({ ...editingProfileData, name: e.target.value  })
-                
               }
             />
           </div>
@@ -502,77 +402,22 @@ const HadoopManagement = () => {
               }}
             />
           </div>
-          <div className="mb-2">
-            <Label className="form-label" for="permissions-select">
-              Choose Existing PEM:
-            </Label>
-            <Select
-              id="permissions-select"
-              isClearable={false}
-              theme={selectThemeColors}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
-              options={pemsOptions}
-              className="react-select"
-              classNamePrefix="Seç"
-              //defaultValue={editingProfileData?.role.label || []}
-              onChange={(value) => {
-                {
-                  //Not: pem id yi instance create ederken graphql ile gönderiyorsun ama pem oluşturma upload işlemleri axios ile
-                  console.log("value:", value);
-                }
-                setEditingProfileData({
-                  ...editingProfileData,
-                  pem: value[0]?.value,
-                }); 
-              }}
-            />
-          </div>
+          <Pem/>
           <Button
           size="sm"
             className="ml-2"
-            //color="primary"
             color="info"
             onClick={onAddPemButtonPressed }
           >
             <Plus size={15} />
             <span className="align-middle ml-50">Create a PEM File</span>
           </Button>
-         {/*  <Card
-            tag="a"
-            border="secondary"
-            color="primary"
-            outline
-            style={{
-              width: "16rem",
-              cursor: "pointer",
-            }}
-            onClick={console.log()}
-          >
-            Click Here to Create a PEM File
-          </Card> */}
-
-          {/* <FormGroup check>
-            <Input
-              type="checkbox"
-              onChange={(e) => {
-                setEditingProfileData({
-                  ...editingProfileData,
-                  workingHours: {
-                    ...editingProfileData.workingHours,
-                  },
-                });
-                console.log(editingProfileData.workingHours);
-              }}
-            />{" "}
-            <Label check>Create a PAM File</Label>
-          </FormGroup>
- */}
           <ModalFooter>
             <Button
-            disabled={!(editingProfileData?.pem&&editingProfileData?.flavors&&editingProfileData?.categories&&editingProfileData?.name)}
-             color="primary" onClick={onAddUserModalButtonPressed}>
+            disabled={pemName != undefined ?
+              !(editingProfileData?.flavors&&editingProfileData?.categories&&editingProfileData?.name) :
+              !(editingProfileData?.pem&&editingProfileData?.flavors&&editingProfileData?.categories&&editingProfileData?.name)}
+            color="primary" onClick={onAddUserModalButtonPressed}>
               {loading
                 ? "Saving.."
                 : !editingProfileData?.id
