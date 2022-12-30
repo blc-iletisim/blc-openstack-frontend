@@ -129,11 +129,9 @@ const InstanceManagement = () => {
   const instancesStore = useSelector((state) => state.instancesReducer);
   const flavorsStore = useSelector((state) => state.flavorsReducer);
   const pemsStore = useSelector((state) => state.pemReducer);
-  console.log("pemsStore: ",pemsStore)
   const [pemsOptions, setPemsOptions] = useState([]);
   const imagesStore = useSelector((state) => state.imagesReducer);
   const [editingPemData, setEditingPemData] = useState(null);
-  console.log("editingPemData: ",editingPemData)
   const [flavorsOptions, setFlavorsOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
@@ -143,7 +141,6 @@ const InstanceManagement = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
   const [instances, setInstances] = useState([]);
-  console.log("instances: ", instances);
   const [showAddPemModal, setShowAddPemModal] = useState(false);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [imagesOptions, setImagesOptions] = useState([]);
@@ -152,6 +149,7 @@ const InstanceManagement = () => {
   let currentUserCompanyId = localStorage.getItem("currentUserCompanyId");
   const [insCompanyFilterStore, setInsCompanyFilterStore] = useState([]);
   const [insUserFilterStore, setInsUserFilterStore] = useState([]);
+  const [pemName, setPemName] = useState();
 
   useEffect(() => {
     setInsCompanyFilterStore(
@@ -283,9 +281,7 @@ const InstanceManagement = () => {
           setCurrentPage(1);
           setInstances(insCompanyFilterStore?.slice(0, rowsPerPage));
         } else {
-          //HATA VERDİĞİ İÇİN KAPALI ÇÖZÜP AÇ!!
           setInstances(
-            //buranın yorumunu aç sonra sayfa sayısı ile ilgili bir problem var onu çözüp
             insCompanyFilterStore?.slice(
               currentPage * rowsPerPage - rowsPerPage,
               currentPage * rowsPerPage
@@ -329,9 +325,6 @@ const InstanceManagement = () => {
 
   let formData = new FormData();
   const handleChangePem = (e) => {
-    console.log("e: ", e);
-    console.log("handleChangePem file:", e?.target?.files[0]);
-
     if (e) {
       formData.append("file", e);
       setEditingPemData({
@@ -340,14 +333,7 @@ const InstanceManagement = () => {
       });
     }
   };
-
-  /*  if(e.target&&e.target.files[0]){
-      formData.append('file',e?.target?.files[0])
-      setEditingPemData({ 
-        ...editingPemData, 
-        file: formData })
-    }}; */
-
+  
   const handleFilter = (e) => {
     setSearchValue(e.target.value);
 
@@ -518,7 +504,6 @@ const InstanceManagement = () => {
   };
 
   const CustomPagination = () => {
-    // const count = Number((instancesStore?.instances?.length / rowsPerPage).toFixed(1));
     let count = 0;
     if (currentUserRole === "ADMIN") {
       count = Number(
@@ -574,7 +559,16 @@ const InstanceManagement = () => {
     setShowAddUserModal(true);
   };
   //*****************************************************************************
-  const PemSelections = () => (
+  useEffect(() => {
+    Pem();
+    setEditingProfileData({
+      ...editingProfileData,
+      pem: pemsOptions?.filter(a=>pemName?.includes(a?.label)),
+      
+    }); 
+   }, [pemsOptions]);
+
+  const Pem = () => (
     <div className="mb-2">
       <Label className="form-label" for="permissions-select">
         Choose Existing PEM:
@@ -585,24 +579,22 @@ const InstanceManagement = () => {
         theme={selectThemeColors}
         closeMenuOnSelect={true}
         components={animatedComponents}
-        //isMulti
         options={pemsOptions}
         className="react-select"
         classNamePrefix="Select"
-        //defaultValue={editingProfileData?.roles || []}
-        defaultValue={editingProfileData?.pem ? editingProfileData?.pem : ""}
+        defaultValue={ pemName!=undefined ? pemsOptions.filter(a=>pemName.includes(a?.label)):""}
         onChange={(value) => {
+          setPemName(value[value.length-1]?.label)
           setEditingProfileData({
             ...editingProfileData,
             pem: value,
-          });
+          }); 
         }}
       />
       <div className="mb-2"> </div>
       <Button
         size="sm"
         className="ml-2"
-        //color="primary"
         color="info"
         onClick={onAddPemButtonPressed}
       >
@@ -612,9 +604,6 @@ const InstanceManagement = () => {
     </div>
   );
   const onAddUserModalButtonPressed = () => {
-    console.log("editingProfileData: ", editingProfileData);
-
-    console.log("editingProfileData: ", editingProfileData);
     if (!editingProfileData.id) {
       const newDatabaseData = {
         name: editingProfileData?.name,
@@ -626,10 +615,9 @@ const InstanceManagement = () => {
         lastUpdatedTime: new Date().getTime(),
         id: editingProfileData?.id,
         deletedAt: editingProfileData?.deletedAt || null,
-        pem: editingProfileData?.pem?.value,
+        pem: editingProfileData?.pem[0]?.value,
         images: imagesStore?.images[1]?.id,
       };
-      console.log("newDatabaseData2:", newDatabaseData);
       dispatch(addInstances(newDatabaseData))
         .then(() => {
           setLoading(false);
@@ -648,10 +636,6 @@ const InstanceManagement = () => {
           });
         });
     } else {
-      console.log("updateEdingProfileData: ", editingProfileData);
-
-      console.log("update else");
-
       const newDatabaseData = {
         name: editingProfileData?.name,
         categories: editingProfileData?.categories.map(
@@ -665,7 +649,6 @@ const InstanceManagement = () => {
         pem: editingProfileData?.pem?.map((a) => a?.value),
         images: imagesStore?.images[1]?.id,
       };
-      console.log("NUD", newDatabaseData);
       dispatch(updateInstance(newDatabaseData))
         .then(() => {
           enqueueSnackbar("User Updated", {
@@ -686,9 +669,6 @@ const InstanceManagement = () => {
   };
 
   const onAddPemModalButtonPressed = () => {
-       //setLoading(true);
-       console.log("editingPemDataButton: ",(editingPemData))
-       console.log("pemsStoreButton: ",pemsStore)
        if (
          pemsStore.pems?.some(
            (c) =>
@@ -708,15 +688,12 @@ const InstanceManagement = () => {
       name: editingPemData?.name,
       file: editingPemData?.file,
     };
-    console.log("newPemData: ", newPemData);
-
     //Name ve file girilip girilmemesine göre filtreleme yapıldı girilmemesi durumunda hata veriyor diğer kısımlara da ekle!!!!
     if (newPemData.name !== null && newPemData.file === undefined) {
-      console.log("iff");
       dispatch(createPem(newPemData.name))
         .then(() => {
           setLoading(false);
-          //setShowAddUserModal(false);
+          setPemName(newPemData.name + ".pem")
           setShowAddPemModal(false);
           enqueueSnackbar("Successfull.", {
             variant: "success",
@@ -725,7 +702,6 @@ const InstanceManagement = () => {
         })
         .catch(() => {
           setLoading(false);
-          // setShowAddUserModal(false);
           setShowAddPemModal(false);
           enqueueSnackbar("Error.", {
             variant: "error",
@@ -736,7 +712,6 @@ const InstanceManagement = () => {
       dispatch(uploadPem(newPemData.file))
         .then(() => {
           setLoading(false);
-          // setShowAddUserModal(false);
           setShowAddPemModal(false);
           enqueueSnackbar("Created.", {
             variant: "success",
@@ -745,7 +720,6 @@ const InstanceManagement = () => {
         })
         .catch(() => {
           setLoading(false);
-          //setShowAddUserModal(false);
           setShowAddPemModal(false);
           enqueueSnackbar("Error.", {
             variant: "error",
@@ -761,29 +735,6 @@ const InstanceManagement = () => {
         }
       );
     }
-
-    //pem için dispatch kısımı düzelt
-
-    /*  const newPemData = {
-        name: editingPemData?.name
-      }
-      dispatch(createPem(newPemData))
-      .then(() => {
-        setLoading(false);
-        setShowAddUserModal(false);
-        enqueueSnackbar("Successfull.", {
-          variant: "success",
-          preventDuplicate: true,
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-        setShowAddUserModal(false);
-        enqueueSnackbar("Error.", {
-          variant: "error",
-          preventDuplicate: true,
-        });
-      }); */
   };
   //*******************************************************
   const renderUserModal = () => {
@@ -843,15 +794,9 @@ const InstanceManagement = () => {
               classNamePrefix="Seç"
               defaultValue={editingProfileData?.categories}
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingProfileData({
                   ...editingProfileData,
-                  // categories: value.map((category) => category.value),
                   categories: value,
-                  //role: value.label,
                 });
               }}
             />
@@ -870,60 +815,15 @@ const InstanceManagement = () => {
               classNamePrefix="Select"
               options={flavorsOptions}
               defaultValue={editingProfileData?.flavors || [""]}
-              //defaultValue={editingProfileData?.roles || []}
-              //defaultValue={editingProfileData?.role.label || []}
               onChange={(value) => {
-                {
-                  console.log("value:", value);
-                }
-
                 setEditingProfileData({
                   ...editingProfileData,
                   flavors: value,
-                  //role: value.label,
                 });
               }}
             />
           </div>
-          <div>{!editingProfileData?.id ? <PemSelections /> : null}</div>
-
-          {/*  <Button color="info" onClick={console.log()}>
-              {loading
-                ? "Saving.."
-                : !editingProfileData?.id
-                ? "Click Here to Click Here to Create a PEM File"
-                : "Update"}
-            </Button> */}
-          {/*  <Card
-            tag="a"
-            border="secondary"
-            color="primary"
-            outline
-            style={{
-              width: "16rem",
-              cursor: "pointer",
-            }}
-            onClick={console.log()}
-          >
-            Click Here to Create a PEM File
-          </Card> */}
-
-          {/* <FormGroup check>
-            <Input
-              type="checkbox"
-              onChange={(e) => {
-                setEditingProfileData({
-                  ...editingProfileData,
-                  workingHours: {
-                    ...editingProfileData.workingHours,
-                  },
-                });
-                console.log(editingProfileData.workingHours);
-              }}
-            />{" "}
-            <Label check>Create a PAM File</Label>
-          </FormGroup>
- */}
+          <div>{!editingProfileData?.id ? <Pem /> : null}</div>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -965,33 +865,16 @@ const InstanceManagement = () => {
               type="text"
               id="pem-name"
               placeholder="PEM Name"
-              //value={editingPemData?.name || ""}
               defaultValue={editingProfileData?.pemName || ""}
               onChange={
                 (e) =>
-                  //console.log("pem name: ",e)
-
-                  // !!!!!her harf girişi için dispatch atmaması için doğrudan gönderme değeri alttaki gibi gönder düzeltip:
                   setEditingPemData({
                     ...editingPemData,
                     name: e.target.value,
                   })
-                // handlePemName(e.target.value)
               }
             />
           </div>
-          {/* Aşağıdaki kod pem upload için çalışıyor veritabanında kontrolüde gerçekleşti diğeri çalışmazsa bunu aktif et*/}
-          {/*     <div className="App">
-            <h6>To use an existing PEM file please choose to file: </h6>
-            <form encType='multipart/form-data'>
-              <input type="file" onChange={((e) =>handleChangePem(e))}      
-              defaultValue=""
-              />
-              </form>
-            
-        {     <img src={file} /> }
-  
-        </div> */}
           <Label className="form-label" for="user-name">
             To Use an Existing PEM File:
           </Label>
@@ -1004,7 +887,6 @@ const InstanceManagement = () => {
         <ModalFooter>
           <Button
             color="primary"
-            //onClick={onAddUserModalButtonPressed}
             onClick={onAddPemModalButtonPressed}
           >
             {loading
@@ -1020,11 +902,8 @@ const InstanceManagement = () => {
 
   const ExpandableTable = ({ data }) => {
     if (currentUserRole === "ADMIN") {
-      console.log("ExpandableTable data: ", data);
     } else {
-      console.log("ExpandableTable data: ", data);
     }
-
     return (
       <div className="expandable-content p-2">
         <p>
@@ -1058,8 +937,6 @@ const InstanceManagement = () => {
   };
 
   const handleDeleteInstance = (selectedInstance) => {
-    console.log("delete");
-    console.log("selectedInstance", selectedInstance);
     return Swal.fire({
       title: ` Are you sure you want to delete the ${selectedInstance.name} instance?`,
       text: "",
@@ -1074,7 +951,6 @@ const InstanceManagement = () => {
       buttonsStyling: false,
     }).then(function (result) {
       if (result.value !== null && result.value === true) {
-        console.log("selectedInstance: ", selectedInstance);
         dispatch(deleteInstance(selectedInstance.id));
       }
     });
@@ -1129,7 +1005,6 @@ const InstanceManagement = () => {
   };
 
   const handleEditCategory = (selectedInstance) => {
-    console.log("selected instance: ", selectedInstance);
     setShowAddUserModal(true);
     const selectedCategories = selectedInstance.categories?.map((x) => ({
       value: x?.id,
@@ -1207,26 +1082,6 @@ const InstanceManagement = () => {
               placeholder="Filter"
             />
           </Col>
-
-          {/*   <Col
-            className="d-flex align-items-center justify-content-end mt-sm-0 mt-1 ml-md-auto"
-            sm="6"
-            md="3"
-          >
-            <Label className="mr-1" for="search-input">
-             Şirkete Göre Filtrele
-            </Label>
-            <Input
-              className="dataTable-filter"
-              type="text"
-              bsSize="sm"
-              id="search-input"
-              //value={searchOrganizationsValue}
-              //onChange={handleOrganizationFilter}
-              placeholder="Organizasyona Göre"
-            />
-            
-          </Col> */}
         </Row>
         <DataTable
           noHeader
