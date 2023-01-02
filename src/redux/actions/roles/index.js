@@ -1,5 +1,6 @@
 import ApplicationService from "../../../services/ApplicationService";
 import { FormControlUnstyledContext } from "@mui/base";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getRoles = () => {
   return async (dispatch) => {
@@ -31,7 +32,7 @@ export const getRoles = () => {
         },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            Authorization: "Bearer " + secureLocalStorage.getItem("accessToken"),
           },
         }
       )
@@ -76,7 +77,7 @@ export const addRoles = (role) => {
         },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            Authorization: "Bearer " + secureLocalStorage.getItem("accessToken"),
           },
         }
       )
@@ -116,7 +117,7 @@ export const deleteRoles = (roleId) => {
         },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            Authorization: "Bearer " + secureLocalStorage.getItem("accessToken"),
           },
         }
       )
@@ -173,7 +174,7 @@ export const updateRoles = (role) => {
         },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            Authorization: "Bearer " + secureLocalStorage.getItem("accessToken"),
           },
         }
       )

@@ -33,6 +33,7 @@ import { updateUser } from "../redux/actions/users";
 import { getOrganisations } from "@src/redux/actions/organisations";
 import { getRoles } from "../redux/actions/roles";
 import { addUser, deleteUser, getUsersHttp } from "../redux/actions/users";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
@@ -126,8 +127,8 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [editingProfileData, setEditingProfileData] = useState(null);
-  const currentUserRole = localStorage.getItem("currentUserRole");
-  let currentUserCompanyId = localStorage.getItem("currentUserCompanyId");
+  const currentUserRole = secureLocalStorage.getItem("currentUserRole");
+  let currentUserCompanyId = secureLocalStorage.getItem("currentUserCompanyId");
   const [userCompanyFilterStore, setUserCompanyFilterStore] = useState([]);
 
   useEffect(() => {

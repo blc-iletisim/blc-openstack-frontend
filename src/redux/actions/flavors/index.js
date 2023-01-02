@@ -1,4 +1,5 @@
 import ApplicationService from "../../../services/ApplicationService";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getFlavors = () => {
   return async (dispatch) => {
@@ -21,7 +22,7 @@ export const getFlavors = () => {
               
           `,
         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
           
         }    
       )

@@ -1,4 +1,5 @@
 import ApplicationService from "../../../services/ApplicationService";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const createPem= (name) => {
   console.log("createPem name:", name);
@@ -11,7 +12,7 @@ export const createPem= (name) => {
         headers: {
           "Content-Type": "application/json",
           Authorization:
-            "Bearer " + (await localStorage.getItem("accessToken")),
+            "Bearer " + (await secureLocalStorage.getItem("accessToken")),
         },
       })
       .then((response) => {
@@ -43,7 +44,7 @@ export const getPem = (user_id) => {
         headers: {
           "Content-Type": "application/json",
           Authorization:
-            "Bearer " + (await localStorage.getItem("accessToken")),
+            "Bearer " + (await secureLocalStorage.getItem("accessToken")),
         },
       })
       .then((response) => {
@@ -75,7 +76,7 @@ console.log("files: ",file)
           //'Content-Type': `multipart/form-data`,
           //"Content-Type":  "multipart/form-data",
           Authorization:
-            "Bearer " + (await localStorage.getItem("accessToken")),
+            "Bearer " + (await secureLocalStorage.getItem("accessToken")),
         },
         
       })

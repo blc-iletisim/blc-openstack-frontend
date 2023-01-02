@@ -1,4 +1,4 @@
-import axios from "../configs/@axios";
+/* import axios from "../configs/@axios";
 
 const register = (username, email, password) => {
   return axios.post("signup", {
@@ -36,4 +36,4 @@ export default {
   login,
   logout,
   getCurrentUser,
-};
+}; */

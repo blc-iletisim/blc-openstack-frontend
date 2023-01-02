@@ -1,4 +1,5 @@
 import ApplicationService from "../../../services/ApplicationService";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getCategories = () => {
   return async (dispatch) => {
@@ -19,7 +20,7 @@ export const getCategories = () => {
               
           `,
         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
           
         }    
       )

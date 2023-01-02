@@ -8,9 +8,10 @@ import navigationModerator from '@src/navigation/horizontalModerator'
 // ** Horizontal Menu Components
 import HorizontalNavMenuItems from './HorizontalNavMenuItems'
 import {useDispatch, useSelector} from "react-redux";
+import  secureLocalStorage  from  "react-secure-storage";
 
 //const currentUserRole= sessionStorage.getItem("currentUserRole")
-const currentUserRole= localStorage.getItem('currentUserRole');
+const currentUserRole= secureLocalStorage.getItem('currentUserRole');
   console.log("currentUserRoleee: ",currentUserRole)
 
 const HorizontalMenu = ({ currentActiveItem, routerProps }) => {
@@ -20,7 +21,7 @@ const HorizontalMenu = ({ currentActiveItem, routerProps }) => {
   const [openDropdown, setOpenDropdown] = useState([])
   const authStore = useSelector((state) => state.auth);
   console.log("authStoreee: ",authStore)
-  const currentUserRole= localStorage.getItem('currentUserRole');
+  const currentUserRole= secureLocalStorage.getItem('currentUserRole');
   console.log("currentUserRole2: ",currentUserRole)
   // ** On mouse enter push the ID to openDropdown array
   const onMouseEnter = id => {

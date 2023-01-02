@@ -1,5 +1,6 @@
 import ApplicationService from "../../../services/ApplicationService";
 import { DateRange } from "@mui/icons-material";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getOrganisations = () => {
   return async (dispatch) => {
@@ -24,7 +25,7 @@ export const getOrganisations = () => {
         
         `,
       },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       }   )
       .then((response) => {
@@ -72,7 +73,7 @@ export const addOrganization = (data) => {
       `
 
      },{
-      headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+      headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
       
     }  
     )
@@ -119,7 +120,7 @@ export const updateOrganization = (data) => {
           `
   
          },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
           
         }
       )
@@ -152,7 +153,7 @@ export const deleteOrganization = (id) => {
 
         `,
       },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       }  )
       .then((response) => {

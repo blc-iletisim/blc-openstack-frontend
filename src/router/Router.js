@@ -11,6 +11,7 @@ import VerticalLayout from '@src/layouts/VerticalLayout'
 import HorizontalLayout from '@src/layouts/HorizontalLayout'
 import {useSnackbar} from "notistack";
 import {useDispatch, useSelector} from "react-redux";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -24,10 +25,10 @@ const Router = () => {
       if (authState.isLoggedIn === true) {
         setIsUserLoggedIn(true);
       } else {
-        const userJSON = `{"name":"${localStorage.getItem("currentUser")}"}`;
+        const userJSON = `{"name":"${secureLocalStorage.getItem("currentUser")}"}`;
         const user=JSON.parse(userJSON);
-        const accessToken = localStorage.getItem("accessToken");
-        const refreshToken = localStorage.getItem("refreshToken");
+        const accessToken = secureLocalStorage.getItem("accessToken");
+        const refreshToken = secureLocalStorage.getItem("refreshToken");
         if (user && accessToken && refreshToken) {
           dispatch({
             type: 'LOGIN',
@@ -50,7 +51,6 @@ const Router = () => {
   }, [authState.isLoggedIn]);
 
   
-
   const [layout, setLayout] = useLayout()
   const [transition, setTransition] = useRouterTransition()
   const ability = useContext(AbilityContext)

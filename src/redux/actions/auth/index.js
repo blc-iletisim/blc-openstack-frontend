@@ -1,6 +1,7 @@
 import ApplicationService from "../../../services/ApplicationService";
 import checkPermission from "../../../utils/checkPermission";
 import { AUTH_PERMISSIONS } from "../../../configs/auth_permissions.enum";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const handleLogin = (email, password) => async (dispatch) => {
   try {
@@ -39,7 +40,7 @@ export const handleLogin = (email, password) => async (dispatch) => {
       },
       {
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          Authorization: "Bearer " + secureLocalStorage.getItem("accessToken"),
         },
       }
     );
@@ -66,15 +67,15 @@ console.log("Login Data: ",res.data.data)
 
 
     //localde tutmak güvenlik açığı yaratabilir v2'de değiştirilmesi gerekebilir bunların: 
-    localStorage.setItem("accessToken", data.data?.login?.accessToken);
-    localStorage.setItem("refreshToken", res.data?.data?.login?.refreshToken);
-    localStorage.setItem("currentUser", data.data?.login?.user?.name);
-    localStorage.setItem("currentUserRole", data.data?.login?.role);
-    localStorage.setItem("currentUserId", data.data?.login?.user.id);
-    localStorage.setItem("currentUserCompanyId", data.data?.login?.user?.company?.id);
+    secureLocalStorage.setItem("accessToken", data.data?.login?.accessToken);
+    secureLocalStorage.setItem("refreshToken", res.data?.data?.login?.refreshToken);
+    secureLocalStorage.setItem("currentUser", data.data?.login?.user?.name);
+    secureLocalStorage.setItem("currentUserRole", data.data?.login?.role);
+    secureLocalStorage.setItem("currentUserId", data.data?.login?.user.id);
+    secureLocalStorage.setItem("currentUserCompanyId", data.data?.login?.user?.company?.id);
     let token2 = localStorage.getItem('currentUserCompanyId');
-    console.log("tokent2: ",token2)
-    let token = localStorage.getItem('currentUserRole');
+    //console.log("tokent2: ",token2)
+   // let token = localStorage.getItem('currentUserRole');
     return data.data.login;
   } catch (error) {
     console.log("error: ", error);
@@ -90,11 +91,12 @@ export const handleLogout = () => {
     dispatch({
       type: "LOGOUT",
     });
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem(" currentUserRole");
-    localStorage.removeItem("currentUserId");
+    secureLocalStorage.removeItem("currentUser");
+    secureLocalStorage.removeItem("accessToken");
+    secureLocalStorage.removeItem("refreshToken");
+    secureLocalStorage.removeItem(" currentUserRole");
+    secureLocalStorage.removeItem("currentUserId");
+    secureLocalStorage.removeItem("currentCompanyId");
     //localStorage.clear();
   };
 };

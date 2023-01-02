@@ -1,4 +1,5 @@
 import ApplicationService from "../../../services/ApplicationService";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getUser = (userId) => {
     console.log("getUserId", userId);
@@ -69,7 +70,7 @@ export const getUser = (userId) => {
             
           `,
         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
           
         })
         .then((response) => {

@@ -1,5 +1,6 @@
 import { DateRange } from "@mui/icons-material";
 import ApplicationService from "../../../services/ApplicationService";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getUsersHttp = () => {
   console.log("getUsers");
@@ -35,7 +36,7 @@ export const getUsersHttp = () => {
           
         `,
       },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       })
       .then((response) => {
@@ -99,7 +100,7 @@ export const addUser = (sender, data) => {
           
           `,
         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
           
         })
       .then((response) => {
@@ -161,7 +162,7 @@ export const updateUser = (sender, data) => {
         `
 
        },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       }
       )
@@ -202,7 +203,7 @@ export const deleteUser = (userId) => {
         }
         `,
       },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       })
       .then((response) => {

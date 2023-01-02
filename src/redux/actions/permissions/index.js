@@ -1,5 +1,6 @@
 import ApplicationService from "../../../services/ApplicationService";
 import { FormControlUnstyledContext } from "@mui/base";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getPermissions = () => {
     return async (dispatch) => {
@@ -24,7 +25,7 @@ export const getPermissions = () => {
   
             `,
           },{
-            headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+            headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
             
           }    
         )

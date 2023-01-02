@@ -13,6 +13,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import VerticalMenuHeader from './VerticalMenuHeader'
 import VerticalNavMenuItems from './VerticalNavMenuItems'
 import {useDispatch, useSelector} from "react-redux";
+import  secureLocalStorage  from  "react-secure-storage";
  
 //const currentUserRole= sessionStorage.getItem("currentUserRole")
 
@@ -24,7 +25,7 @@ const Sidebar = props => {
   const [groupOpen, setGroupOpen] = useState([])
   const [groupActive, setGroupActive] = useState([])
   const [activeItem, setActiveItem] = useState(null)
-  const currentUserRole= localStorage.getItem('currentUserRole');
+  const currentUserRole= secureLocalStorage.getItem('currentUserRole');
   console.log("currentUserRole2: ",currentUserRole)
 
   // ** Menu Hover State

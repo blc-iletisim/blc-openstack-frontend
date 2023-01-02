@@ -40,6 +40,7 @@ import { getFlavors } from "../redux/actions/flavors";
 import { getCategories } from "../redux/actions/categories";
 import { createPem, uploadPem, getPem } from "../redux/actions/pem";
 import { FileUploader } from "react-drag-drop-files";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Swal = withReactContent(SweetAlert);
 const animatedComponents = makeAnimated();
@@ -144,9 +145,9 @@ const InstanceManagement = () => {
   const [showAddPemModal, setShowAddPemModal] = useState(false);
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [imagesOptions, setImagesOptions] = useState([]);
-  const currentUserRole = localStorage.getItem("currentUserRole");
-  const currentUserId = localStorage.getItem("currentUserId");
-  let currentUserCompanyId = localStorage.getItem("currentUserCompanyId");
+  const currentUserRole = secureLocalStorage.getItem("currentUserRole");
+  const currentUserId = secureLocalStorage.getItem("currentUserId");
+  let currentUserCompanyId = secureLocalStorage.getItem("currentUserCompanyId");
   const [insCompanyFilterStore, setInsCompanyFilterStore] = useState([]);
   const [insUserFilterStore, setInsUserFilterStore] = useState([]);
   const [pemName, setPemName] = useState();

@@ -1,4 +1,5 @@
 import ApplicationService from "../../../services/ApplicationService";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getImages = () => {
   return async (dispatch) => {
@@ -22,7 +23,7 @@ export const getImages = () => {
               
           `,
         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
           
         }    
       )

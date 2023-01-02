@@ -108,7 +108,7 @@ const Login = (props) => {
   useEffect(() => {
 
     if (authState.isLoggedIn === true) {
-      localStorage.setItem("currentUserRole", authStore.role);
+      //localStorage.setItem("currentUserRole", authStore.role);
       
     /*   localStorage.setItem("currentUser", data.data?.login?.user?.name);
       localStorage.setItem("currentUserRole", data.data?.login?.role); */

@@ -1,4 +1,5 @@
 import ApplicationService from "../../../services/ApplicationService";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getInstances = () => {
   return async (dispatch) => {
@@ -41,7 +42,7 @@ export const getInstances = () => {
             }   
           `,
         },{
-          headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+          headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
           
         }    
       )
@@ -143,7 +144,7 @@ export const addInstances = (instance) => {
             }
         `
        },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       }   
       )
@@ -223,7 +224,7 @@ export const updateInstance = (instance) => {
         }
         `
        },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       }
       )
@@ -253,7 +254,7 @@ export const deleteInstance = (instanceId) => {
             }
         `,
       },{
-        headers:{Authorization:'Bearer '+ localStorage.getItem('accessToken')}
+        headers:{Authorization:'Bearer '+ secureLocalStorage.getItem('accessToken')}
         
       })
       .then((response) => {

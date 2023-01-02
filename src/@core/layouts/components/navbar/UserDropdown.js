@@ -17,6 +17,7 @@ import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from
 import { User, Mail, CheckSquare, MessageSquare, Settings, CreditCard, HelpCircle, Power,LogOut } from 'react-feather'
 import {useSnackbar} from "notistack";
 import { Logout } from '@mui/icons-material'
+import  secureLocalStorage  from  "react-secure-storage";
 
 const UserDropdown = () => {
   const dispatch = useDispatch()
@@ -24,7 +25,7 @@ const UserDropdown = () => {
   console.log("auth: ",auth)
   const { enqueueSnackbar } = useSnackbar();
   const history = useHistory();
-  const name= localStorage.getItem('currentUser');
+  const name= secureLocalStorage.getItem('currentUser');
   console.log("name: ",name)
 
 
