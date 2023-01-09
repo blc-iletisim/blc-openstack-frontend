@@ -13,7 +13,6 @@
     "@fullcalendar/react": "5.7.0",
     "@fullcalendar/timegrid": "5.7.2",
     "@fullcalendar/timeline": "5.7.2",
-    "@hookform/resolvers": "1.3.4",
     "@mui/icons-material": "^5.2.4",
     "@mui/material": "^5.2.4",
     "@reduxjs/toolkit": "^1.7.1",
@@ -72,7 +71,6 @@
     "react-paginate": "7.0.0",
     "react-perfect-scrollbar": "1.5.5",
     "react-player": "2.6.2",
-    "react-rating": "2.0.5",
     "react-redux": "7.2.2",
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.2",
@@ -128,7 +126,6 @@
     "eslint": "^7.8.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-react": "^7.20.6",
-   
     "node-sass": "^4.13.1",
     "react-app-rewire-aliases": "^0.2.0",
     "react-app-rewire-postcss": "^3.0.2",
