@@ -66,7 +66,7 @@ console.log("Login Data: ",res.data.data)
     }*/
 
 
-    //localde tutmak güvenlik açığı yaratabilir v2'de değiştirilmesi gerekebilir bunların: 
+    //localde tutulan role gibi değişkenleri kıyaslarken haskleyip vermen lazım admin vs yazmak yerine v2 de düzeltilecek!!!
     secureLocalStorage.setItem("accessToken", data.data?.login?.accessToken);
     secureLocalStorage.setItem("refreshToken", res.data?.data?.login?.refreshToken);
     secureLocalStorage.setItem("currentUser", data.data?.login?.user?.name);

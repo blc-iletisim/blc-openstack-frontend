@@ -1714,7 +1714,7 @@
   "resolved" "https://registry.npmjs.org/@formatjs/macro/-/macro-0.2.8.tgz"
   "version" "0.2.8"
 
-"@fullcalendar/common@~5.7.0", "@fullcalendar/common@~5.7.2":
+"@fullcalendar/common@~5.7.2":
   "integrity" "sha512-0EDKmZBvTUFLvnJ7n6Vo6xMaPVm0jpYq739aSjwFPPXKgbjKFTPbWvLkaDpjJf7YhVebVSOLHbUC1Ky5wXsKvQ=="
   "resolved" "https://registry.npmjs.org/@fullcalendar/common/-/common-5.7.2.tgz"
   "version" "5.7.2"
@@ -1760,14 +1760,6 @@
   "version" "5.7.2"
   dependencies:
     "@fullcalendar/common" "~5.7.2"
-    "tslib" "^2.0.3"
-
-"@fullcalendar/react@5.7.0":
-  "integrity" "sha512-9JdaN/pZXlUFyUe8H1NHIvEt5UVe2p/sctcfsQbKSPJ9NNTVmK+kk3qfUpOWEho6DYuFRLqYI+VwmeVM5mE8rA=="
-  "resolved" "https://registry.npmjs.org/@fullcalendar/react/-/react-5.7.0.tgz"
-  "version" "5.7.0"
-  dependencies:
-    "@fullcalendar/common" "~5.7.0"
     "tslib" "^2.0.3"
 
 "@fullcalendar/scrollgrid@~5.7.2":
@@ -2738,9 +2730,9 @@
   "version" "4.0.2"
 
 "@types/minimatch@*":
-  "integrity" "sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ=="
-  "resolved" "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.5.tgz"
-  "version" "3.0.5"
+  "integrity" "sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA=="
+  "resolved" "https://registry.npmjs.org/@types/minimatch/-/minimatch-5.1.2.tgz"
+  "version" "5.1.2"
 
 "@types/node@*", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
   "integrity" "sha512-GKX1Qnqxo4S+Z/+Z8KKPLpH282LD7jLHWJcVryOflnsnH+BtSDfieR6ObwBMwpnNws0bUK8GI7z0unQf9bARNQ=="
@@ -2849,9 +2841,9 @@
     "@types/jest" "*"
 
 "@types/uglify-js@*":
-  "integrity" "sha512-0yeUr92L3r0GLRnBOvtYK1v2SjqMIqQDHMl7GLb+l2L8+6LSFWEEWEIgVsPdMn5ImLM8qzWT8xFPtQYpp8co0g=="
-  "resolved" "https://registry.npmjs.org/@types/uglify-js/-/uglify-js-3.16.0.tgz"
-  "version" "3.16.0"
+  "integrity" "sha512-GkewRA4i5oXacU/n4MA9+bLgt5/L3F1mKrYvFGm7r2ouLXhRKjuWwo9XHNnbx6WF3vlGW21S3fCvgqxvxXXc5g=="
+  "resolved" "https://registry.npmjs.org/@types/uglify-js/-/uglify-js-3.17.1.tgz"
+  "version" "3.17.1"
   dependencies:
     "source-map" "^0.6.1"
 
@@ -2865,9 +2857,9 @@
     "source-map" "^0.7.3"
 
 "@types/webpack@^4.41.8":
-  "integrity" "sha512-cb+0ioil/7oz5//7tZUSwbrSAN/NWHrQylz5cW8G0dWTcF/g+/dSdMlKVZspBYuMAN1+WnwHrkxiRrLcwd0Heg=="
-  "resolved" "https://registry.npmjs.org/@types/webpack/-/webpack-4.41.32.tgz"
-  "version" "4.41.32"
+  "integrity" "sha512-PPajH64Ft2vWevkerISMtnZ8rTs4YmRbs+23c402J0INmxDKCrhZNvwZYtzx96gY2wAtXdrK1BS2fiC8MlLr3g=="
+  "resolved" "https://registry.npmjs.org/@types/webpack/-/webpack-4.41.33.tgz"
+  "version" "4.41.33"
   dependencies:
     "@types/node" "*"
     "@types/tapable" "^1"
@@ -9895,9 +9887,9 @@
   "version" "4.17.21"
 
 "loglevel@^1.6.8":
-  "integrity" "sha512-G6A/nJLRgWOuuwdNuA6koovfEV1YpqqAG4pRUlFaz3jj2QNZ8M4vBqnVA+HBTmU/AMNUtlOsMmSpF6NyOjztbA=="
-  "resolved" "https://registry.npmjs.org/loglevel/-/loglevel-1.8.0.tgz"
-  "version" "1.8.0"
+  "integrity" "sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg=="
+  "resolved" "https://registry.npmjs.org/loglevel/-/loglevel-1.8.1.tgz"
+  "version" "1.8.1"
 
 "long@^4.0.0":
   "integrity" "sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA=="
@@ -11272,9 +11264,9 @@
   "version" "1.16.1"
 
 "portfinder@^1.0.26":
-  "integrity" "sha512-Z5+DarHWCKlufshB9Z1pN95oLtANoY5Wn9X3JGELGyQ6VhEcBfT2t+1fGUBq7MwUant6g/mqowH+4HifByPbiQ=="
-  "resolved" "https://registry.npmjs.org/portfinder/-/portfinder-1.0.29.tgz"
-  "version" "1.0.29"
+  "integrity" "sha512-on2ZJVVDXRADWE6jnQaX0ioEylzgBpQk8r55NE4wjXW1ZxO+BgDlY6DXwj20i0V8eB4SenDQ00WEaxfiIQPcxg=="
+  "resolved" "https://registry.npmjs.org/portfinder/-/portfinder-1.0.32.tgz"
+  "version" "1.0.32"
   dependencies:
     "async" "^2.6.4"
     "debug" "^3.2.7"
